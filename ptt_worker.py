@@ -173,12 +173,14 @@ def load_model(requested: str, *, announce: bool = True) -> tuple[Any, Any]:
 
         # Kestrel 0.8 defaults to 2 s preview chunks plus 2 s of right context.
         # Parakeet's stateful TDT path supports smaller increments. Empirical
-        # validation shows 320 ms + 320 ms is the smallest configuration that
-        # grows provisional text consistently instead of stalling on blanks.
-        chunk_ms = max(40.0, float(os.getenv("PTT_STREAM_CHUNK_MS", "320")))
-        right_ms = max(0.0, float(os.getenv("PTT_STREAM_RIGHT_MS", "320")))
+        # validation shows asymmetric chunk/lookahead windows can preserve stable
+        # hypotheses while increasing update cadence. The default is 160/480.
+        chunk_ms = max(40.0, float(os.getenv("PTT_STREAM_CHUNK_MS", "160")))
+        right_ms = max(0.0, float(os.getenv("PTT_STREAM_RIGHT_MS", "480")))
+        left_ms = max(chunk_ms, float(os.getenv("PTT_STREAM_LEFT_MS", "4000")))
         parakeet_longform._LIVE_CHUNK_SECONDS = _IntegralFrameSeconds(chunk_ms / 1000.0)
         parakeet_longform._LIVE_RIGHT_SECONDS = _IntegralFrameSeconds(right_ms / 1000.0)
+        parakeet_longform._LIVE_LEFT_SECONDS = _IntegralFrameSeconds(left_ms / 1000.0)
 
         kwargs = {} if requested == "auto" else {"device": requested}
         photon = md.photon("moondream/parakeet-redux", **kwargs)
@@ -190,6 +192,7 @@ def load_model(requested: str, *, announce: bool = True) -> tuple[Any, Any]:
             "device": requested,
             "stream_chunk_ms": chunk_ms,
             "stream_right_ms": right_ms,
+            "stream_left_ms": left_ms,
         })
     return photon, speech
 

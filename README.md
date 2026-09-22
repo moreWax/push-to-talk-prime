@@ -41,12 +41,14 @@ Choose streaming behavior with a named preset:
 ```text
 /voice preset fast
 /voice preset balanced
+/voice preset realtime
 /voice preset smooth
 ```
 
-- `fast`: 160 ms chunk + 160 ms lookahead; lowest latency, less stable previews
-- `balanced`: 320 ms + 320 ms; recommended default
-- `smooth`: 500 ms + 500 ms; slowest, most stable previews
+- `fast`: 160 ms chunk + 160 ms lookahead; lowest first-token latency, less stable previews
+- `balanced`: 160 ms chunk + 480 ms lookahead; recommended stable 160 ms cadence
+- `realtime`: 80 ms chunk + 560 ms lookahead + 1 s left context; smoothest 80 ms cadence, higher compute
+- `smooth`: 320 ms chunk + 320 ms lookahead; fewer, larger stable updates
 
 ## Requirements
 
@@ -174,6 +176,7 @@ Runtime environment variables:
 | `PTT_UV` | `uv` | Path to the `uv` executable |
 | `PTT_STREAM_CHUNK_MS` | preset value | Advanced numeric override for the update window |
 | `PTT_STREAM_RIGHT_MS` | preset value | Advanced numeric override for right context |
+| `PTT_STREAM_LEFT_MS` | preset value | Advanced override for repeated encoder history |
 | `PTT_ALLOW_TELEMETRY` | unset | Set `1` to opt into Kestrel Photon telemetry; disabled by default |
 
 ## Permissions and troubleshooting

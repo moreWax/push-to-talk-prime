@@ -16,7 +16,6 @@ const BURST_GAP_MS = 120;
 const WARMING_EVENT_COUNT = 2;
 const COMMIT_EVENT_COUNT = 5;
 const RELEASE_GAP_MS = 200;
-const INTERIM_PAINT_MS = 150;
 const FIRST_RELEASE_FALLBACK_MS = 2000;
 const TAP_SILENCE_MS = 15_000;
 const TAP_MAX_MS = 120_000;
@@ -24,7 +23,7 @@ const DOUBLE_TAP_MS = 300;
 const DOUBLE_TAP_DISAMBIGUATE_MS = 120;
 
 export type VoiceMode = "hold" | "tap";
-export type VoicePreset = "fast" | "balanced" | "smooth";
+export type VoicePreset = "fast" | "balanced" | "realtime" | "smooth";
 export type VoiceSettings = {
   enabled: boolean;
   mode: VoiceMode;
@@ -32,14 +31,15 @@ export type VoiceSettings = {
   preset: VoicePreset;
 };
 
-const STREAM_PRESETS: Record<VoicePreset, { chunkMs: number; rightMs: number }> = {
-  fast: { chunkMs: 160, rightMs: 160 },
-  balanced: { chunkMs: 320, rightMs: 320 },
-  smooth: { chunkMs: 500, rightMs: 500 },
+const STREAM_PRESETS: Record<VoicePreset, { chunkMs: number; rightMs: number; leftMs: number }> = {
+  fast: { chunkMs: 160, rightMs: 160, leftMs: 2_000 },
+  balanced: { chunkMs: 160, rightMs: 480, leftMs: 4_000 },
+  realtime: { chunkMs: 80, rightMs: 560, leftMs: 1_000 },
+  smooth: { chunkMs: 320, rightMs: 320, leftMs: 5_000 },
 };
 
 function parsePreset(value: unknown): VoicePreset {
-  return value === "fast" || value === "smooth" ? value : "balanced";
+  return value === "fast" || value === "realtime" || value === "smooth" ? value : "balanced";
 }
 
 const RUNTIME_IDENTITY = `${process.execPath} ${process.argv[1] ?? ""}`.toLowerCase();
@@ -57,6 +57,7 @@ function workerEnvironment(preset: VoicePreset): NodeJS.ProcessEnv {
     "CUDA_VISIBLE_DEVICES", "LD_LIBRARY_PATH", "DYLD_LIBRARY_PATH",
     "PULSE_SERVER", "PIPEWIRE_REMOTE", "ALSA_CONFIG_PATH", "OMP_WAIT_POLICY",
     "PTT_DEVICE", "PTT_INPUT_DEVICE", "PTT_STREAM_CHUNK_MS", "PTT_STREAM_RIGHT_MS",
+    "PTT_STREAM_LEFT_MS",
     "PTT_ALLOW_TELEMETRY",
   ];
   const environment: NodeJS.ProcessEnv = { PYTHONUNBUFFERED: "1", PTT_CLIENT_PID: String(process.pid) };
@@ -67,6 +68,7 @@ function workerEnvironment(preset: VoicePreset): NodeJS.ProcessEnv {
   const stream = STREAM_PRESETS[preset];
   environment.PTT_STREAM_CHUNK_MS = process.env.PTT_STREAM_CHUNK_MS ?? String(stream.chunkMs);
   environment.PTT_STREAM_RIGHT_MS = process.env.PTT_STREAM_RIGHT_MS ?? String(stream.rightMs);
+  environment.PTT_STREAM_LEFT_MS = process.env.PTT_STREAM_LEFT_MS ?? String(stream.leftMs);
   return environment;
 }
 
@@ -310,8 +312,6 @@ export class ClientEditorVoiceBridge {
   private captureGeneration = 0;
   private hasInterim = false;
   private targetInterim = "";
-  private displayedInterim = "";
-  private lastInterimPaint = 0;
   private marker = "";
   private meterIndex = 1;
   private editor?: CustomEditor;
@@ -384,7 +384,6 @@ export class ClientEditorVoiceBridge {
     this.lastSpaceAt = now;
 
     if (this.recording) {
-      this.advanceInterimDisplay();
       this.armRelease();
       return;
     }
@@ -401,8 +400,6 @@ export class ClientEditorVoiceBridge {
       this.processing = false;
       this.hasInterim = false;
       this.targetInterim = "";
-      this.displayedInterim = "";
-      this.lastInterimPaint = 0;
       this.meterIndex = 1;
       debugEvent({ event: "editor_bridge_commit" });
       this.replaceMarker("▁");
@@ -490,8 +487,6 @@ export class ClientEditorVoiceBridge {
     this.processing = false;
     this.hasInterim = false;
     this.targetInterim = "";
-    this.displayedInterim = "";
-    this.lastInterimPaint = 0;
     this.marker = "";
     this.burstCount = 0;
     this.leakedSpaces = 0;
@@ -509,7 +504,6 @@ export class ClientEditorVoiceBridge {
     this.processing = true;
     if (this.hasInterim && this.targetInterim) {
       this.replaceMarker(this.targetInterim);
-      this.displayedInterim = this.targetInterim;
     } else {
       this.replaceMarker("");
     }
@@ -524,22 +518,6 @@ export class ClientEditorVoiceBridge {
     this.captureGeneration += 1;
     this.restoreAnchor();
     this.clearCaptureState();
-  }
-
-  private advanceInterimDisplay(force = false): void {
-    if (!this.hasInterim || !this.targetInterim) return;
-    const now = Date.now();
-    if (!force && now - this.lastInterimPaint < INTERIM_PAINT_MS) return;
-    const displayed = Array.from(this.displayedInterim);
-    const target = Array.from(this.targetInterim);
-    let common = 0;
-    while (common < displayed.length && common < target.length && displayed[common] === target[common]) common++;
-    const remaining = target.slice(common);
-    if (!remaining.length && common === displayed.length) return;
-    const take = Math.max(1, Math.ceil(remaining.length / 2));
-    this.displayedInterim = [...target.slice(0, common), ...remaining.slice(0, take)].join("");
-    this.lastInterimPaint = now;
-    this.replaceMarker(this.displayedInterim);
   }
 
   private resetCandidate(): void {
@@ -561,7 +539,7 @@ export class ClientEditorVoiceBridge {
       if (option === "status" || option === "preset") return;
       if (option.startsWith("preset ")) {
         const requested = option.slice("preset ".length).trim();
-        if (requested !== "fast" && requested !== "balanced" && requested !== "smooth") return;
+        if (requested !== "fast" && requested !== "balanced" && requested !== "realtime" && requested !== "smooth") return;
         this.applySettings({ ...this.settings, preset: requested });
         return;
       }
@@ -614,7 +592,7 @@ export class ClientEditorVoiceBridge {
       if (!this.recording || !value) return;
       this.hasInterim = true;
       this.targetInterim = value;
-      this.advanceInterimDisplay(true);
+      this.replaceMarker(value);
     };
     worker.onLevel = (level) => {
       if (!this.recording || this.processing || this.hasInterim) return;
@@ -1131,13 +1109,13 @@ export default function pushToTalk(pi: ExtensionAPI): void {
         return;
       }
       if (option === "preset") {
-        ctx.ui.notify(`Voice preset: ${settings.preset}. Available: fast, balanced, smooth.`, "info");
+        ctx.ui.notify(`Voice preset: ${settings.preset}. Available: fast, balanced, realtime, smooth.`, "info");
         return;
       }
       if (option.startsWith("preset ")) {
         const requested = option.slice("preset ".length).trim();
-        if (requested !== "fast" && requested !== "balanced" && requested !== "smooth") {
-          ctx.ui.notify("Usage: /voice preset [fast|balanced|smooth]", "warning");
+        if (requested !== "fast" && requested !== "balanced" && requested !== "realtime" && requested !== "smooth") {
+          ctx.ui.notify("Usage: /voice preset [fast|balanced|realtime|smooth]", "warning");
           return;
         }
         settings.preset = requested;
@@ -1149,7 +1127,7 @@ export default function pushToTalk(pi: ExtensionAPI): void {
         return;
       }
       if (option) {
-        ctx.ui.notify("Usage: /voice [status|preset [fast|balanced|smooth]]", "warning");
+        ctx.ui.notify("Usage: /voice [status|preset [fast|balanced|realtime|smooth]]", "warning");
         return;
       }
       settings.enabled = !settings.enabled;
