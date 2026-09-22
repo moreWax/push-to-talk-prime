@@ -527,12 +527,9 @@ export class ClientEditorVoiceBridge {
       this.commandBuffer = "";
       if (!command.startsWith("/voice")) return;
       const option = command.slice("/voice".length).trim();
-      const next = { ...this.settings };
-      if (!option) next.enabled = !next.enabled;
-      else if (option === "off") next.enabled = false;
-      else if (option === "on") next.enabled = true;
-      else if (option === "hold" || option === "tap") { next.enabled = true; next.mode = option; }
-      else return;
+      if (option === "status") return;
+      if (option) return;
+      const next = { ...this.settings, enabled: !this.settings.enabled, mode: "hold" as const };
       this.applySettings(next);
     } else if (code >= 0x20 && code <= 0x7e) {
       this.commandBuffer += data;
@@ -1039,17 +1036,6 @@ export default function pushToTalk(pi: ExtensionAPI): void {
   let recording: RecordingController | undefined;
   let editor: PushToTalkEditor | undefined;
 
-  const toggle = (ctx: ExtensionContext) => {
-    if (!recording) recording = new RecordingController(worker, ctx);
-    if (recording.state === "idle") editor?.prepareAnchor();
-    recording.toggle(settings.mode);
-  };
-
-  const cancel = () => {
-    if (editor) editor.cancelFromOutside();
-    else recording?.cancel();
-  };
-
   const reportStatus = (ctx: ExtensionContext) => {
     const state = recording?.state ?? "idle";
     ctx.ui.notify(`Voice: ${settings.enabled ? settings.mode : "off"}. State: ${state}. Hold detection: 5 events / 120 ms burst / 200 ms release. Worker: uv + Python 3.11. Device: ${process.env.PTT_DEVICE ?? "auto"}.`, "info");
@@ -1093,56 +1079,30 @@ export default function pushToTalk(pi: ExtensionAPI): void {
     }
   });
 
-  pi.registerShortcut("f8", {
-    description: "Start or stop local speech input",
-    handler: async (ctx) => toggle(ctx),
-  });
-
-  pi.registerCommand("ptt", {
-    description: "Start/stop speech input; accepts doctor, status, or cancel",
-    handler: async (args, ctx) => {
-      const action = args.trim().toLowerCase();
-      if (!action || action === "toggle") toggle(ctx);
-      else if (action === "doctor" || action === "status") reportStatus(ctx);
-      else if (action === "cancel" || action === "stop") cancel();
-      else ctx.ui.notify("Usage: /ptt [toggle|doctor|status|cancel]", "warning");
-    },
-  });
-
   pi.registerCommand("voice", {
-    description: "Enable voice input, disable it, or select hold/tap mode",
+    description: "Toggle hold-Space voice input; use /voice status to inspect it",
     handler: async (args, ctx) => {
       const option = args.trim().toLowerCase();
-      if (!option) settings.enabled = !settings.enabled;
-      else if (option === "hold" || option === "tap") {
-        settings.enabled = true;
-        settings.mode = option;
-      } else if (option === "off") settings.enabled = false;
-      else if (option === "on") settings.enabled = true;
-      else {
-        ctx.ui.notify("Usage: /voice [on|off|hold|tap]", "warning");
+      if (option === "status") {
+        reportStatus(ctx);
         return;
       }
+      if (option) {
+        ctx.ui.notify("Usage: /voice [status]", "warning");
+        return;
+      }
+      settings.enabled = !settings.enabled;
+      settings.mode = "hold";
       if (!settings.enabled) {
         if (editor) editor.cancelFromOutside();
         else recording?.cancel();
       }
       saveVoiceSettings(settings);
-      const detail = settings.enabled
-        ? `Voice mode enabled (${settings.mode}). ${settings.mode === "tap" ? "Tap Space to record." : "Hold Space to record."}`
-        : "Voice mode disabled.";
-      ctx.ui.notify(detail, "info");
+      ctx.ui.notify(
+        settings.enabled ? "Voice enabled. Hold Space to record." : "Voice disabled.",
+        "info",
+      );
     },
-  });
-
-  pi.registerCommand("ptt-cancel", {
-    description: "Cancel the current speech recording",
-    handler: async () => cancel(),
-  });
-
-  pi.registerCommand("ptt-doctor", {
-    description: "Show push-to-talk setup and input status",
-    handler: async (_args, ctx) => reportStatus(ctx),
   });
 
   pi.on("session_shutdown", async () => {

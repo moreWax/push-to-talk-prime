@@ -13,9 +13,8 @@ Transcription uses [moondream/parakeet-redux](https://huggingface.co/moondream/p
 - Native stateful Parakeet streaming with smooth 320 ms transcript updates.
 - Live provisional transcript snapshots replace the meter as speech is recognized.
 - Transcript insertion at the activation cursor without automatic submission by default.
-- In daemon-backed Prime, `/voice off` stops the client worker and releases model memory.
-- In daemon-backed Prime, `/voice on` and `/voice hold` start and warm the client worker immediately.
-- Manual `/ptt` start/stop/cancel fallback.
+- One `/voice` command toggles the warm worker on or off.
+- `/voice status` reports the current mode, worker state, and device.
 - Local CPU, Apple Metal, or CUDA inference.
 
 No terminal plugin, global keyboard hook, clipboard automation, launcher wrapper, Prime source patch, or cloud API is required.
@@ -24,18 +23,16 @@ No terminal plugin, global keyboard hook, clipboard automation, launcher wrapper
 
 In daemon-backed Prime Agent, the package uses its client-loaded module to transform the terminal callback before input reaches the editor. The worker-side extension continues to own slash commands and supported UI requests. Standalone pi uses the normal custom-editor API.
 
-The client worker remains warm while voice is enabled, so the first recording does not pay model startup cost. Disable it when not needed:
+The client worker remains warm while voice is enabled, so the first recording does not pay model startup cost. Toggle it off when not needed, and toggle it on to prewarm again:
 
 ```text
-/voice off
+/voice
 ```
 
-Enable and prewarm it again:
+Inspect it without changing state:
 
 ```text
-/voice on
-# or
-/voice hold
+/voice status
 ```
 
 ## Requirements
@@ -122,12 +119,9 @@ Voice is enabled in hold mode by default for this package.
 |---|---|
 | Hold Space | Commit after five repeat events and record until physical release |
 | Type another key while recording (daemon Prime) | Cancel dictation and keep the typed input |
-| `/voice` | Toggle voice input on or off while keeping the current mode |
-| `/voice hold` or `/voice on` | Enable voice; daemon Prime immediately prewarms the client worker |
-| `/voice off` | Disable voice; daemon Prime stops its client worker |
-| `/ptt` | Toggle recording manually |
-| `/ptt-cancel` | Cancel recording |
-| `/ptt doctor` or `/ptt-doctor` | Show mode, state, and runtime configuration |
+| `/voice` | Toggle hold-Space voice input and its warm worker |
+| `/voice status` | Show enabled state, worker state, and selected device |
+| Escape while recording | Cancel and restore the anchored prompt |
 | `npm run doctor` | Validate dependencies and list microphones |
 
 ### Hold semantics
@@ -137,10 +131,6 @@ A single Space remains immediate normal typing. Five repeat events commit a hold
 Parakeet uses native 320 ms stateful streaming windows with 320 ms lookahead. Smaller windows lowered the first-token gate but produced empty, unstable, or stalled previews. This configuration grew the transcript consistently on every tested snapshot. The UI reveals each stable snapshot suffix in two revision-aware stages about 150 ms apart, giving a smoother visual stream without exposing lower-quality 160 ms hypotheses.
 
 By default, release inserts text and leaves it for review. Set `autoSubmit` to `true` in the settings file to submit hold transcripts of at least three words.
-
-### Tap semantics
-
-Standalone pi supports `/voice tap` through its custom editor. In daemon-backed Prime, use `/ptt` as the toggle fallback; the extension-only stdin bridge reserves Space hold semantics to avoid stealing ordinary spaces from nonempty prompts.
 
 ## Configuration
 
@@ -175,7 +165,7 @@ Runtime environment variables:
 - **Windows:** enable desktop-app microphone access in **Settings → Privacy & security → Microphone**.
 - **Linux:** confirm PipeWire/PulseAudio exposes an input with `npm run doctor`.
 - **tmux:** enable extended keys/CSI-u for immediate physical release; otherwise the worker uses its repeat-gap fallback.
-- If keyboard repeat is disabled, use `/ptt` in daemon-backed Prime. Standalone pi also supports F8.
+- Hold-Space requires keyboard repeat. Enable repeat in the OS/terminal if hold detection does not commit.
 
 ```bash
 npm run setup
@@ -204,5 +194,5 @@ Prime daemon support uses a client-side decoration of Prime 0.9.5's `CustomEdito
 
 `PTT_DEBUG_LOG` records transition metadata only, uses mode `0600` when creating the file, and no longer records prompt text or raw key bytes. Do not enable it unless diagnosing a problem.
 
-Each enabled Prime terminal client owns one warm model worker. Use `/voice off` in clients where dictation is not needed to release memory.
+Each enabled Prime terminal client owns one warm model worker. Run `/voice` in clients where dictation is not needed to toggle it off and release memory.
 

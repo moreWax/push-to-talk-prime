@@ -106,16 +106,16 @@ test("typing while finalization is pending preserves edits and rejects stale fin
   bridge.close();
 });
 
-test("voice commands stop and restart the warm worker", () => {
+test("bare voice command toggles the warm worker", () => {
   const first = new FakeWorker();
   const second = new FakeWorker();
   const workers = [first, second];
   const bridge = new ClientEditorVoiceBridge({ settings: holdSettings, workerFactory: () => workers.shift()!, watchSettings: false });
   const editor = new FakeEditor();
   const send = (data: string) => bridge.handleInput(editor as unknown as CustomEditor, data, (value) => editor.input(value));
-  for (const char of "/voice off\r") send(char);
+  for (const char of "/voice\r") send(char);
   assert.equal(first.closed, true);
-  for (const char of "/voice on\r") send(char);
+  for (const char of "/voice\r") send(char);
   assert.equal(second.warmed, 1);
   bridge.close();
 });
