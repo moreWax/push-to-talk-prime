@@ -178,6 +178,7 @@ Runtime environment variables:
 | `PTT_STREAM_RIGHT_MS` | preset value | Advanced numeric override for right context |
 | `PTT_STREAM_LEFT_MS` | preset value | Advanced override for repeated encoder history |
 | `PTT_ALLOW_TELEMETRY` | unset | Set `1` to opt into Kestrel Photon telemetry; disabled by default |
+| `PTT_TRAILING_SILENCE_MS` | `320` | Synthetic endpoint context added on release for final words and punctuation |
 
 ## Permissions and troubleshooting
 

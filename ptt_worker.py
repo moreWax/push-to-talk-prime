@@ -92,6 +92,10 @@ class Recorder:
                 stream.close()
         finally:
             if self.live_queue is not None:
+                tail_ms = max(0.0, float(os.getenv("PTT_TRAILING_SILENCE_MS", "320")))
+                tail_frames = round(self.sample_rate * tail_ms / 1000.0)
+                if tail_frames > 0:
+                    self.live_queue.put(self.np.zeros(tail_frames, dtype=self.np.float32))
                 self.live_queue.put(None)
                 self.live_queue = None
             with self.lock:

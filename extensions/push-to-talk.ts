@@ -58,7 +58,7 @@ function workerEnvironment(preset: VoicePreset): NodeJS.ProcessEnv {
     "PULSE_SERVER", "PIPEWIRE_REMOTE", "ALSA_CONFIG_PATH", "OMP_WAIT_POLICY",
     "PTT_DEVICE", "PTT_INPUT_DEVICE", "PTT_STREAM_CHUNK_MS", "PTT_STREAM_RIGHT_MS",
     "PTT_STREAM_LEFT_MS",
-    "PTT_ALLOW_TELEMETRY",
+    "PTT_ALLOW_TELEMETRY", "PTT_TRAILING_SILENCE_MS",
   ];
   const environment: NodeJS.ProcessEnv = { PYTHONUNBUFFERED: "1", PTT_CLIENT_PID: String(process.pid) };
   for (const key of keys) {

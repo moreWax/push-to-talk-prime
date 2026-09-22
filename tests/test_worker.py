@@ -22,13 +22,16 @@ class WorkerUtilitiesTest(unittest.TestCase):
         stream = BrokenStream()
         recorder.stream = stream
         recorder.frames = [np.array([0.1], dtype=np.float32)]
-        recorder.live_queue = queue.Queue()
+        live_queue = queue.Queue()
+        recorder.live_queue = live_queue
         with self.assertRaisesRegex(RuntimeError, "stop failed"):
             recorder.finish()
         self.assertTrue(stream.closed)
         self.assertIsNone(recorder.stream)
         self.assertIsNone(recorder.live_queue)
         self.assertEqual(recorder.frames, [])
+        self.assertEqual(live_queue.get_nowait().shape, (5120,))
+        self.assertIsNone(live_queue.get_nowait())
 
     def test_cancel_cleans_up_when_close_fails(self):
         class BrokenStream:
@@ -42,13 +45,15 @@ class WorkerUtilitiesTest(unittest.TestCase):
         stream = BrokenStream()
         recorder.stream = stream
         recorder.frames = [np.array([0.1], dtype=np.float32)]
-        recorder.live_queue = queue.Queue()
+        live_queue = queue.Queue()
+        recorder.live_queue = live_queue
         with self.assertRaisesRegex(RuntimeError, "close failed"):
             recorder.cancel()
         self.assertTrue(stream.stopped)
         self.assertIsNone(recorder.stream)
         self.assertIsNone(recorder.live_queue)
         self.assertEqual(recorder.frames, [])
+        self.assertIsNone(live_queue.get_nowait())
 
 
 if __name__ == "__main__":
