@@ -1,0 +1,13 @@
+[project]
+name = "push-to-talk-prime-worker"
+version = "0.1.0"
+description = "Local audio worker for push-to-talk-prime"
+requires-python = ">=3.10,<3.13"
+dependencies = [
+  "moondream>=2.4.0,<3",
+  "numpy>=1.26,<3",
+  "sounddevice>=0.5.1,<1",
+]
+
+[tool.uv]
+package = false

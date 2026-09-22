@@ -1,0 +1,67 @@
+{
+  "name": "push-to-talk-prime",
+  "version": "0.1.0",
+  "description": "Local hold-to-talk speech input for Prime Agent and pi, powered by moondream/parakeet-redux",
+  "type": "module",
+  "license": "MIT",
+  "keywords": [
+    "pi-package",
+    "prime-agent",
+    "speech-to-text",
+    "push-to-talk",
+    "parakeet-redux"
+  ],
+  "pi": {
+    "extensions": [
+      "./extensions/push-to-talk.ts"
+    ]
+  },
+  "scripts": {
+    "setup": "node scripts/setup.mjs",
+    "doctor": "node scripts/doctor.mjs",
+    "test": "uv run --project . --python 3.11 python -m unittest discover -s tests -v && npm run typecheck && node --experimental-transform-types --test tests-ts/client-editor-bridge.test.ts",
+    "typecheck": "tsc -p tsconfig.json",
+    "doctor:model": "node scripts/doctor.mjs --model"
+  },
+  "engines": {
+    "node": ">=22.19.0"
+  },
+  "devDependencies": {
+    "@earendil-works/pi-coding-agent": "^0.87.0",
+    "@earendil-works/pi-tui": "^0.87.0",
+    "@types/node": "^26.6.2",
+    "typescript": "^7.0.2"
+  },
+  "files": [
+    "extensions/",
+    "scripts/",
+    "ptt_worker.py",
+    "pyproject.toml",
+    "uv.lock",
+    "THIRD_PARTY_NOTICES.md",
+    "CHANGELOG.md"
+  ],
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*",
+    "@earendil-works/pi-tui": "*"
+  },
+  "peerDependenciesMeta": {
+    "@earendil-works/pi-coding-agent": {
+      "optional": true
+    },
+    "@earendil-works/pi-tui": {
+      "optional": true
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/moreWax/push-to-talk-prime.git"
+  },
+  "homepage": "https://github.com/moreWax/push-to-talk-prime#readme",
+  "bugs": {
+    "url": "https://github.com/moreWax/push-to-talk-prime/issues"
+  }
+}
