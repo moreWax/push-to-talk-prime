@@ -14,7 +14,8 @@ Transcription uses [moondream/parakeet-redux](https://huggingface.co/moondream/p
 - Live provisional transcript snapshots replace the meter as speech is recognized.
 - Transcript insertion at the activation cursor without automatic submission by default.
 - One `/voice` command toggles the warm worker on or off.
-- `/voice status` reports the current mode, worker state, and device.
+- `/voice status` reports enabled state, preset, worker state, and device.
+- `/voice preset fast|balanced|smooth` selects latency versus provisional stability without numeric tuning.
 - Local CPU, Apple Metal, or CUDA inference.
 
 No terminal plugin, global keyboard hook, clipboard automation, launcher wrapper, Prime source patch, or cloud API is required.
@@ -34,6 +35,18 @@ Inspect it without changing state:
 ```text
 /voice status
 ```
+
+Choose streaming behavior with a named preset:
+
+```text
+/voice preset fast
+/voice preset balanced
+/voice preset smooth
+```
+
+- `fast`: 160 ms chunk + 160 ms lookahead; lowest latency, less stable previews
+- `balanced`: 320 ms + 320 ms; recommended default
+- `smooth`: 500 ms + 500 ms; slowest, most stable previews
 
 ## Requirements
 
@@ -120,7 +133,9 @@ Voice is enabled in hold mode by default for this package.
 | Hold Space | Commit after five repeat events and record until physical release |
 | Type another key while recording (daemon Prime) | Cancel dictation and keep the typed input |
 | `/voice` | Toggle hold-Space voice input and its warm worker |
-| `/voice status` | Show enabled state, worker state, and selected device |
+| `/voice status` | Show enabled state, preset, worker state, and selected device |
+| `/voice preset` | Show current preset and available names |
+| `/voice preset fast|balanced|smooth` | Change and persist streaming behavior |
 | Escape while recording | Cancel and restore the anchored prompt |
 | `npm run doctor` | Validate dependencies and list microphones |
 
@@ -140,7 +155,8 @@ Voice settings persist in `~/.prime/agent/push-to-talk.json`:
 {
   "enabled": true,
   "mode": "hold",
-  "autoSubmit": false
+  "autoSubmit": false,
+  "preset": "balanced"
 }
 ```
 
@@ -153,10 +169,11 @@ Runtime environment variables:
 | `PTT_MODE` | `hold` | Initial mode before a settings file exists |
 | `PTT_ENABLED` | `1` | Set `0` to start disabled before settings exist |
 | `PTT_AUTO_SUBMIT` | `0` | Initial hold auto-submit setting |
+| `PTT_PRESET` | `balanced` | Initial `fast`, `balanced`, or `smooth` preset |
 | `PTT_CONFIG` | `~/.prime/agent/push-to-talk.json` | Alternate settings path |
 | `PTT_UV` | `uv` | Path to the `uv` executable |
-| `PTT_STREAM_CHUNK_MS` | `320` | Native Parakeet streaming update window |
-| `PTT_STREAM_RIGHT_MS` | `320` | Right context for stable, growing provisional text |
+| `PTT_STREAM_CHUNK_MS` | preset value | Advanced numeric override for the update window |
+| `PTT_STREAM_RIGHT_MS` | preset value | Advanced numeric override for right context |
 | `PTT_ALLOW_TELEMETRY` | unset | Set `1` to opt into Kestrel Photon telemetry; disabled by default |
 
 ## Permissions and troubleshooting

@@ -24,14 +24,30 @@ const DOUBLE_TAP_MS = 300;
 const DOUBLE_TAP_DISAMBIGUATE_MS = 120;
 
 export type VoiceMode = "hold" | "tap";
-export type VoiceSettings = { enabled: boolean; mode: VoiceMode; autoSubmit: boolean };
+export type VoicePreset = "fast" | "balanced" | "smooth";
+export type VoiceSettings = {
+  enabled: boolean;
+  mode: VoiceMode;
+  autoSubmit: boolean;
+  preset: VoicePreset;
+};
+
+const STREAM_PRESETS: Record<VoicePreset, { chunkMs: number; rightMs: number }> = {
+  fast: { chunkMs: 160, rightMs: 160 },
+  balanced: { chunkMs: 320, rightMs: 320 },
+  smooth: { chunkMs: 500, rightMs: 500 },
+};
+
+function parsePreset(value: unknown): VoicePreset {
+  return value === "fast" || value === "smooth" ? value : "balanced";
+}
 
 const RUNTIME_IDENTITY = `${process.execPath} ${process.argv[1] ?? ""}`.toLowerCase();
 const IS_PRIME_RUNTIME = RUNTIME_IDENTITY.includes("prime-agent") || Boolean(process.env.PRIME_AGENT_LAUNCHER_PATH);
 const DEFAULT_AGENT_DIR = join(homedir(), IS_PRIME_RUNTIME ? ".prime/agent" : ".pi/agent");
 const SETTINGS_PATH = process.env.PTT_CONFIG ?? join(DEFAULT_AGENT_DIR, "push-to-talk.json");
 
-function workerEnvironment(): NodeJS.ProcessEnv {
+function workerEnvironment(preset: VoicePreset): NodeJS.ProcessEnv {
   const keys = [
     "PATH", "Path", "HOME", "USER", "LOGNAME", "TMPDIR", "TEMP", "TMP",
     "LANG", "LC_ALL", "SystemRoot", "USERPROFILE", "APPDATA", "LOCALAPPDATA",
@@ -48,6 +64,9 @@ function workerEnvironment(): NodeJS.ProcessEnv {
     const value = process.env[key];
     if (value !== undefined) environment[key] = value;
   }
+  const stream = STREAM_PRESETS[preset];
+  environment.PTT_STREAM_CHUNK_MS = process.env.PTT_STREAM_CHUNK_MS ?? String(stream.chunkMs);
+  environment.PTT_STREAM_RIGHT_MS = process.env.PTT_STREAM_RIGHT_MS ?? String(stream.rightMs);
   return environment;
 }
 
@@ -55,10 +74,20 @@ function loadVoiceSettings(): VoiceSettings {
   try {
     if (existsSync(SETTINGS_PATH)) {
       const value = JSON.parse(readFileSync(SETTINGS_PATH, "utf8")) as Partial<VoiceSettings>;
-      return { enabled: value.enabled !== false, mode: value.mode === "tap" ? "tap" : "hold", autoSubmit: value.autoSubmit === true };
+      return {
+        enabled: value.enabled !== false,
+        mode: value.mode === "tap" ? "tap" : "hold",
+        autoSubmit: value.autoSubmit === true,
+        preset: parsePreset(value.preset),
+      };
     }
   } catch {}
-  return { enabled: process.env.PTT_ENABLED !== "0", mode: process.env.PTT_MODE === "tap" ? "tap" : "hold", autoSubmit: process.env.PTT_AUTO_SUBMIT === "1" };
+  return {
+    enabled: process.env.PTT_ENABLED !== "0",
+    mode: process.env.PTT_MODE === "tap" ? "tap" : "hold",
+    autoSubmit: process.env.PTT_AUTO_SUBMIT === "1",
+    preset: parsePreset(process.env.PTT_PRESET),
+  };
 }
 
 function debugEvent(event: object): void {
@@ -99,6 +128,8 @@ export interface VoiceWorker {
 
 
 class WorkerClient implements VoiceWorker {
+  constructor(private readonly preset: VoicePreset = "balanced") {}
+
   private child?: ChildProcessWithoutNullStreams;
   private ready?: Promise<void>;
   private nextId = 1;
@@ -124,7 +155,7 @@ class WorkerClient implements VoiceWorker {
         ["run", "--locked", "--project", ROOT, "--python", "3.11", "python", join(ROOT, "ptt_worker.py")],
         {
           cwd: ROOT,
-          env: workerEnvironment(),
+          env: workerEnvironment(this.preset),
           stdio: ["pipe", "pipe", "pipe"],
         },
       );
@@ -266,7 +297,7 @@ class WorkerClient implements VoiceWorker {
  */
 export class ClientEditorVoiceBridge {
   private worker?: VoiceWorker;
-  private readonly workerFactory: () => VoiceWorker;
+  private readonly workerFactory?: () => VoiceWorker;
   private settingsWatcher?: FSWatcher;
   private settingsMtimeMs = 0;
   private settings: VoiceSettings;
@@ -293,7 +324,7 @@ export class ClientEditorVoiceBridge {
     watchSettings?: boolean;
   } = {}) {
     this.settings = options.settings ?? loadVoiceSettings();
-    this.workerFactory = options.workerFactory ?? (() => new WorkerClient());
+    this.workerFactory = options.workerFactory;
     this.settingsMtimeMs = this.readSettingsMtime();
     this.applySettings(this.settings);
     if (options.watchSettings !== false) {
@@ -527,7 +558,13 @@ export class ClientEditorVoiceBridge {
       this.commandBuffer = "";
       if (!command.startsWith("/voice")) return;
       const option = command.slice("/voice".length).trim();
-      if (option === "status") return;
+      if (option === "status" || option === "preset") return;
+      if (option.startsWith("preset ")) {
+        const requested = option.slice("preset ".length).trim();
+        if (requested !== "fast" && requested !== "balanced" && requested !== "smooth") return;
+        this.applySettings({ ...this.settings, preset: requested });
+        return;
+      }
       if (option) return;
       const next = { ...this.settings, enabled: !this.settings.enabled, mode: "hold" as const };
       this.applySettings(next);
@@ -550,19 +587,25 @@ export class ClientEditorVoiceBridge {
 
   private applySettings(next: VoiceSettings): void {
     const modeChanged = this.settings.mode !== next.mode;
+    const presetChanged = this.settings.preset !== next.preset;
     this.settings = next;
     if (!next.enabled) {
       this.cancelRecording();
       this.stopWorker();
     } else {
+      if (presetChanged) {
+        this.cancelRecording();
+        this.stopWorker();
+      } else if (modeChanged) {
+        this.cancelRecording();
+      }
       this.startWorker();
-      if (modeChanged) this.cancelRecording();
     }
   }
 
   private startWorker(): VoiceWorker {
     if (this.worker) return this.worker;
-    const worker = this.workerFactory();
+    const worker = this.workerFactory?.() ?? new WorkerClient(this.settings.preset);
     this.worker = worker;
     worker.onReleaseTimeout = () => this.releaseHold();
     worker.onFatalError = () => this.failRecording(this.captureGeneration);
@@ -1031,14 +1074,14 @@ class PushToTalkEditor extends CustomEditor {
 }
 
 export default function pushToTalk(pi: ExtensionAPI): void {
-  const worker = new WorkerClient();
   const settings = loadVoiceSettings();
+  const worker = new WorkerClient(settings.preset);
   let recording: RecordingController | undefined;
   let editor: PushToTalkEditor | undefined;
 
   const reportStatus = (ctx: ExtensionContext) => {
     const state = recording?.state ?? "idle";
-    ctx.ui.notify(`Voice: ${settings.enabled ? settings.mode : "off"}. State: ${state}. Hold detection: 5 events / 120 ms burst / 200 ms release. Worker: uv + Python 3.11. Device: ${process.env.PTT_DEVICE ?? "auto"}.`, "info");
+    ctx.ui.notify(`Voice: ${settings.enabled ? settings.mode : "off"}. Preset: ${settings.preset}. State: ${state}. Device: ${process.env.PTT_DEVICE ?? "auto"}.`, "info");
   };
 
   pi.on("session_start", (_event, ctx) => {
@@ -1080,15 +1123,33 @@ export default function pushToTalk(pi: ExtensionAPI): void {
   });
 
   pi.registerCommand("voice", {
-    description: "Toggle hold-Space voice input; use /voice status to inspect it",
+    description: "Toggle voice, inspect status, or choose a streaming preset",
     handler: async (args, ctx) => {
       const option = args.trim().toLowerCase();
       if (option === "status") {
         reportStatus(ctx);
         return;
       }
+      if (option === "preset") {
+        ctx.ui.notify(`Voice preset: ${settings.preset}. Available: fast, balanced, smooth.`, "info");
+        return;
+      }
+      if (option.startsWith("preset ")) {
+        const requested = option.slice("preset ".length).trim();
+        if (requested !== "fast" && requested !== "balanced" && requested !== "smooth") {
+          ctx.ui.notify("Usage: /voice preset [fast|balanced|smooth]", "warning");
+          return;
+        }
+        settings.preset = requested;
+        saveVoiceSettings(settings);
+        const restartNote = ctx.ui.getEditorComponent() !== undefined
+          ? " Restart standalone pi to apply it."
+          : " The warm worker is restarting now.";
+        ctx.ui.notify(`Voice preset changed to ${requested}.${restartNote}`, "info");
+        return;
+      }
       if (option) {
-        ctx.ui.notify("Usage: /voice [status]", "warning");
+        ctx.ui.notify("Usage: /voice [status|preset [fast|balanced|smooth]]", "warning");
         return;
       }
       settings.enabled = !settings.enabled;

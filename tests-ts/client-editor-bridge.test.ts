@@ -48,7 +48,7 @@ class FakeEditor {
   }
 }
 
-const holdSettings: VoiceSettings = { enabled: true, mode: "hold", autoSubmit: false };
+const holdSettings: VoiceSettings = { enabled: true, mode: "hold", autoSubmit: false, preset: "balanced" };
 const releaseSpace = "\x1b[32;1:3u";
 const tick = async () => { await Promise.resolve(); await Promise.resolve(); };
 
@@ -103,6 +103,19 @@ test("typing while finalization is pending preserves edits and rejects stale fin
   resolveStop({ ok: true, event: "transcript", text: "world" });
   await tick();
   assert.equal(editor.text, "hellox");
+  bridge.close();
+});
+
+test("preset command restarts the worker with persisted selection", () => {
+  const first = new FakeWorker();
+  const second = new FakeWorker();
+  const workers = [first, second];
+  const bridge = new ClientEditorVoiceBridge({ settings: holdSettings, workerFactory: () => workers.shift()!, watchSettings: false });
+  const editor = new FakeEditor();
+  const send = (data: string) => bridge.handleInput(editor as unknown as CustomEditor, data, (value) => editor.input(value));
+  for (const char of "/voice preset smooth\r") send(char);
+  assert.equal(first.closed, true);
+  assert.equal(second.warmed, 1);
   bridge.close();
 });
 
