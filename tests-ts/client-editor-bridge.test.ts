@@ -50,7 +50,7 @@ class FakeEditor {
 
 const holdSettings: VoiceSettings = { enabled: true, mode: "hold", autoSubmit: false, preset: "balanced", device: "auto" };
 const releaseSpace = "\x1b[32;1:3u";
-const tick = async () => { await Promise.resolve(); await Promise.resolve(); };
+const tick = () => new Promise<void>((resolve) => setImmediate(resolve));
 
 function setup(text = "", settings = holdSettings) {
   const worker = new FakeWorker();
@@ -73,6 +73,7 @@ test("hold removes the candidate Space and inserts an anchored final transcript"
   const { worker, bridge, editor, send } = setup("hello");
   for (let i = 0; i < 5; i++) send(" ");
   assert.equal(editor.text, "hello▁");
+  await tick();
   assert.deepEqual(worker.commands.slice(0, 2), ["start", "arm_release"]);
   send(releaseSpace);
   await tick();
@@ -84,6 +85,7 @@ test("interim text replaces the level marker and final text replaces interim", a
   const { worker, bridge, editor, send } = setup();
   worker.stopResult = Promise.resolve({ ok: true, event: "transcript", text: "hello world" });
   for (let i = 0; i < 5; i++) send(" ");
+  await tick();
   worker.onInterim?.("hello wor");
   assert.match(editor.text, /^hello/);
   send(releaseSpace);

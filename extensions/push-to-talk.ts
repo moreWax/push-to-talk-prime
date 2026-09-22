@@ -71,7 +71,7 @@ function workerEnvironment(preset: VoicePreset, device: VoiceDevice): NodeJS.Pro
     "PTT_INPUT_DEVICE", "PTT_STREAM_CHUNK_MS", "PTT_STREAM_RIGHT_MS",
     "PTT_STREAM_LEFT_MS",
     "PTT_ALLOW_TELEMETRY", "PTT_TRAILING_SILENCE_MS", "PTT_INTERIM_STABILITY",
-    "PTT_SKIP_MODEL_WARMUP",
+    "PTT_SKIP_MODEL_WARMUP", "PTT_DEMO_AUDIO_FILE",
   ];
   const environment: NodeJS.ProcessEnv = { PYTHONUNBUFFERED: "1", PTT_CLIENT_PID: String(process.pid) };
   for (const key of keys) {
@@ -343,7 +343,7 @@ export class SharedWorkerClient implements VoiceWorker {
   ) {}
 
   private get statePath(): string {
-    return join(DEFAULT_AGENT_DIR, "push-to-talk-server.json");
+    return process.env.PTT_SERVICE_STATE ?? join(DEFAULT_AGENT_DIR, "push-to-talk-server.json");
   }
 
   private async ensureStarted(): Promise<void> {
@@ -557,6 +557,8 @@ export class ClientEditorVoiceBridge {
   private recording = false;
   private processing = false;
   private captureGeneration = 0;
+  private captureStarted = false;
+  private captureStart?: Promise<void>;
   private hasInterim = false;
   private targetInterim = "";
   private marker = "";
@@ -631,7 +633,7 @@ export class ClientEditorVoiceBridge {
     this.lastSpaceAt = now;
 
     if (this.recording) {
-      this.armRelease();
+      if (this.captureStarted) this.armRelease();
       return;
     }
 
@@ -650,8 +652,14 @@ export class ClientEditorVoiceBridge {
       this.meterIndex = 1;
       debugEvent({ event: "editor_bridge_commit" });
       this.replaceMarker("▁");
-      void this.startWorker().request("start").catch(() => this.failRecording(generation));
-      this.armRelease(generation);
+      this.captureStarted = false;
+      const start = this.startWorker().request("start").then(() => {
+        if (generation !== this.captureGeneration) return;
+        this.captureStarted = true;
+        if (this.recording && !this.processing) this.armRelease(generation);
+      });
+      this.captureStart = start;
+      void start.catch(() => this.failRecording(generation));
       return;
     }
 
@@ -706,9 +714,12 @@ export class ClientEditorVoiceBridge {
     this.captureGeneration += 1;
     this.restoreAnchor();
     const worker = this.worker;
+    const start = this.captureStart;
     if (worker && (this.recording || this.processing)) {
-      void worker.request("disarm_release").catch(() => {});
-      void worker.request("cancel").catch(() => {});
+      void (start ?? Promise.resolve()).then(async () => {
+        await worker.request("disarm_release").catch(() => {});
+        await worker.request("cancel").catch(() => {});
+      });
     }
     this.clearCaptureState();
   }
@@ -732,6 +743,8 @@ export class ClientEditorVoiceBridge {
   private clearCaptureState(clearAnchor = true): void {
     this.recording = false;
     this.processing = false;
+    this.captureStarted = false;
+    this.captureStart = undefined;
     this.hasInterim = false;
     this.targetInterim = "";
     this.marker = "";
@@ -754,8 +767,12 @@ export class ClientEditorVoiceBridge {
     } else {
       this.replaceMarker("");
     }
-    void this.startWorker().request("stop").then((reply) => {
-      if (generation !== this.captureGeneration) return;
+    const start = this.captureStart ?? Promise.resolve();
+    void start.then(() => {
+      if (generation !== this.captureGeneration) return undefined;
+      return this.startWorker().request("stop");
+    }).then((reply) => {
+      if (!reply || generation !== this.captureGeneration) return;
       this.finishRecording(reply.text?.trim() ?? "", generation);
     }).catch(() => this.failRecording(generation));
   }

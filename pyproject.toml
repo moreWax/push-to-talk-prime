@@ -9,5 +9,10 @@ dependencies = [
   "sounddevice>=0.5.1,<1",
 ]
 
+[project.optional-dependencies]
+demo = [
+    "pyte>=0.8.2",
+]
+
 [tool.uv]
 package = false

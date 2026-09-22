@@ -44,7 +44,9 @@
     "GETTING_STARTED.md",
     "TROUBLESHOOTING.md",
     "assets/demo-input.wav",
-    "assets/demo-events.json"
+    "assets/demo-events.json",
+    "assets/demo.gif",
+    "assets/demo.mp4"
   ],
   "peerDependencies": {
     "@earendil-works/pi-coding-agent": "*",

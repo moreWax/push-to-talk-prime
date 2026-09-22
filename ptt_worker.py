@@ -12,6 +12,9 @@ import queue
 import signal
 import sys
 import threading
+import time
+import wave
+from types import SimpleNamespace
 from concurrent.futures import Future, ThreadPoolExecutor
 from typing import Any
 
@@ -29,6 +32,61 @@ def normalize_text(value: str) -> str:
     return " ".join(value.strip().split())
 
 
+class DemoAudioInputStream:
+    """Real-time WAV-backed input used only by the reproducible demo harness."""
+
+    def __init__(self, path: str, callback: Any, np: Any) -> None:
+        with wave.open(path, "rb") as source:
+            if source.getnchannels() != 1 or source.getsampwidth() != 2:
+                raise ValueError("PTT_DEMO_AUDIO_FILE must be mono 16-bit PCM WAV")
+            self.sample_rate = source.getframerate()
+            self.samples = np.frombuffer(
+                source.readframes(source.getnframes()),
+                dtype="<i2",
+            ).astype(np.float32) / 32768.0
+        self.callback = callback
+        self.np = np
+        self.stop_event = threading.Event()
+        self.thread: threading.Thread | None = None
+
+    def start(self) -> None:
+        if self.thread is not None:
+            return
+
+        def run() -> None:
+            block_frames = max(1, round(self.sample_rate * 0.02))
+            started = time.monotonic()
+            offset = 0
+            while not self.stop_event.is_set():
+                target = started + offset / self.sample_rate
+                if self.stop_event.wait(max(0.0, target - time.monotonic())):
+                    break
+                if offset < len(self.samples):
+                    block = self.samples[offset : offset + block_frames]
+                else:
+                    block = self.np.zeros(block_frames, dtype=self.np.float32)
+                if len(block) < block_frames:
+                    block = self.np.pad(block, (0, block_frames - len(block)))
+                self.callback(
+                    block[:, None],
+                    len(block),
+                    SimpleNamespace(currentTime=time.monotonic()),
+                    None,
+                )
+                offset += block_frames
+
+        self.thread = threading.Thread(target=run, name="ptt-demo-audio", daemon=True)
+        self.thread.start()
+
+    def stop(self) -> None:
+        self.stop_event.set()
+        if self.thread is not None:
+            self.thread.join(timeout=2.0)
+
+    def close(self) -> None:
+        self.stop()
+
+
 class Recorder:
     def __init__(self, sd: Any, np: Any) -> None:
         self.sd = sd
@@ -43,12 +101,17 @@ class Recorder:
     def start(self, live_queue: queue.Queue[Any | None] | None = None) -> None:
         if self.stream is not None:
             raise RuntimeError("microphone is already recording")
+        demo_audio = os.getenv("PTT_DEMO_AUDIO_FILE")
         device_env = os.getenv("PTT_INPUT_DEVICE")
         device: int | str | None = None
         if device_env:
             device = int(device_env) if device_env.isdigit() else device_env
-        info = self.sd.query_devices(device, "input")
-        self.sample_rate = int(info["default_samplerate"])
+        if demo_audio:
+            with wave.open(demo_audio, "rb") as source:
+                self.sample_rate = source.getframerate()
+        else:
+            info = self.sd.query_devices(device, "input")
+            self.sample_rate = int(info["default_samplerate"])
         self.frames = []
         self.live_queue = live_queue
 
@@ -72,13 +135,16 @@ class Recorder:
                 level = float(self.np.sqrt(min(rms * 16.384, 1.0)))
                 emit({"event": "level", "level": level})
 
-        self.stream = self.sd.InputStream(
-            device=device,
-            channels=1,
-            samplerate=self.sample_rate,
-            dtype="float32",
-            callback=callback,
-        )
+        if demo_audio:
+            self.stream = DemoAudioInputStream(demo_audio, callback, self.np)
+        else:
+            self.stream = self.sd.InputStream(
+                device=device,
+                channels=1,
+                samplerate=self.sample_rate,
+                dtype="float32",
+                callback=callback,
+            )
         self.stream.start()
 
     def finish(self) -> tuple[Any, int]:
