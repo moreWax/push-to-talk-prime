@@ -44,9 +44,9 @@
     "GETTING_STARTED.md",
     "TROUBLESHOOTING.md",
     "assets/demo-input.wav",
-    "assets/demo-events.json",
     "assets/prime-live-demo.gif",
-    "assets/prime-live-demo.mp4"
+    "assets/prime-live-demo.mp4",
+    "demo.tape"
   ],
   "peerDependencies": {
     "@earendil-works/pi-coding-agent": "*",

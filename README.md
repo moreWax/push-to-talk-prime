@@ -10,8 +10,10 @@
 This is an actual Prime 0.9.5 PTY capture. The demo launches Prime with the extension, holds Space, feeds `assets/demo-input.wav` through the real worker as a demo microphone, streams real MPS Parakeet hypotheses into the real editor, and records the exact final correction. Reproduce it with:
 
 ```bash
-uv run --locked --extra demo python scripts/record-prime-demo.py
+VHS_BIN=/path/to/vhs-v0.11.0 scripts/build-demo.sh
 ```
+
+The tape source is [`demo.tape`](demo.tape). VHS v0.11.0 is pinned because v0.12.0 has an upstream no-output regression ([charmbracelet/vhs#787](https://github.com/charmbracelet/vhs/issues/787)).
 
 Claude Code-style local voice dictation for the Prime/pi chat editor. Hold **Space**, speak, and release. The transcript is inserted at the activation cursor without submitting unless auto-submit is enabled.
 
@@ -23,7 +25,7 @@ Transcription uses [moondream/parakeet-redux](https://huggingface.co/moondream/p
 - Claude-style Space repeat detection with Kitty key-release support and a worker-side release fallback.
 - Normal Space typing stays immediate; one candidate Space is removed when a hold commits.
 - Minimal `▁▂▃▄▅▆▇█` recording indicator with no processing text left in the prompt.
-- Native stateful Parakeet streaming with smooth 320 ms transcript updates.
+- Native stateful Parakeet streaming with named asymmetric latency/stability presets.
 - Stable live words replace the meter as speech is recognized; unstable partial words stay hidden.
 - Transcript insertion at the activation cursor without automatic submission by default.
 - One `/voice` command toggles the warm worker on or off.
