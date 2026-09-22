@@ -14,7 +14,7 @@ cleanup() {
 }
 trap cleanup EXIT
 "$VHS_BIN" demo.tape
-ffmpeg -y -loglevel error   -i assets/prime-live-demo-silent.webm   -i assets/demo-input.wav   -filter_complex "[1:a]adelay=9350|9350,apad[a]"   -map 0:v -map '[a]' -c:v libx264 -pix_fmt yuv420p -c:a aac -shortest   assets/prime-live-demo.mp4
-rm -f assets/prime-live-demo-silent.webm
+ffmpeg -y -loglevel error   -i assets/vhs-live-demo-silent.webm   -i assets/demo-input.wav   -filter_complex "[1:a]adelay=9350|9350,apad[a]"   -map 0:v -map '[a]' -c:v libx264 -pix_fmt yuv420p -c:a aac -shortest   assets/vhs-live-demo.mp4
+rm -f assets/vhs-live-demo-silent.webm
 printf '%s
-' assets/prime-live-demo.gif assets/prime-live-demo.mp4
+' assets/vhs-live-demo.gif assets/vhs-live-demo.mp4

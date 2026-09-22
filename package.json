@@ -44,8 +44,8 @@
     "GETTING_STARTED.md",
     "TROUBLESHOOTING.md",
     "assets/demo-input.wav",
-    "assets/prime-live-demo.gif",
-    "assets/prime-live-demo.mp4",
+    "assets/vhs-live-demo.gif",
+    "assets/vhs-live-demo.mp4",
     "demo.tape"
   ],
   "peerDependencies": {
