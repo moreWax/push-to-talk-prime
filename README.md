@@ -50,6 +50,17 @@ Choose streaming behavior with a named preset:
 - `realtime`: 80 ms chunk + 560 ms lookahead + 1 s left context; smoothest 80 ms cadence, higher compute
 - `smooth`: 320 ms chunk + 320 ms lookahead; fewer, larger stable updates
 
+Choose inference hardware:
+
+```text
+/voice device
+/voice device auto
+/voice device cpu
+/voice device gpu
+```
+
+`gpu` maps to Apple Metal/MPS on macOS and CUDA on Linux/Windows. Explicit `mps` and `cuda` names are also accepted.
+
 ## Requirements
 
 - Prime Agent 0.9.5 or a compatible pi build
@@ -158,7 +169,8 @@ Voice settings persist in `~/.prime/agent/push-to-talk.json`:
   "enabled": true,
   "mode": "hold",
   "autoSubmit": false,
-  "preset": "balanced"
+  "preset": "balanced",
+  "device": "auto"
 }
 ```
 
@@ -166,7 +178,7 @@ Runtime environment variables:
 
 | Variable | Default | Meaning |
 |---|---:|---|
-| `PTT_DEVICE` | `auto` | Photon device: `auto`, `cpu`, `mps`, or `cuda` |
+| `PTT_DEVICE` | `auto` | Initial device before settings exist: `auto`, `cpu`, `gpu`, `mps`, or `cuda` |
 | `PTT_INPUT_DEVICE` | system default | Microphone index or name from `npm run doctor` |
 | `PTT_MODE` | `hold` | Initial mode before a settings file exists |
 | `PTT_ENABLED` | `1` | Set `0` to start disabled before settings exist |

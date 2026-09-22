@@ -24,11 +24,13 @@ const DOUBLE_TAP_DISAMBIGUATE_MS = 120;
 
 export type VoiceMode = "hold" | "tap";
 export type VoicePreset = "fast" | "balanced" | "realtime" | "smooth";
+export type VoiceDevice = "auto" | "cpu" | "gpu" | "mps" | "cuda";
 export type VoiceSettings = {
   enabled: boolean;
   mode: VoiceMode;
   autoSubmit: boolean;
   preset: VoicePreset;
+  device: VoiceDevice;
 };
 
 const STREAM_PRESETS: Record<VoicePreset, { chunkMs: number; rightMs: number; leftMs: number }> = {
@@ -42,12 +44,21 @@ function parsePreset(value: unknown): VoicePreset {
   return value === "fast" || value === "realtime" || value === "smooth" ? value : "balanced";
 }
 
+function parseDevice(value: unknown): VoiceDevice {
+  return value === "cpu" || value === "gpu" || value === "mps" || value === "cuda" ? value : "auto";
+}
+
+function resolveDevice(device: VoiceDevice): "auto" | "cpu" | "mps" | "cuda" {
+  if (device === "gpu") return process.platform === "darwin" ? "mps" : "cuda";
+  return device;
+}
+
 const RUNTIME_IDENTITY = `${process.execPath} ${process.argv[1] ?? ""}`.toLowerCase();
 const IS_PRIME_RUNTIME = RUNTIME_IDENTITY.includes("prime-agent") || Boolean(process.env.PRIME_AGENT_LAUNCHER_PATH);
 const DEFAULT_AGENT_DIR = join(homedir(), IS_PRIME_RUNTIME ? ".prime/agent" : ".pi/agent");
 const SETTINGS_PATH = process.env.PTT_CONFIG ?? join(DEFAULT_AGENT_DIR, "push-to-talk.json");
 
-function workerEnvironment(preset: VoicePreset): NodeJS.ProcessEnv {
+function workerEnvironment(preset: VoicePreset, device: VoiceDevice): NodeJS.ProcessEnv {
   const keys = [
     "PATH", "Path", "HOME", "USER", "LOGNAME", "TMPDIR", "TEMP", "TMP",
     "LANG", "LC_ALL", "SystemRoot", "USERPROFILE", "APPDATA", "LOCALAPPDATA",
@@ -56,7 +67,7 @@ function workerEnvironment(preset: VoicePreset): NodeJS.ProcessEnv {
     "HTTP_PROXY", "HTTPS_PROXY", "NO_PROXY", "ALL_PROXY",
     "CUDA_VISIBLE_DEVICES", "LD_LIBRARY_PATH", "DYLD_LIBRARY_PATH",
     "PULSE_SERVER", "PIPEWIRE_REMOTE", "ALSA_CONFIG_PATH", "OMP_WAIT_POLICY",
-    "PTT_DEVICE", "PTT_INPUT_DEVICE", "PTT_STREAM_CHUNK_MS", "PTT_STREAM_RIGHT_MS",
+    "PTT_INPUT_DEVICE", "PTT_STREAM_CHUNK_MS", "PTT_STREAM_RIGHT_MS",
     "PTT_STREAM_LEFT_MS",
     "PTT_ALLOW_TELEMETRY", "PTT_TRAILING_SILENCE_MS",
   ];
@@ -69,6 +80,7 @@ function workerEnvironment(preset: VoicePreset): NodeJS.ProcessEnv {
   environment.PTT_STREAM_CHUNK_MS = process.env.PTT_STREAM_CHUNK_MS ?? String(stream.chunkMs);
   environment.PTT_STREAM_RIGHT_MS = process.env.PTT_STREAM_RIGHT_MS ?? String(stream.rightMs);
   environment.PTT_STREAM_LEFT_MS = process.env.PTT_STREAM_LEFT_MS ?? String(stream.leftMs);
+  environment.PTT_DEVICE = resolveDevice(device);
   return environment;
 }
 
@@ -81,6 +93,7 @@ function loadVoiceSettings(): VoiceSettings {
         mode: value.mode === "tap" ? "tap" : "hold",
         autoSubmit: value.autoSubmit === true,
         preset: parsePreset(value.preset),
+        device: parseDevice(value.device),
       };
     }
   } catch {}
@@ -89,6 +102,7 @@ function loadVoiceSettings(): VoiceSettings {
     mode: process.env.PTT_MODE === "tap" ? "tap" : "hold",
     autoSubmit: process.env.PTT_AUTO_SUBMIT === "1",
     preset: parsePreset(process.env.PTT_PRESET),
+    device: parseDevice(process.env.PTT_DEVICE),
   };
 }
 
@@ -130,7 +144,10 @@ export interface VoiceWorker {
 
 
 class WorkerClient implements VoiceWorker {
-  constructor(private readonly preset: VoicePreset = "balanced") {}
+  constructor(
+    private readonly preset: VoicePreset = "balanced",
+    private readonly device: VoiceDevice = "auto",
+  ) {}
 
   private child?: ChildProcessWithoutNullStreams;
   private ready?: Promise<void>;
@@ -157,7 +174,7 @@ class WorkerClient implements VoiceWorker {
         ["run", "--locked", "--project", ROOT, "--python", "3.11", "python", join(ROOT, "ptt_worker.py")],
         {
           cwd: ROOT,
-          env: workerEnvironment(this.preset),
+          env: workerEnvironment(this.preset, this.device),
           stdio: ["pipe", "pipe", "pipe"],
         },
       );
@@ -536,7 +553,13 @@ export class ClientEditorVoiceBridge {
       this.commandBuffer = "";
       if (!command.startsWith("/voice")) return;
       const option = command.slice("/voice".length).trim();
-      if (option === "status" || option === "preset") return;
+      if (option === "status" || option === "preset" || option === "device") return;
+      if (option.startsWith("device ")) {
+        const requested = option.slice("device ".length).trim();
+        if (requested !== "auto" && requested !== "cpu" && requested !== "gpu" && requested !== "mps" && requested !== "cuda") return;
+        this.applySettings({ ...this.settings, device: requested });
+        return;
+      }
       if (option.startsWith("preset ")) {
         const requested = option.slice("preset ".length).trim();
         if (requested !== "fast" && requested !== "balanced" && requested !== "realtime" && requested !== "smooth") return;
@@ -566,12 +589,13 @@ export class ClientEditorVoiceBridge {
   private applySettings(next: VoiceSettings): void {
     const modeChanged = this.settings.mode !== next.mode;
     const presetChanged = this.settings.preset !== next.preset;
+    const deviceChanged = this.settings.device !== next.device;
     this.settings = next;
     if (!next.enabled) {
       this.cancelRecording();
       this.stopWorker();
     } else {
-      if (presetChanged) {
+      if (presetChanged || deviceChanged) {
         this.cancelRecording();
         this.stopWorker();
       } else if (modeChanged) {
@@ -583,7 +607,7 @@ export class ClientEditorVoiceBridge {
 
   private startWorker(): VoiceWorker {
     if (this.worker) return this.worker;
-    const worker = this.workerFactory?.() ?? new WorkerClient(this.settings.preset);
+    const worker = this.workerFactory?.() ?? new WorkerClient(this.settings.preset, this.settings.device);
     this.worker = worker;
     worker.onReleaseTimeout = () => this.releaseHold();
     worker.onFatalError = () => this.failRecording(this.captureGeneration);
@@ -1053,13 +1077,13 @@ class PushToTalkEditor extends CustomEditor {
 
 export default function pushToTalk(pi: ExtensionAPI): void {
   const settings = loadVoiceSettings();
-  const worker = new WorkerClient(settings.preset);
+  const worker = new WorkerClient(settings.preset, settings.device);
   let recording: RecordingController | undefined;
   let editor: PushToTalkEditor | undefined;
 
   const reportStatus = (ctx: ExtensionContext) => {
     const state = recording?.state ?? "idle";
-    ctx.ui.notify(`Voice: ${settings.enabled ? settings.mode : "off"}. Preset: ${settings.preset}. State: ${state}. Device: ${process.env.PTT_DEVICE ?? "auto"}.`, "info");
+    ctx.ui.notify(`Voice: ${settings.enabled ? settings.mode : "off"}. Preset: ${settings.preset}. Device: ${settings.device}${settings.device === "gpu" ? ` (${resolveDevice(settings.device)})` : ""}. State: ${state}.`, "info");
   };
 
   pi.on("session_start", (_event, ctx) => {
@@ -1108,6 +1132,24 @@ export default function pushToTalk(pi: ExtensionAPI): void {
         reportStatus(ctx);
         return;
       }
+      if (option === "device") {
+        ctx.ui.notify(`Voice device: ${settings.device}${settings.device === "gpu" ? ` (${resolveDevice(settings.device)})` : ""}. Available: auto, cpu, gpu, mps, cuda.`, "info");
+        return;
+      }
+      if (option.startsWith("device ")) {
+        const requested = option.slice("device ".length).trim();
+        if (requested !== "auto" && requested !== "cpu" && requested !== "gpu" && requested !== "mps" && requested !== "cuda") {
+          ctx.ui.notify("Usage: /voice device [auto|cpu|gpu|mps|cuda]", "warning");
+          return;
+        }
+        settings.device = requested;
+        saveVoiceSettings(settings);
+        const restartNote = ctx.ui.getEditorComponent() !== undefined
+          ? " Restart standalone pi to apply it."
+          : " The warm worker is restarting now.";
+        ctx.ui.notify(`Voice device changed to ${requested}${requested === "gpu" ? ` (${resolveDevice(requested)})` : ""}.${restartNote}`, "info");
+        return;
+      }
       if (option === "preset") {
         ctx.ui.notify(`Voice preset: ${settings.preset}. Available: fast, balanced, realtime, smooth.`, "info");
         return;
@@ -1127,7 +1169,7 @@ export default function pushToTalk(pi: ExtensionAPI): void {
         return;
       }
       if (option) {
-        ctx.ui.notify("Usage: /voice [status|preset [fast|balanced|realtime|smooth]]", "warning");
+        ctx.ui.notify("Usage: /voice [status|preset [fast|balanced|realtime|smooth]|device [auto|cpu|gpu|mps|cuda]]", "warning");
         return;
       }
       settings.enabled = !settings.enabled;
