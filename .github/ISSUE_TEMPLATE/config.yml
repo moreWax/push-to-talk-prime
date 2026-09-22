@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Support guide
+    url: https://github.com/moreWax/push-to-talk-prime/blob/main/SUPPORT.md
+    about: Setup, diagnostics, and requesting help
+  - name: Report a vulnerability privately
+    url: https://github.com/moreWax/push-to-talk-prime/security/advisories/new
+    about: Do not report security issues publicly

@@ -1,0 +1,50 @@
+name: Bug report
+description: Report a reproducible defect
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: "Do not report vulnerabilities here. Use private vulnerability reporting. Redact secrets, audio, transcripts, usernames, and local paths."
+  - type: textarea
+    id: description
+    attributes: { label: Description, description: What happened? }
+    validations: { required: true }
+  - type: textarea
+    id: reproduction
+    attributes: { label: Reproduction, description: Exact steps to reproduce }
+    validations: { required: true }
+  - type: textarea
+    id: expected
+    attributes: { label: Expected behavior }
+    validations: { required: true }
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Extension version/commit, install source, Prime/pi version, OS/arch, Node, uv, terminal/tmux, preset, compute device, and microphone
+    validations: { required: true }
+  - type: textarea
+    id: status
+    attributes: { label: Voice status, description: Sanitized `/voice status` output }
+    validations: { required: true }
+  - type: textarea
+    id: doctor
+    attributes: { label: Doctor output, description: Sanitized `npm run doctor` output }
+    validations: { required: true }
+  - type: textarea
+    id: logs
+    attributes: { label: Additional sanitized logs, description: Optional; do not attach audio or transcripts without explicit intent }
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checklist
+      options:
+        - label: I tested the latest release or main branch.
+          required: true
+        - label: I searched existing issues.
+          required: true
+        - label: I removed sensitive data.
+          required: true
+        - label: This is not a security vulnerability.
+          required: true

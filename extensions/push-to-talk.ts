@@ -1,6 +1,7 @@
 import { spawn, type ChildProcessWithoutNullStreams } from "node:child_process";
 import { appendFileSync, existsSync, mkdirSync, readFileSync, renameSync, statSync, watch, writeFileSync, type FSWatcher } from "node:fs";
 import { homedir } from "node:os";
+import net from "node:net";
 import { fileURLToPath } from "node:url";
 import { basename, dirname, join } from "node:path";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
@@ -81,6 +82,7 @@ function workerEnvironment(preset: VoicePreset, device: VoiceDevice): NodeJS.Pro
   environment.PTT_STREAM_RIGHT_MS = process.env.PTT_STREAM_RIGHT_MS ?? String(stream.rightMs);
   environment.PTT_STREAM_LEFT_MS = process.env.PTT_STREAM_LEFT_MS ?? String(stream.leftMs);
   environment.PTT_DEVICE = resolveDevice(device);
+  environment.PTT_PRESET = preset;
   return environment;
 }
 
@@ -140,6 +142,7 @@ export interface VoiceWorker {
   warm(): Promise<void>;
   request(command: WorkerCommand): Promise<Reply>;
   close(): void;
+  shutdown?(): void;
 }
 
 
@@ -314,6 +317,232 @@ class WorkerClient implements VoiceWorker {
  * single terminal data callback at registration time so hold-Space can remain
  * a package-only feature without patching Prime.
  */
+export class SharedWorkerClient implements VoiceWorker {
+  private socket?: net.Socket;
+  private ready?: Promise<void>;
+  private closed = false;
+  private nextId = 1;
+  private modelReady = false;
+  private modelReadyPromise?: Promise<void>;
+  private resolveModelReady?: () => void;
+  private rejectModelReady?: (error: Error) => void;
+  private pending = new Map<number, {
+    resolve: (value: Reply) => void;
+    reject: (error: Error) => void;
+    timer: ReturnType<typeof setTimeout>;
+  }>();
+  onLevel?: (level: number) => void;
+  onInterim?: (text: string) => void;
+  onReleaseTimeout?: () => void;
+  onFatalError?: (error: Error) => void;
+
+  constructor(
+    private readonly preset: VoicePreset,
+    private readonly device: VoiceDevice,
+  ) {}
+
+  private get statePath(): string {
+    return join(DEFAULT_AGENT_DIR, "push-to-talk-server.json");
+  }
+
+  private async ensureStarted(): Promise<void> {
+    if (this.closed) throw new Error("shared speech worker client is closed");
+    if (this.ready) return this.ready;
+    this.ready = this.connectOrStart().catch((error) => {
+      this.ready = undefined;
+      throw error;
+    });
+    return this.ready;
+  }
+
+  private async connectOrStart(): Promise<void> {
+    mkdirSync(DEFAULT_AGENT_DIR, { recursive: true });
+    const deadline = Date.now() + 30_000;
+    let lastSpawn = 0;
+    let lastError: Error | undefined;
+    while (Date.now() < deadline) {
+      try {
+        const state = JSON.parse(readFileSync(this.statePath, "utf8")) as {
+          version: number;
+          pid: number;
+          port: number;
+          token: string;
+          root: string;
+          preset?: string;
+          device?: string;
+        };
+        if (state.version !== 1 || typeof state.port !== "number" || typeof state.token !== "string") {
+          throw new Error("invalid global speech service metadata");
+        }
+        if (state.preset !== this.preset || state.device !== resolveDevice(this.device)) {
+          await this.shutdownExisting(state.port, state.token);
+          throw new Error("global speech service configuration changed");
+        }
+        await this.connect(state.port, state.token);
+        return;
+      } catch (error) {
+        lastError = error instanceof Error ? error : new Error(String(error));
+        if (Date.now() - lastSpawn >= 1_000) {
+          lastSpawn = Date.now();
+          const node = process.env.PTT_NODE ?? "node";
+          const child = spawn(
+            node,
+            [join(ROOT, "scripts", "voice-server.mjs"), "--state", this.statePath, "--root", ROOT],
+            {
+              cwd: ROOT,
+              env: workerEnvironment(this.preset, this.device),
+              detached: true,
+              stdio: "ignore",
+            },
+          );
+          child.unref();
+        }
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+    }
+    throw new Error(`global speech service startup timed out${lastError ? `: ${lastError.message}` : ""}`);
+  }
+
+  private shutdownExisting(port: number, token: string): Promise<void> {
+    return new Promise((resolve) => {
+      const socket = net.createConnection({ host: "127.0.0.1", port });
+      const done = () => { socket.destroy(); resolve(); };
+      const timer = setTimeout(done, 1_000);
+      timer.unref();
+      socket.on("connect", () => {
+        socket.write(`${JSON.stringify({ type: "auth", token })}\n`);
+        socket.write(`${JSON.stringify({ id: 1, command: "shutdown" })}\n`);
+      });
+      socket.on("data", () => { clearTimeout(timer); done(); });
+      socket.on("error", () => { clearTimeout(timer); done(); });
+      socket.on("close", () => { clearTimeout(timer); resolve(); });
+    });
+  }
+
+  private connect(port: number, token: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const socket = net.createConnection({ host: "127.0.0.1", port });
+      let buffer = "";
+      let settled = false;
+      const fail = (error: Error) => {
+        if (!settled) { settled = true; reject(error); }
+        this.failAll(error);
+      };
+      socket.setEncoding("utf8");
+      socket.on("connect", () => socket.write(`${JSON.stringify({ type: "auth", token })}\n`));
+      socket.on("data", (chunk) => {
+        buffer += chunk;
+        while (buffer.includes("\n")) {
+          const index = buffer.indexOf("\n");
+          const line = buffer.slice(0, index);
+          buffer = buffer.slice(index + 1);
+          if (!line.trim()) continue;
+          let message: Reply & { type?: string };
+          try { message = JSON.parse(line) as Reply & { type?: string }; } catch { continue; }
+          if (message.type === "ready" && !settled) {
+            settled = true;
+            this.socket = socket;
+            if ((message as { model_ready?: boolean }).model_ready) this.markModelReady();
+            resolve();
+          }
+          if (message.event === "level" && typeof message.level === "number") this.onLevel?.(Math.max(0, Math.min(1, message.level)));
+          if (message.event === "interim" && typeof message.text === "string") this.onInterim?.(message.text);
+          if (message.event === "release_timeout") this.onReleaseTimeout?.();
+          if (message.event === "model_ready") this.markModelReady();
+          if (message.event === "model_error" || message.event === "worker_exit") {
+            const error = new Error(message.error ?? message.event);
+            this.rejectModelReady?.(error);
+            this.onFatalError?.(error);
+          }
+          if (message.id !== undefined && message.id !== null) {
+            const id = Number(message.id);
+            const waiter = this.pending.get(id);
+            if (!waiter) continue;
+            this.pending.delete(id);
+            clearTimeout(waiter.timer);
+            if (message.ok === false) waiter.reject(new Error(message.error ?? "global speech service request failed"));
+            else waiter.resolve(message);
+          }
+        }
+      });
+      socket.on("error", fail);
+      socket.on("close", () => {
+        const error = new Error("global speech service disconnected");
+        this.socket = undefined;
+        this.ready = undefined;
+        if (!this.closed) fail(error);
+      });
+    });
+  }
+
+  private markModelReady(): void {
+    this.modelReady = true;
+    this.resolveModelReady?.();
+    this.modelReadyPromise = undefined;
+    this.resolveModelReady = undefined;
+    this.rejectModelReady = undefined;
+  }
+
+  private waitForModel(): Promise<void> {
+    if (this.modelReady) return Promise.resolve();
+    if (this.modelReadyPromise) return this.modelReadyPromise;
+    this.modelReadyPromise = new Promise<void>((resolve, reject) => {
+      const timer = setTimeout(() => reject(new Error("global speech model warm-up timed out")), 300_000);
+      timer.unref();
+      this.resolveModelReady = () => { clearTimeout(timer); resolve(); };
+      this.rejectModelReady = (error) => { clearTimeout(timer); reject(error); };
+    });
+    return this.modelReadyPromise;
+  }
+
+  private failAll(error: Error): void {
+    for (const waiter of this.pending.values()) {
+      clearTimeout(waiter.timer);
+      waiter.reject(error);
+    }
+    this.pending.clear();
+  }
+
+  async warm(): Promise<void> {
+    await this.ensureStarted();
+    await this.waitForModel();
+  }
+
+  async request(command: WorkerCommand): Promise<Reply> {
+    if (command === "start") await this.warm();
+    else await this.ensureStarted();
+    const socket = this.socket;
+    if (!socket?.writable) throw new Error("global speech service is unavailable");
+    const id = this.nextId++;
+    const timeoutMs = command === "stop" ? 310_000 : 30_000;
+    const reply = new Promise<Reply>((resolve, reject) => {
+      const timer = setTimeout(() => {
+        this.pending.delete(id);
+        reject(new Error(`global speech service ${command} request timed out`));
+      }, timeoutMs);
+      timer.unref();
+      this.pending.set(id, { resolve, reject, timer });
+    });
+    socket.write(`${JSON.stringify({ id, command })}\n`);
+    return reply;
+  }
+
+  close(): void {
+    if (this.closed) return;
+    this.closed = true;
+    const error = new Error("global speech service client closed");
+    this.failAll(error);
+    this.rejectModelReady?.(error);
+    this.socket?.end();
+    this.socket = undefined;
+  }
+
+  shutdown(): void {
+    if (this.closed) return;
+    void this.request("shutdown").catch(() => {}).finally(() => this.close());
+  }
+}
+
 export class ClientEditorVoiceBridge {
   private worker?: VoiceWorker;
   private readonly workerFactory?: () => VoiceWorker;
@@ -593,11 +822,11 @@ export class ClientEditorVoiceBridge {
     this.settings = next;
     if (!next.enabled) {
       this.cancelRecording();
-      this.stopWorker();
+      this.stopWorker(true);
     } else {
       if (presetChanged || deviceChanged) {
         this.cancelRecording();
-        this.stopWorker();
+        this.stopWorker(true);
       } else if (modeChanged) {
         this.cancelRecording();
       }
@@ -607,7 +836,7 @@ export class ClientEditorVoiceBridge {
 
   private startWorker(): VoiceWorker {
     if (this.worker) return this.worker;
-    const worker = this.workerFactory?.() ?? new WorkerClient(this.settings.preset, this.settings.device);
+    const worker = this.workerFactory?.() ?? new SharedWorkerClient(this.settings.preset, this.settings.device);
     this.worker = worker;
     worker.onReleaseTimeout = () => this.releaseHold();
     worker.onFatalError = () => this.failRecording(this.captureGeneration);
@@ -630,10 +859,12 @@ export class ClientEditorVoiceBridge {
     return worker;
   }
 
-  private stopWorker(): void {
+  private stopWorker(shutdown = false): void {
     const worker = this.worker;
     this.worker = undefined;
-    worker?.close();
+    if (!worker) return;
+    if (shutdown && worker.shutdown) worker.shutdown();
+    else worker.close();
   }
 }
 

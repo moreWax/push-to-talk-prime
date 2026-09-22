@@ -19,7 +19,7 @@
   "scripts": {
     "setup": "node scripts/setup.mjs",
     "doctor": "node scripts/doctor.mjs",
-    "test": "uv run --project . --python 3.11 python -m unittest discover -s tests -v && npm run typecheck && node --experimental-transform-types --test tests-ts/client-editor-bridge.test.ts",
+    "test": "uv run --project . --python 3.11 python -m unittest discover -s tests -v && npm run typecheck && node --experimental-transform-types --test tests-ts/client-editor-bridge.test.ts tests-ts/global-service.test.ts",
     "typecheck": "tsc -p tsconfig.json",
     "doctor:model": "node scripts/doctor.mjs --model"
   },
@@ -39,7 +39,10 @@
     "pyproject.toml",
     "uv.lock",
     "THIRD_PARTY_NOTICES.md",
-    "CHANGELOG.md"
+    "CHANGELOG.md",
+    "ARCHITECTURE.md",
+    "GETTING_STARTED.md",
+    "TROUBLESHOOTING.md"
   ],
   "peerDependencies": {
     "@earendil-works/pi-coding-agent": "*",

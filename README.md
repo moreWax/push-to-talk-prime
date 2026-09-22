@@ -1,5 +1,8 @@
 # Push to Talk for Prime Agent and pi
 
+[![CI](https://github.com/moreWax/push-to-talk-prime/actions/workflows/ci.yml/badge.svg)](https://github.com/moreWax/push-to-talk-prime/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 Claude Code-style local voice dictation for the Prime/pi chat editor. Hold **Space**, speak, and release. The transcript is inserted at the activation cursor without submitting unless auto-submit is enabled.
 
 Transcription uses [moondream/parakeet-redux](https://huggingface.co/moondream/parakeet-redux) through Moondream Photon. Audio and text stay on your machine.
@@ -16,6 +19,7 @@ Transcription uses [moondream/parakeet-redux](https://huggingface.co/moondream/p
 - One `/voice` command toggles the warm worker on or off.
 - `/voice status` reports enabled state, preset, worker state, and device.
 - `/voice preset fast|balanced|smooth` selects latency versus provisional stability without numeric tuning.
+- One authenticated warm model service shared across all Prime sessions and clients.
 - Local CPU, Apple Metal, or CUDA inference.
 
 No terminal plugin, global keyboard hook, clipboard automation, launcher wrapper, Prime source patch, or cloud API is required.
@@ -212,6 +216,19 @@ npm test
 
 English, German, French, Spanish, Italian, Portuguese, Russian, Ukrainian, Croatian, Slovenian, Latvian, Lithuanian, Estonian, Finnish, Swedish, Danish, Dutch, Polish, Czech, Slovak, Hungarian, Romanian, Bulgarian, Greek, and Maltese.
 
+
+## Community and project documentation
+
+- [Getting Started](GETTING_STARTED.md)
+- [Architecture](ARCHITECTURE.md)
+- [Troubleshooting](TROUBLESHOOTING.md)
+- [Contributing](CONTRIBUTING.md)
+- [Support](SUPPORT.md)
+- [Security](SECURITY.md)
+- [Code of Conduct](CODE_OF_CONDUCT.md)
+- [Changelog](CHANGELOG.md)
+- [Release process](docs/RELEASING.md)
+
 ## Privacy, telemetry, and licenses
 
 Audio and transcripts are processed locally. Model download and dependency installation require network access unless already cached.
@@ -228,5 +245,5 @@ Prime daemon support uses a client-side decoration of Prime 0.9.5's `CustomEdito
 
 `PTT_DEBUG_LOG` records transition metadata only, uses mode `0600` when creating the file, and no longer records prompt text or raw key bytes. Do not enable it unless diagnosing a problem.
 
-Each enabled Prime terminal client owns one warm model worker. Run `/voice` in clients where dictation is not needed to toggle it off and release memory.
+All daemon-backed Prime clients share one authenticated loopback model service. Closing a client releases its recording ownership but keeps the warm service available. Run `/voice` to disable voice globally and unload it.
 
