@@ -23,7 +23,7 @@ const DOUBLE_TAP_MS = 300;
 const DOUBLE_TAP_DISAMBIGUATE_MS = 120;
 
 export type VoiceMode = "hold" | "tap";
-export type VoicePreset = "fast" | "rapid" | "balanced" | "realtime" | "smooth";
+export type VoicePreset = "fast" | "balanced" | "realtime" | "smooth";
 export type VoiceSettings = {
   enabled: boolean;
   mode: VoiceMode;
@@ -33,14 +33,13 @@ export type VoiceSettings = {
 
 const STREAM_PRESETS: Record<VoicePreset, { chunkMs: number; rightMs: number; leftMs: number }> = {
   fast: { chunkMs: 160, rightMs: 160, leftMs: 2_000 },
-  rapid: { chunkMs: 80, rightMs: 320, leftMs: 1_000 },
   balanced: { chunkMs: 160, rightMs: 480, leftMs: 4_000 },
   realtime: { chunkMs: 80, rightMs: 560, leftMs: 1_000 },
   smooth: { chunkMs: 320, rightMs: 320, leftMs: 5_000 },
 };
 
 function parsePreset(value: unknown): VoicePreset {
-  return value === "fast" || value === "rapid" || value === "realtime" || value === "smooth" ? value : "balanced";
+  return value === "fast" || value === "realtime" || value === "smooth" ? value : "balanced";
 }
 
 const RUNTIME_IDENTITY = `${process.execPath} ${process.argv[1] ?? ""}`.toLowerCase();
@@ -540,7 +539,7 @@ export class ClientEditorVoiceBridge {
       if (option === "status" || option === "preset") return;
       if (option.startsWith("preset ")) {
         const requested = option.slice("preset ".length).trim();
-        if (requested !== "fast" && requested !== "rapid" && requested !== "balanced" && requested !== "realtime" && requested !== "smooth") return;
+        if (requested !== "fast" && requested !== "balanced" && requested !== "realtime" && requested !== "smooth") return;
         this.applySettings({ ...this.settings, preset: requested });
         return;
       }
@@ -1110,13 +1109,13 @@ export default function pushToTalk(pi: ExtensionAPI): void {
         return;
       }
       if (option === "preset") {
-        ctx.ui.notify(`Voice preset: ${settings.preset}. Available: fast, rapid, balanced, realtime, smooth.`, "info");
+        ctx.ui.notify(`Voice preset: ${settings.preset}. Available: fast, balanced, realtime, smooth.`, "info");
         return;
       }
       if (option.startsWith("preset ")) {
         const requested = option.slice("preset ".length).trim();
-        if (requested !== "fast" && requested !== "rapid" && requested !== "balanced" && requested !== "realtime" && requested !== "smooth") {
-          ctx.ui.notify("Usage: /voice preset [fast|rapid|balanced|realtime|smooth]", "warning");
+        if (requested !== "fast" && requested !== "balanced" && requested !== "realtime" && requested !== "smooth") {
+          ctx.ui.notify("Usage: /voice preset [fast|balanced|realtime|smooth]", "warning");
           return;
         }
         settings.preset = requested;
@@ -1128,7 +1127,7 @@ export default function pushToTalk(pi: ExtensionAPI): void {
         return;
       }
       if (option) {
-        ctx.ui.notify("Usage: /voice [status|preset [fast|rapid|balanced|realtime|smooth]]", "warning");
+        ctx.ui.notify("Usage: /voice [status|preset [fast|balanced|realtime|smooth]]", "warning");
         return;
       }
       settings.enabled = !settings.enabled;
