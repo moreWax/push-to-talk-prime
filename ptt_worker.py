@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import contextlib
+from collections import deque
 import json
 import os
 from importlib.metadata import PackageNotFoundError, version
@@ -201,6 +202,63 @@ def load_model(requested: str, *, announce: bool = True) -> tuple[Any, Any]:
     return photon, speech
 
 
+class InterimTranscriptStabilizer:
+    """Expose only text that survives consecutive cumulative ASR snapshots."""
+
+    def __init__(self, required_snapshots: int = 2) -> None:
+        self.required_snapshots = max(1, required_snapshots)
+        self.history: deque[str] = deque(maxlen=self.required_snapshots)
+        self.visible = ""
+
+    def push(self, text: str) -> str | None:
+        value = normalize_text(text)
+        if not value:
+            return None
+        self.history.append(value)
+        if len(self.history) < self.required_snapshots:
+            return None
+
+        values = list(self.history)
+        prefix = values[0]
+        for item in values[1:]:
+            limit = min(len(prefix), len(item))
+            index = 0
+            while index < limit and prefix[index] == item[index]:
+                index += 1
+            prefix = prefix[:index]
+            if not prefix:
+                break
+
+        if not prefix:
+            candidate = ""
+        elif all(item == prefix for item in values):
+            # Equality alone does not prove that the trailing SentencePiece
+            # fragment is a complete word. Keep only text through the last
+            # visible boundary; punctuation itself is safe to show.
+            punctuation = max(*(prefix.rfind(char) for char in ".,!?;:"))
+            whitespace = prefix.rfind(" ")
+            boundary = max(punctuation, whitespace)
+            candidate = prefix[: boundary + 1] if boundary >= 0 else ""
+        else:
+            boundary_after_prefix = all(
+                len(item) == len(prefix)
+                or item[len(prefix)].isspace()
+                or item[len(prefix)] in ".,!?;:"
+                for item in values
+            )
+            if boundary_after_prefix:
+                candidate = prefix
+            else:
+                boundary = max(prefix.rfind(" "), *(prefix.rfind(char) for char in ".,!?;:"))
+                candidate = prefix[: boundary + 1] if boundary >= 0 else ""
+
+        candidate = candidate.strip()
+        if candidate == self.visible:
+            return None
+        self.visible = candidate
+        return candidate or None
+
+
 def transcribe_live(
     model_future: "Future[tuple[Any, Any]]",
     chunks: "queue.Queue[Any | None]",
@@ -224,12 +282,17 @@ def transcribe_live(
         timestamps="none",
         stream=True,
     )
+    required = max(1, int(os.getenv("PTT_INTERIM_STABILITY", "2")))
+    stabilizer = InterimTranscriptStabilizer(required)
     for update in stream:
-        if is_current(session_id):
+        if update.get("provisional") is False:
+            continue
+        stable = stabilizer.push(str(update.get("text", "")))
+        if is_current(session_id) and stable is not None:
             emit({
                 "event": "interim",
-                "text": normalize_text(str(update.get("text", ""))),
-                "provisional": bool(update.get("provisional", True)),
+                "text": stable,
+                "provisional": True,
             })
     result = stream.result()
     return result

@@ -3,7 +3,7 @@ import unittest
 
 import numpy as np
 
-from ptt_worker import Recorder, normalize_text
+from ptt_worker import InterimTranscriptStabilizer, Recorder, normalize_text
 
 
 class WorkerUtilitiesTest(unittest.TestCase):
@@ -54,6 +54,32 @@ class WorkerUtilitiesTest(unittest.TestCase):
         self.assertIsNone(recorder.live_queue)
         self.assertEqual(recorder.frames, [])
         self.assertIsNone(live_queue.get_nowait())
+
+    def test_interim_stabilizer_hides_partial_words(self):
+        stabilizer = InterimTranscriptStabilizer(2)
+        self.assertIsNone(stabilizer.push("Hello, this is a live streaming trans"))
+        self.assertEqual(
+            stabilizer.push("Hello, this is a live streaming transcrip"),
+            "Hello, this is a live streaming",
+        )
+
+    def test_interim_stabilizer_hides_repeated_partial_suffix(self):
+        stabilizer = InterimTranscriptStabilizer(2)
+        self.assertIsNone(stabilizer.push("Hello streaming trans"))
+        self.assertEqual(stabilizer.push("Hello streaming trans"), "Hello streaming")
+
+    def test_interim_stabilizer_emits_repeated_complete_text(self):
+        stabilizer = InterimTranscriptStabilizer(2)
+        self.assertIsNone(stabilizer.push("Hello,"))
+        self.assertEqual(stabilizer.push("Hello,"), "Hello,")
+        self.assertIsNone(stabilizer.push("Hello, this"))
+        self.assertIsNone(stabilizer.push("Hello, this"))
+        self.assertEqual(stabilizer.push("Hello, this is"), "Hello, this")
+
+    def test_interim_stabilizer_revises_to_common_word_boundary(self):
+        stabilizer = InterimTranscriptStabilizer(2)
+        self.assertIsNone(stabilizer.push("we need foo"))
+        self.assertEqual(stabilizer.push("we need bar"), "we need")
 
 
 if __name__ == "__main__":

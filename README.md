@@ -11,7 +11,7 @@ Transcription uses [moondream/parakeet-redux](https://huggingface.co/moondream/p
 - Normal Space typing stays immediate; one candidate Space is removed when a hold commits.
 - Minimal `▁▂▃▄▅▆▇█` recording indicator with no processing text left in the prompt.
 - Native stateful Parakeet streaming with smooth 320 ms transcript updates.
-- Live provisional transcript snapshots replace the meter as speech is recognized.
+- Stable live words replace the meter as speech is recognized; unstable partial words stay hidden.
 - Transcript insertion at the activation cursor without automatic submission by default.
 - One `/voice` command toggles the warm worker on or off.
 - `/voice status` reports enabled state, preset, worker state, and device.
@@ -191,6 +191,7 @@ Runtime environment variables:
 | `PTT_STREAM_LEFT_MS` | preset value | Advanced override for repeated encoder history |
 | `PTT_ALLOW_TELEMETRY` | unset | Set `1` to opt into Kestrel Photon telemetry; disabled by default |
 | `PTT_TRAILING_SILENCE_MS` | `320` | Synthetic endpoint context added on release for final words and punctuation |
+| `PTT_INTERIM_STABILITY` | `2` | Consecutive snapshots required before provisional text is shown |
 
 ## Permissions and troubleshooting
 
