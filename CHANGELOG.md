@@ -6,3 +6,4 @@
 - Added daemon-backed Prime editor integration, progressive Parakeet transcription, worker lifecycle controls, diagnostics, and cross-platform packaging.
 - Added a single authenticated warm speech service shared across daemon-backed Prime sessions.
 - Added production documentation, community health files, and singleton integration coverage.
+- Added a reproducible scripted MP4/GIF product demo.

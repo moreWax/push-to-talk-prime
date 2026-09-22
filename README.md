@@ -3,6 +3,10 @@
 [![CI](https://github.com/moreWax/push-to-talk-prime/actions/workflows/ci.yml/badge.svg)](https://github.com/moreWax/push-to-talk-prime/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
+![Scripted push-to-talk demo](assets/demo.gif)
+
+[Watch the MP4 demo with audio](assets/demo.mp4) · [How it works](ARCHITECTURE.md)
+
 Claude Code-style local voice dictation for the Prime/pi chat editor. Hold **Space**, speak, and release. The transcript is inserted at the activation cursor without submitting unless auto-submit is enabled.
 
 Transcription uses [moondream/parakeet-redux](https://huggingface.co/moondream/parakeet-redux) through Moondream Photon. Audio and text stay on your machine.
