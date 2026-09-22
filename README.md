@@ -40,12 +40,14 @@ Choose streaming behavior with a named preset:
 
 ```text
 /voice preset fast
+/voice preset rapid
 /voice preset balanced
 /voice preset realtime
 /voice preset smooth
 ```
 
-- `fast`: 160 ms chunk + 160 ms lookahead; lowest first-token latency, less stable previews
+- `fast`: 160 ms chunk + 160 ms lookahead; low first-token latency, sparse/unstable previews
+- `rapid`: 80 ms chunk + 320 ms lookahead + 1 s left context; fastest updates, speculative/garbled previews
 - `balanced`: 160 ms chunk + 480 ms lookahead; recommended stable 160 ms cadence
 - `realtime`: 80 ms chunk + 560 ms lookahead + 1 s left context; smoothest 80 ms cadence, higher compute
 - `smooth`: 320 ms chunk + 320 ms lookahead; fewer, larger stable updates
@@ -137,7 +139,7 @@ Voice is enabled in hold mode by default for this package.
 | `/voice` | Toggle hold-Space voice input and its warm worker |
 | `/voice status` | Show enabled state, preset, worker state, and selected device |
 | `/voice preset` | Show current preset and available names |
-| `/voice preset fast|balanced|smooth` | Change and persist streaming behavior |
+| `/voice preset fast|rapid|balanced|realtime|smooth` | Change and persist streaming behavior |
 | Escape while recording | Cancel and restore the anchored prompt |
 | `npm run doctor` | Validate dependencies and list microphones |
 
