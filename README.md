@@ -3,9 +3,9 @@
 [![CI](https://github.com/moreWax/push-to-talk-prime/actions/workflows/ci.yml/badge.svg)](https://github.com/moreWax/push-to-talk-prime/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-![Actual Prime push-to-talk capture](assets/vhs-live-demo.gif)
+![Actual Prime push-to-talk capture](assets/vhs-polished-demo.gif)
 
-[Watch the MP4 with the exact generated source voice](assets/vhs-live-demo.mp4)
+[Watch the MP4 with the exact generated source voice](assets/vhs-polished-demo.mp4)
 
 This is an actual Prime 0.9.5 PTY capture. The demo launches Prime with the extension, holds Space, feeds `assets/demo-input.wav` through the real worker as a demo microphone, streams real MPS Parakeet hypotheses into the real editor, and records the exact final correction. Reproduce it with:
 

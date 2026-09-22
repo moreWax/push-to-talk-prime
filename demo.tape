@@ -1,5 +1,5 @@
-Output "assets/vhs-live-demo-silent.webm"
-Output "assets/vhs-live-demo.gif"
+Output "assets/vhs-polished-demo-silent.webm"
+Output "assets/vhs-polished-demo.gif"
 
 Require prime-agent
 Require node
