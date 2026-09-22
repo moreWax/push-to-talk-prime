@@ -1,0 +1,55 @@
+{
+  "source_audio": "assets/demo-input.wav",
+  "device": "mps",
+  "chunk_ms": 160,
+  "right_ms": 480,
+  "left_ms": 4000,
+  "audio_duration": 3.766,
+  "events": [
+    {
+      "time": 0.908,
+      "type": "interim",
+      "text": "Use"
+    },
+    {
+      "time": 1.002,
+      "type": "interim",
+      "text": "Use the"
+    },
+    {
+      "time": 1.269,
+      "type": "interim",
+      "text": "Use the new"
+    },
+    {
+      "time": 1.625,
+      "type": "interim",
+      "text": "Use the new token"
+    },
+    {
+      "time": 2.317,
+      "type": "interim",
+      "text": "Use the new token validation"
+    },
+    {
+      "time": 2.698,
+      "type": "interim",
+      "text": "Use the new token validation helper"
+    },
+    {
+      "time": 2.795,
+      "type": "interim",
+      "text": "Use the new token validation helper in"
+    },
+    {
+      "time": 3.064,
+      "type": "interim",
+      "text": "Use the new token validation helper in the"
+    },
+    {
+      "time": 4.717,
+      "type": "final",
+      "text": "Use the new token validation helper in the authentication middleware."
+    }
+  ]
+}

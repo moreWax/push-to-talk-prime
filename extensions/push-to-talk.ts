@@ -71,6 +71,7 @@ function workerEnvironment(preset: VoicePreset, device: VoiceDevice): NodeJS.Pro
     "PTT_INPUT_DEVICE", "PTT_STREAM_CHUNK_MS", "PTT_STREAM_RIGHT_MS",
     "PTT_STREAM_LEFT_MS",
     "PTT_ALLOW_TELEMETRY", "PTT_TRAILING_SILENCE_MS", "PTT_INTERIM_STABILITY",
+    "PTT_SKIP_MODEL_WARMUP",
   ];
   const environment: NodeJS.ProcessEnv = { PYTHONUNBUFFERED: "1", PTT_CLIENT_PID: String(process.pid) };
   for (const key of keys) {

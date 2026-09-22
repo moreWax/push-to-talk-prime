@@ -134,6 +134,28 @@ class _IntegralFrameSeconds(float):
         return self.__mul__(value)
 
 
+def warm_streaming_model(speech: Any, chunk_ms: float, right_ms: float) -> None:
+    if os.getenv("PTT_SKIP_MODEL_WARMUP") == "1":
+        return
+    import numpy as np
+
+    sample_rate = 16_000
+    total_frames = max(320, round(sample_rate * (chunk_ms + right_ms) / 1000.0))
+
+    async def silence():
+        yield np.zeros(total_frames, dtype=np.float32)
+
+    stream = speech.transcribe(
+        audio=silence(),
+        sample_rate=sample_rate,
+        timestamps="none",
+        stream=True,
+    )
+    for _update in stream:
+        pass
+    stream.result()
+
+
 def load_model(requested: str, *, announce: bool = True) -> tuple[Any, Any]:
     with contextlib.redirect_stdout(sys.stderr):
         import moondream as md
@@ -190,6 +212,7 @@ def load_model(requested: str, *, announce: bool = True) -> tuple[Any, Any]:
         kwargs = {} if requested == "auto" else {"device": requested}
         photon = md.photon("moondream/parakeet-redux", **kwargs)
         speech = photon.__enter__()
+        warm_streaming_model(speech, chunk_ms, right_ms)
     if announce:
         emit({
             "event": "model_ready",

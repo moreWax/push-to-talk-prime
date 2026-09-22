@@ -3,9 +3,11 @@
 [![CI](https://github.com/moreWax/push-to-talk-prime/actions/workflows/ci.yml/badge.svg)](https://github.com/moreWax/push-to-talk-prime/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-![Scripted push-to-talk demo](assets/demo.gif)
+![Real-model push-to-talk demo](assets/demo.gif)
 
-[Watch the MP4 demo with audio](assets/demo.mp4) · [How it works](ARCHITECTURE.md)
+[Watch the MP4 demo with the exact computer-generated source audio](assets/demo.mp4) · [Captured model events](assets/demo-events.json) · [How it works](ARCHITECTURE.md)
+
+The demo WAV is streamed in real time through `parakeet-redux` on Apple MPS. Every provisional and final string shown in the video comes from the captured model event trace; only the terminal chrome is rendered.
 
 Claude Code-style local voice dictation for the Prime/pi chat editor. Hold **Space**, speak, and release. The transcript is inserted at the activation cursor without submitting unless auto-submit is enabled.
 
@@ -200,6 +202,7 @@ Runtime environment variables:
 | `PTT_ALLOW_TELEMETRY` | unset | Set `1` to opt into Kestrel Photon telemetry; disabled by default |
 | `PTT_TRAILING_SILENCE_MS` | `320` | Synthetic endpoint context added on release for final words and punctuation |
 | `PTT_INTERIM_STABILITY` | `2` | Consecutive snapshots required before provisional text is shown |
+| `PTT_SKIP_MODEL_WARMUP` | unset | Set `1` only for diagnostics to skip startup streaming-kernel warm-up |
 
 ## Permissions and troubleshooting
 
