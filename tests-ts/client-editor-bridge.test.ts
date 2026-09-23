@@ -3,6 +3,7 @@ import test from "node:test";
 import type { CustomEditor } from "@earendil-works/pi-coding-agent";
 import {
   ClientEditorVoiceBridge,
+  decorateAudioIndicator,
   type VoiceSettings,
   type VoiceWorker,
 } from "../extensions/push-to-talk.ts";
@@ -28,6 +29,8 @@ class FakeWorker implements VoiceWorker {
 class FakeEditor {
   text: string;
   cursor: number;
+  renders = 0;
+  tui = { requestRender: () => { this.renders++; } };
   constructor(text = "") { this.text = text; this.cursor = text.length; }
   getText() { return this.text; }
   getLines() { return this.text.split("\n"); }
@@ -81,16 +84,47 @@ test("hold removes the candidate Space and inserts an anchored final transcript"
   bridge.close();
 });
 
-test("interim text replaces the level marker and final text replaces interim", async () => {
+test("meter remains beside interim text without storing ANSI", async () => {
   const { worker, bridge, editor, send } = setup();
   worker.stopResult = Promise.resolve({ ok: true, event: "transcript", text: "hello world" });
   for (let i = 0; i < 5; i++) send(" ");
   await tick();
   worker.onInterim?.("hello wor");
-  assert.match(editor.text, /^hello/);
+  assert.equal(editor.text, "hello wor ▁");
+  assert.equal(editor.text.includes("\x1b"), false);
+  const renders = editor.renders;
+  worker.onLevel?.(0.9);
+  assert.equal(editor.text, "hello wor ▁");
+  assert.equal(editor.renders, renders + 1);
+  worker.onLevel?.(0.9);
+  assert.ok(editor.renders >= renders + 1);
   send(releaseSpace);
   await tick();
   assert.equal(editor.text, "hello world");
+  assert.equal(editor.text.includes("\x1b"), false);
+  bridge.close();
+});
+
+test("render decoration colors one owned placeholder without changing width", () => {
+  const input = ["before ▁ and owned ▂ after"];
+  const output = decorateAudioIndicator(input, "▂", 6);
+  assert.equal(input[0], "before ▁ and owned ▂ after");
+  assert.match(output[0]!, /before ▁ and owned \x1b\[38;2;244;164;116m▇ after\x1b\[39m/);
+  assert.equal(output[0]!.replace(/\x1b\[[0-9;]*m/g, "").length, input[0]!.length);
+});
+
+test("render decoration suppresses Prime's adjacent software cursor", () => {
+  const cursor = "\x1b_pi:c\x07\x1b[7m \x1b[27m";
+  const output = decorateAudioIndicator([`prompt ▁${cursor} rest`], "▁", 4)[0]!;
+  assert.equal(output.includes(cursor), false);
+  assert.match(output, /prompt \x1b\[38;2;217;119;87m▅  rest\x1b\[39m/);
+});
+
+test("capture chooses a placeholder absent from existing prompt text", () => {
+  const { bridge, editor, send } = setup("existing ▁ block");
+  for (let i = 0; i < 5; i++) send(" ");
+  assert.equal(editor.text, "existing ▁ block▂");
+  assert.equal(editor.text.includes("\x1b"), false);
   bridge.close();
 });
 

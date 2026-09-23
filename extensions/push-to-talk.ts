@@ -22,6 +22,37 @@ const TAP_SILENCE_MS = 15_000;
 const TAP_MAX_MS = 120_000;
 const DOUBLE_TAP_MS = 300;
 const DOUBLE_TAP_DISAMBIGUATE_MS = 120;
+const AUDIO_LEVEL_GLYPHS = [..."▁▂▃▄▅▆▇█"];
+const AUDIO_PLACEHOLDERS = [..."▁▂▃▄▅▆▇█◼◆●■"];
+// Claude Code-style quiet gray → warm coral → bright amber progression.
+const AUDIO_LEVEL_COLORS: [number, number, number][] = [
+  [126, 126, 126], [145, 126, 118], [169, 113, 96], [194, 107, 83],
+  [217, 119, 87], [232, 139, 99], [244, 164, 116], [255, 194, 141],
+];
+
+export function decorateAudioIndicator(
+  lines: string[],
+  placeholder: string | undefined,
+  levelIndex: number,
+): string[] {
+  if (!placeholder) return lines;
+  const glyph = AUDIO_LEVEL_GLYPHS[Math.max(0, Math.min(AUDIO_LEVEL_GLYPHS.length - 1, levelIndex))]!;
+  const [red, green, blue] = AUDIO_LEVEL_COLORS[Math.max(0, Math.min(AUDIO_LEVEL_COLORS.length - 1, levelIndex))]!;
+  let pending = true;
+  return lines.map((line) => {
+    if (!pending || !line.includes(placeholder)) return line;
+    pending = false;
+    const color = `\x1b[38;2;${red};${green};${blue}m`;
+    const softwareCursor = "\x1b_pi:c\x07\x1b[7m \x1b[27m";
+    const ownedCursor = `${placeholder}${softwareCursor}`;
+    if (line.includes(ownedCursor)) {
+      // Keep the cell count stable, but replace Prime's adjacent inverse-video
+      // cursor with an ordinary blank while the waveform owns the input edge.
+      return `${line.replace(ownedCursor, `${color}${glyph} `)}\x1b[39m`;
+    }
+    return `${line.replace(placeholder, `${color}${glyph}`)}\x1b[39m`;
+  });
+}
 
 export type VoiceMode = "hold" | "tap";
 export type VoicePreset = "fast" | "balanced" | "realtime" | "smooth";
@@ -71,7 +102,7 @@ function workerEnvironment(preset: VoicePreset, device: VoiceDevice): NodeJS.Pro
     "PTT_INPUT_DEVICE", "PTT_STREAM_CHUNK_MS", "PTT_STREAM_RIGHT_MS",
     "PTT_STREAM_LEFT_MS",
     "PTT_ALLOW_TELEMETRY", "PTT_TRAILING_SILENCE_MS", "PTT_INTERIM_STABILITY",
-    "PTT_SKIP_MODEL_WARMUP", "PTT_DEMO_AUDIO_FILE",
+    "PTT_SKIP_MODEL_WARMUP", "PTT_DEMO_AUDIO_FILE", "PTT_DEMO_TIMELINE",
   ];
   const environment: NodeJS.ProcessEnv = { PYTHONUNBUFFERED: "1", PTT_CLIENT_PID: String(process.pid) };
   for (const key of keys) {
@@ -562,7 +593,11 @@ export class ClientEditorVoiceBridge {
   private hasInterim = false;
   private targetInterim = "";
   private marker = "";
-  private meterIndex = 1;
+  private meterIndex = 0;
+  private smoothMeterLevel = 0;
+  private indicatorPlaceholder?: string;
+  private holdPressedAt = 0;
+  private captureStartedAt = 0;
   private editor?: CustomEditor;
   private originalInput?: (data: string) => void;
   private anchor?: { original: string; expected: string; prefix: string; suffix: string };
@@ -627,6 +662,28 @@ export class ClientEditorVoiceBridge {
     this.stopWorker();
   }
 
+  private demoTimeline(text: string, phase = "LIVE"): string {
+    if (process.env.PTT_DEMO_TIMELINE !== "1") return text;
+    const origin = this.holdPressedAt || this.captureStartedAt || Date.now();
+    const elapsed = Math.max(0, Date.now() - origin);
+    return `${phase} ${String(elapsed).padStart(4, "0")}ms │ ${text}`;
+  }
+
+  private liveMarker(text = this.targetInterim): string {
+    const indicator = this.indicatorPlaceholder ?? AUDIO_LEVEL_GLYPHS[0]!;
+    return this.demoTimeline(text ? `${text} ${indicator}` : indicator, text ? "LIVE" : "HOLD");
+  }
+
+  decorateRender(editor: CustomEditor, lines: string[]): string[] {
+    if (editor !== this.editor || !this.recording || this.processing) return lines;
+    return decorateAudioIndicator(lines, this.indicatorPlaceholder, this.meterIndex);
+  }
+
+  private requestEditorRender(): void {
+    const editor = this.editor as unknown as { tui?: { requestRender(): void } } | undefined;
+    editor?.tui?.requestRender();
+  }
+
   private handleSpace(data: string, original: (data: string) => void): void {
     const now = Date.now();
     if (!this.recording && this.lastSpaceAt > 0 && now - this.lastSpaceAt > BURST_GAP_MS) this.resetCandidate();
@@ -638,6 +695,7 @@ export class ClientEditorVoiceBridge {
     }
 
     const previous = this.burstCount;
+    if (previous === 0) this.holdPressedAt = Date.now();
     this.burstCount += 1;
     if (this.burstCount >= COMMIT_EVENT_COUNT) {
       for (let index = 0; index < this.leakedSpaces; index++) original("\x7f");
@@ -649,9 +707,11 @@ export class ClientEditorVoiceBridge {
       this.processing = false;
       this.hasInterim = false;
       this.targetInterim = "";
-      this.meterIndex = 1;
+      this.meterIndex = 0;
+      this.smoothMeterLevel = 0;
+      this.captureStartedAt = Date.now();
       debugEvent({ event: "editor_bridge_commit" });
-      this.replaceMarker("▁");
+      this.replaceMarker(this.liveMarker(""));
       this.captureStarted = false;
       const start = this.startWorker().request("start").then(() => {
         if (generation !== this.captureGeneration) return;
@@ -678,6 +738,7 @@ export class ClientEditorVoiceBridge {
     let offset = cursor.col;
     for (let line = 0; line < cursor.line; line++) offset += (lines[line]?.length ?? 0) + 1;
     this.anchor = { original: text, expected: text, prefix: text.slice(0, offset), suffix: text.slice(offset) };
+    this.indicatorPlaceholder = AUDIO_PLACEHOLDERS.find((candidate) => !text.includes(candidate));
   }
 
   private replaceMarker(next: string): boolean {
@@ -690,6 +751,7 @@ export class ClientEditorVoiceBridge {
     for (let index = 0; index < Array.from(anchor.suffix).length; index++) original("\x1b[D");
     anchor.expected = value;
     this.marker = next;
+    this.requestEditorRender();
     return true;
   }
 
@@ -697,9 +759,10 @@ export class ClientEditorVoiceBridge {
     if (generation !== this.captureGeneration) return;
     const anchor = this.anchor;
     if (!anchor) return this.clearCaptureState();
-    const leading = anchor.prefix.length > 0 && !/\s$/.test(anchor.prefix) && text ? " " : "";
-    const trailing = anchor.suffix.length > 0 && !/^\s/.test(anchor.suffix) && text ? " " : "";
-    if (!this.replaceMarker(`${leading}${text}${trailing}`)) {
+    const finalText = this.demoTimeline(text, "FINAL");
+    const leading = anchor.prefix.length > 0 && !/\s$/.test(anchor.prefix) && finalText ? " " : "";
+    const trailing = anchor.suffix.length > 0 && !/^\s/.test(anchor.suffix) && finalText ? " " : "";
+    if (!this.replaceMarker(`${leading}${finalText}${trailing}`)) {
       this.clearCaptureState();
       return;
     }
@@ -748,9 +811,13 @@ export class ClientEditorVoiceBridge {
     this.hasInterim = false;
     this.targetInterim = "";
     this.marker = "";
+    this.indicatorPlaceholder = undefined;
+    this.smoothMeterLevel = 0;
     this.burstCount = 0;
     this.leakedSpaces = 0;
     this.lastSpaceAt = 0;
+    this.holdPressedAt = 0;
+    this.captureStartedAt = 0;
     if (clearAnchor) this.anchor = undefined;
   }
 
@@ -762,7 +829,9 @@ export class ClientEditorVoiceBridge {
     if (!this.recording || this.processing) return;
     const generation = this.captureGeneration;
     this.processing = true;
-    if (this.hasInterim && this.targetInterim) {
+    if (process.env.PTT_DEMO_TIMELINE === "1") {
+      this.replaceMarker(this.demoTimeline(this.targetInterim || "finalizing", "RELEASE"));
+    } else if (this.hasInterim && this.targetInterim) {
       this.replaceMarker(this.targetInterim);
     } else {
       this.replaceMarker("");
@@ -788,6 +857,7 @@ export class ClientEditorVoiceBridge {
     this.burstCount = 0;
     this.leakedSpaces = 0;
     this.lastSpaceAt = 0;
+    this.holdPressedAt = 0;
   }
 
   private observeVoiceCommand(data: string): void {
@@ -863,15 +933,15 @@ export class ClientEditorVoiceBridge {
       if (!this.recording || !value) return;
       this.hasInterim = true;
       this.targetInterim = value;
-      this.replaceMarker(value);
+      this.replaceMarker(this.liveMarker(value));
     };
     worker.onLevel = (level) => {
-      if (!this.recording || this.processing || this.hasInterim) return;
-      const blocks = " ▁▂▃▄▅▆▇█";
-      const next = Math.max(1, Math.min(blocks.length - 1, Math.round(Math.min(level * 1.8, 1) * (blocks.length - 1))));
+      if (!this.recording || this.processing) return;
+      this.smoothMeterLevel = this.smoothMeterLevel * 0.6 + Math.min(level, 1) * 0.4;
+      const next = Math.max(0, Math.min(AUDIO_LEVEL_GLYPHS.length - 1, Math.round(this.smoothMeterLevel * (AUDIO_LEVEL_GLYPHS.length - 1))));
       if (next === this.meterIndex) return;
       this.meterIndex = next;
-      this.replaceMarker(blocks[next]!);
+      this.requestEditorRender();
     };
     void worker.warm().catch(() => {});
     return worker;
@@ -896,8 +966,12 @@ function installDaemonClientEditorBridge(): void {
   const prototype = CustomEditor.prototype as CustomEditor & { wantsKeyRelease?: boolean };
   prototype.wantsKeyRelease = true;
   const original = CustomEditor.prototype.handleInput;
+  const originalRender = CustomEditor.prototype.render;
   CustomEditor.prototype.handleInput = function (data: string): void {
     bridge.handleInput(this, data, (value) => original.call(this, value));
+  };
+  CustomEditor.prototype.render = function (width: number): string[] {
+    return bridge.decorateRender(this, originalRender.call(this, width));
   };
   process.once("exit", () => bridge.close());
 }
