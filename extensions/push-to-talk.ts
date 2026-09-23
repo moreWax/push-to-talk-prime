@@ -16,7 +16,6 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const BURST_GAP_MS = 120;
 const WARMING_EVENT_COUNT = 2;
 const COMMIT_EVENT_COUNT = 5;
-const HOLD_COMMIT_MS = 350;
 const RELEASE_GAP_MS = 200;
 const FIRST_RELEASE_FALLBACK_MS = 2000;
 const TAP_SILENCE_MS = 15_000;
@@ -25,10 +24,16 @@ const DOUBLE_TAP_MS = 300;
 const DOUBLE_TAP_DISAMBIGUATE_MS = 120;
 const AUDIO_LEVEL_GLYPHS = [..."▁▂▃▄▅▆▇█"];
 const AUDIO_PLACEHOLDERS = [..."▁▂▃▄▅▆▇█◼◆●■"];
-// Claude Code-style quiet gray → warm coral → bright amber progression.
+// Distinct level bands stay legible at terminal-cell size and across themes.
 const AUDIO_LEVEL_COLORS: [number, number, number][] = [
-  [126, 126, 126], [145, 126, 118], [169, 113, 96], [194, 107, 83],
-  [217, 119, 87], [232, 139, 99], [244, 164, 116], [255, 194, 141],
+  [88, 91, 112],   // quiet: gray
+  [180, 190, 254], // lavender
+  [137, 180, 250], // blue
+  [148, 226, 213], // teal
+  [166, 227, 161], // green
+  [249, 226, 175], // yellow
+  [250, 179, 135], // peach
+  [243, 139, 168], // peak: red
 ];
 
 export function decorateAudioIndicator(
@@ -586,8 +591,6 @@ export class ClientEditorVoiceBridge {
   private burstCount = 0;
   private leakedSpaces = 0;
   private lastSpaceAt = 0;
-  private holdStartedAt = 0;
-  private readonly now: () => number;
   private recording = false;
   private processing = false;
   private captureGeneration = 0;
@@ -607,9 +610,7 @@ export class ClientEditorVoiceBridge {
     settings?: VoiceSettings;
     workerFactory?: () => VoiceWorker;
     watchSettings?: boolean;
-    now?: () => number;
   } = {}) {
-    this.now = options.now ?? Date.now;
     this.settings = options.settings ?? loadVoiceSettings();
     this.workerFactory = options.workerFactory;
     this.settingsMtimeMs = this.readSettingsMtime();
@@ -681,7 +682,7 @@ export class ClientEditorVoiceBridge {
   }
 
   private handleSpace(data: string, original: (data: string) => void): void {
-    const now = this.now();
+    const now = Date.now();
     if (!this.recording && this.lastSpaceAt > 0 && now - this.lastSpaceAt > BURST_GAP_MS) this.resetCandidate();
     this.lastSpaceAt = now;
 
@@ -691,12 +692,9 @@ export class ClientEditorVoiceBridge {
     }
 
     const previous = this.burstCount;
-    if (previous === 0) {
-      this.holdStartedAt = now;
-      debugEvent({ event: "editor_bridge_press" });
-    }
+    if (previous === 0) debugEvent({ event: "editor_bridge_press" });
     this.burstCount += 1;
-    if (this.burstCount >= COMMIT_EVENT_COUNT && now - this.holdStartedAt >= HOLD_COMMIT_MS) {
+    if (this.burstCount >= COMMIT_EVENT_COUNT) {
       for (let index = 0; index < this.leakedSpaces; index++) original("\x7f");
       this.leakedSpaces = 0;
       this.burstCount = 0;
@@ -813,7 +811,6 @@ export class ClientEditorVoiceBridge {
     this.burstCount = 0;
     this.leakedSpaces = 0;
     this.lastSpaceAt = 0;
-    this.holdStartedAt = 0;
     if (clearAnchor) this.anchor = undefined;
   }
 
@@ -852,7 +849,6 @@ export class ClientEditorVoiceBridge {
     this.burstCount = 0;
     this.leakedSpaces = 0;
     this.lastSpaceAt = 0;
-    this.holdStartedAt = 0;
   }
 
   private observeVoiceCommand(data: string): void {
