@@ -195,7 +195,7 @@ Telemetry is replaced with a no-op reporter unless `PTT_ALLOW_TELEMETRY=1` is ex
 
 `PTT_STREAM_CHUNK_MS`, `PTT_STREAM_RIGHT_MS`, and `PTT_STREAM_LEFT_MS` can override preset values. Named settings are preferred because they are persisted and participate in broker configuration matching.
 
-Devices are `auto`, `cpu`, `mps`, and `cuda`; the convenience value `gpu` resolves to `mps` on macOS and `cuda` elsewhere. `PTT_INPUT_DEVICE` independently selects a microphone by PortAudio index or name. The worker's `devices` command and `npm run doctor` enumerate valid inputs.
+Devices are `auto`, `cpu`, `mps`, and `cuda`; the convenience value `gpu` resolves to `mps` on macOS and `cuda` elsewhere. `PTT_INPUT_DEVICE` independently selects a microphone by PortAudio index or name. Capture prefers the model-native 16 kHz rate to avoid repeated streaming resampling, then automatically retries at the device-native rate if probing or stream startup fails. Set `PTT_CAPTURE_SAMPLE_RATE=native` to opt out. The worker's `devices` command and `npm run doctor` enumerate valid inputs and report the selected capture rate.
 
 Settings persist atomically in `~/.prime/agent/push-to-talk.json` with mode `0600`. Changing preset or inference device cancels active capture and restarts the applicable worker/service. Environment variables supply initial values and advanced overrides.
 

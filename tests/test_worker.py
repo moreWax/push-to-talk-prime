@@ -1,14 +1,117 @@
+import os
 import queue
 import unittest
+from unittest.mock import patch
 
 import numpy as np
 
-from ptt_worker import InterimTranscriptStabilizer, Recorder, normalize_text
+from ptt_worker import InterimTranscriptStabilizer, Recorder, normalize_text, select_capture_sample_rate
 
 
 class WorkerUtilitiesTest(unittest.TestCase):
     def test_normalize_text(self):
         self.assertEqual(normalize_text("  hello\n  world  "), "hello world")
+
+    def test_capture_prefers_model_native_rate(self):
+        class FakeSoundDevice:
+            def check_input_settings(self, **settings):
+                self.settings = settings
+
+        sound = FakeSoundDevice()
+        with patch.dict(os.environ, {}, clear=False):
+            os.environ.pop("PTT_CAPTURE_SAMPLE_RATE", None)
+            selected, fallback = select_capture_sample_rate(sound, 3, 48_000)
+        self.assertEqual(selected, 16_000)
+        self.assertFalse(fallback)
+        self.assertEqual(sound.settings["samplerate"], 16_000)
+
+    def test_capture_falls_back_when_16k_is_unsupported(self):
+        class FakeSoundDevice:
+            def check_input_settings(self, **_settings):
+                raise RuntimeError("unsupported")
+
+        with patch.dict(os.environ, {}, clear=False):
+            os.environ.pop("PTT_CAPTURE_SAMPLE_RATE", None)
+            selected, fallback = select_capture_sample_rate(FakeSoundDevice(), None, 48_000)
+        self.assertEqual(selected, 48_000)
+        self.assertTrue(fallback)
+
+    def test_capture_native_override_skips_rate_probe(self):
+        class FakeSoundDevice:
+            def check_input_settings(self, **_settings):
+                raise AssertionError("native override must not probe")
+
+        with patch.dict(os.environ, {"PTT_CAPTURE_SAMPLE_RATE": "native"}):
+            selected, fallback = select_capture_sample_rate(FakeSoundDevice(), None, 48_000)
+        self.assertEqual(selected, 48_000)
+        self.assertFalse(fallback)
+
+    def test_capture_retries_native_rate_when_stream_start_fails(self):
+        class FakeStream:
+            def __init__(self, fail):
+                self.fail = fail
+                self.closed = False
+                self.started = False
+            def start(self):
+                if self.fail:
+                    raise RuntimeError("16k open failed")
+                self.started = True
+            def stop(self):
+                pass
+            def close(self):
+                self.closed = True
+
+        class FakeSoundDevice:
+            def __init__(self):
+                self.rates = []
+                self.streams = []
+            def query_devices(self, _device, _kind):
+                return {"default_samplerate": 48_000}
+            def check_input_settings(self, **_settings):
+                pass
+            def InputStream(self, **settings):
+                self.rates.append(settings["samplerate"])
+                stream = FakeStream(fail=settings["samplerate"] == 16_000)
+                self.streams.append(stream)
+                return stream
+
+        sound = FakeSoundDevice()
+        recorder = Recorder(sound, np)
+        with patch.dict(os.environ, {}, clear=False):
+            os.environ.pop("PTT_CAPTURE_SAMPLE_RATE", None)
+            os.environ.pop("PTT_DEMO_AUDIO_FILE", None)
+            recorder.start()
+        self.assertEqual(sound.rates, [16_000, 48_000])
+        self.assertTrue(sound.streams[0].closed)
+        self.assertTrue(sound.streams[1].started)
+        self.assertEqual(recorder.sample_rate, 48_000)
+        self.assertTrue(recorder.capture_rate_fallback)
+        recorder.cancel()
+
+    def test_capture_leaves_recorder_idle_when_native_retry_fails(self):
+        class BrokenStream:
+            def start(self):
+                raise RuntimeError("open failed")
+            def close(self):
+                pass
+
+        class FakeSoundDevice:
+            def query_devices(self, _device, _kind):
+                return {"default_samplerate": 48_000}
+            def check_input_settings(self, **_settings):
+                pass
+            def InputStream(self, **_settings):
+                return BrokenStream()
+
+        recorder = Recorder(FakeSoundDevice(), np)
+        with patch.dict(os.environ, {}, clear=False):
+            os.environ.pop("PTT_CAPTURE_SAMPLE_RATE", None)
+            os.environ.pop("PTT_DEMO_AUDIO_FILE", None)
+            with self.assertRaisesRegex(RuntimeError, "open failed"):
+                recorder.start()
+        self.assertIsNone(recorder.stream)
+        self.assertEqual(recorder.sample_rate, 48_000)
+        self.assertTrue(recorder.capture_rate_fallback)
 
     def test_finish_cleans_up_when_stop_fails(self):
         class BrokenStream:

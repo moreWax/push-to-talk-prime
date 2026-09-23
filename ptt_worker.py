@@ -87,6 +87,31 @@ class DemoAudioInputStream:
         self.stop()
 
 
+def select_capture_sample_rate(sd: Any, device: int | str | None, native_rate: int) -> tuple[int, bool]:
+    """Prefer model-native 16 kHz capture, with a device-native fallback."""
+    raw = os.getenv("PTT_CAPTURE_SAMPLE_RATE", "16000").strip().lower()
+    if raw in {"native", "default"}:
+        return native_rate, False
+    try:
+        requested = int(raw)
+    except ValueError as exc:
+        raise ValueError("PTT_CAPTURE_SAMPLE_RATE must be an integer or 'native'") from exc
+    if requested <= 0:
+        raise ValueError("PTT_CAPTURE_SAMPLE_RATE must be positive")
+    if requested == native_rate:
+        return native_rate, False
+    try:
+        sd.check_input_settings(
+            device=device,
+            channels=1,
+            dtype="float32",
+            samplerate=requested,
+        )
+    except Exception:
+        return native_rate, True
+    return requested, False
+
+
 class Recorder:
     def __init__(self, sd: Any, np: Any) -> None:
         self.sd = sd
@@ -95,6 +120,8 @@ class Recorder:
         self.frames: list[Any] = []
         self.lock = threading.Lock()
         self.sample_rate = 16_000
+        self.native_sample_rate = 16_000
+        self.capture_rate_fallback = False
         self.last_level_emit = 0.0
         self.live_queue: queue.Queue[Any | None] | None = None
 
@@ -109,9 +136,16 @@ class Recorder:
         if demo_audio:
             with wave.open(demo_audio, "rb") as source:
                 self.sample_rate = source.getframerate()
+            self.native_sample_rate = self.sample_rate
+            self.capture_rate_fallback = False
         else:
             info = self.sd.query_devices(device, "input")
-            self.sample_rate = int(info["default_samplerate"])
+            self.native_sample_rate = int(info["default_samplerate"])
+            self.sample_rate, self.capture_rate_fallback = select_capture_sample_rate(
+                self.sd,
+                device,
+                self.native_sample_rate,
+            )
         self.frames = []
         self.live_queue = live_queue
 
@@ -137,15 +171,40 @@ class Recorder:
 
         if demo_audio:
             self.stream = DemoAudioInputStream(demo_audio, callback, self.np)
-        else:
-            self.stream = self.sd.InputStream(
+            self.stream.start()
+            return
+
+        def open_stream(sample_rate: int) -> Any:
+            return self.sd.InputStream(
                 device=device,
                 channels=1,
-                samplerate=self.sample_rate,
+                samplerate=sample_rate,
                 dtype="float32",
                 callback=callback,
             )
-        self.stream.start()
+
+        def start_stream(sample_rate: int) -> Any:
+            stream = open_stream(sample_rate)
+            try:
+                stream.start()
+            except Exception:
+                stream.close()
+                raise
+            return stream
+
+        try:
+            self.stream = start_stream(self.sample_rate)
+        except Exception:
+            self.stream = None
+            if self.sample_rate == self.native_sample_rate:
+                raise
+            self.sample_rate = self.native_sample_rate
+            self.capture_rate_fallback = True
+            try:
+                self.stream = start_stream(self.sample_rate)
+            except Exception:
+                self.stream = None
+                raise
 
     def finish(self) -> tuple[Any, int]:
         if self.stream is None:
@@ -425,11 +484,26 @@ def main() -> int:
             selected_input = int(configured_input) if configured_input.isdigit() else configured_input
         errors: list[str] = []
         devices = []
+        native_input_rate: int | None = None
+        selected_capture_rate: int | None = None
+        capture_rate_fallback = False
         try:
             for index, item in enumerate(sd.query_devices()):
                 if item["max_input_channels"] > 0:
                     devices.append({"index": index, "name": item["name"], "sample_rate": item["default_samplerate"]})
-            sd.check_input_settings(device=selected_input, channels=1)
+            input_info = sd.query_devices(selected_input, "input")
+            native_input_rate = int(input_info["default_samplerate"])
+            selected_capture_rate, capture_rate_fallback = select_capture_sample_rate(
+                sd,
+                selected_input,
+                native_input_rate,
+            )
+            sd.check_input_settings(
+                device=selected_input,
+                channels=1,
+                dtype="float32",
+                samplerate=selected_capture_rate,
+            )
         except Exception as exc:
             errors.append(f"microphone: {type(exc).__name__}: {exc}")
 
@@ -458,6 +532,9 @@ def main() -> int:
             "device": requested,
             "configured_input": configured_input,
             "input_devices": devices,
+            "native_input_rate": native_input_rate,
+            "selected_capture_rate": selected_capture_rate,
+            "capture_rate_fallback": capture_rate_fallback,
             "packages": packages,
             "model_checked": "--doctor-model" in sys.argv,
             "model_loaded": model_loaded,
@@ -568,7 +645,14 @@ def main() -> int:
                         session_id,
                         is_current,
                     )
-                    emit({"id": request_id, "ok": True, "event": "recording"})
+                    emit({
+                        "id": request_id,
+                        "ok": True,
+                        "event": "recording",
+                        "sample_rate": recorder.sample_rate,
+                        "native_sample_rate": recorder.native_sample_rate,
+                        "capture_rate_fallback": recorder.capture_rate_fallback,
+                    })
                 elif command == "arm_release":
                     arm_release()
                     emit({"id": request_id, "ok": True, "event": "release_armed"})

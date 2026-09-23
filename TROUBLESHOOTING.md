@@ -25,6 +25,7 @@ The terminal may not report key release. The worker then uses its repeat-gap fal
 
 - Grant microphone permission to the terminal application.
 - Run `npm run doctor` and choose a listed `PTT_INPUT_DEVICE` index or name.
+- The worker prefers 16 kHz capture and falls back automatically. If a device or driver behaves poorly during rate negotiation, set `PTT_CAPTURE_SAMPLE_RATE=native`.
 - Linux: install PortAudio and verify PipeWire/PulseAudio exposes an input.
 
 ```bash

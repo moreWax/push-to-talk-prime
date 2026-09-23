@@ -196,6 +196,7 @@ Runtime environment variables:
 |---|---:|---|
 | `PTT_DEVICE` | `auto` | Initial device before settings exist: `auto`, `cpu`, `gpu`, `mps`, or `cuda` |
 | `PTT_INPUT_DEVICE` | system default | Microphone index or name from `npm run doctor` |
+| `PTT_CAPTURE_SAMPLE_RATE` | `16000` | Preferred microphone rate; unsupported devices automatically fall back. Use `native` to disable the preference. |
 | `PTT_MODE` | `hold` | Initial mode before a settings file exists |
 | `PTT_ENABLED` | `1` | Set `0` to start disabled before settings exist |
 | `PTT_AUTO_SUBMIT` | `0` | Initial hold auto-submit setting |
