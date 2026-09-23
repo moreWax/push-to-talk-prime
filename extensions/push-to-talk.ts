@@ -16,6 +16,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const BURST_GAP_MS = 120;
 const WARMING_EVENT_COUNT = 2;
 const COMMIT_EVENT_COUNT = 5;
+const HOLD_COMMIT_MS = 350;
 const RELEASE_GAP_MS = 200;
 const FIRST_RELEASE_FALLBACK_MS = 2000;
 const TAP_SILENCE_MS = 15_000;
@@ -102,7 +103,7 @@ function workerEnvironment(preset: VoicePreset, device: VoiceDevice): NodeJS.Pro
     "PTT_INPUT_DEVICE", "PTT_STREAM_CHUNK_MS", "PTT_STREAM_RIGHT_MS",
     "PTT_STREAM_LEFT_MS",
     "PTT_ALLOW_TELEMETRY", "PTT_TRAILING_SILENCE_MS", "PTT_INTERIM_STABILITY",
-    "PTT_SKIP_MODEL_WARMUP", "PTT_DEMO_AUDIO_FILE", "PTT_DEMO_TIMELINE",
+    "PTT_SKIP_MODEL_WARMUP", "PTT_DEMO_AUDIO_FILE",
   ];
   const environment: NodeJS.ProcessEnv = { PYTHONUNBUFFERED: "1", PTT_CLIENT_PID: String(process.pid) };
   for (const key of keys) {
@@ -585,6 +586,8 @@ export class ClientEditorVoiceBridge {
   private burstCount = 0;
   private leakedSpaces = 0;
   private lastSpaceAt = 0;
+  private holdStartedAt = 0;
+  private readonly now: () => number;
   private recording = false;
   private processing = false;
   private captureGeneration = 0;
@@ -596,8 +599,6 @@ export class ClientEditorVoiceBridge {
   private meterIndex = 0;
   private smoothMeterLevel = 0;
   private indicatorPlaceholder?: string;
-  private holdPressedAt = 0;
-  private captureStartedAt = 0;
   private editor?: CustomEditor;
   private originalInput?: (data: string) => void;
   private anchor?: { original: string; expected: string; prefix: string; suffix: string };
@@ -606,7 +607,9 @@ export class ClientEditorVoiceBridge {
     settings?: VoiceSettings;
     workerFactory?: () => VoiceWorker;
     watchSettings?: boolean;
+    now?: () => number;
   } = {}) {
+    this.now = options.now ?? Date.now;
     this.settings = options.settings ?? loadVoiceSettings();
     this.workerFactory = options.workerFactory;
     this.settingsMtimeMs = this.readSettingsMtime();
@@ -662,16 +665,9 @@ export class ClientEditorVoiceBridge {
     this.stopWorker();
   }
 
-  private demoTimeline(text: string, phase = "LIVE"): string {
-    if (process.env.PTT_DEMO_TIMELINE !== "1") return text;
-    const origin = this.holdPressedAt || this.captureStartedAt || Date.now();
-    const elapsed = Math.max(0, Date.now() - origin);
-    return `${phase} ${String(elapsed).padStart(4, "0")}ms │ ${text}`;
-  }
-
   private liveMarker(text = this.targetInterim): string {
     const indicator = this.indicatorPlaceholder ?? AUDIO_LEVEL_GLYPHS[0]!;
-    return this.demoTimeline(text ? `${text} ${indicator}` : indicator, text ? "LIVE" : "HOLD");
+    return text ? `${text}${indicator}` : indicator;
   }
 
   decorateRender(editor: CustomEditor, lines: string[]): string[] {
@@ -685,7 +681,7 @@ export class ClientEditorVoiceBridge {
   }
 
   private handleSpace(data: string, original: (data: string) => void): void {
-    const now = Date.now();
+    const now = this.now();
     if (!this.recording && this.lastSpaceAt > 0 && now - this.lastSpaceAt > BURST_GAP_MS) this.resetCandidate();
     this.lastSpaceAt = now;
 
@@ -695,9 +691,12 @@ export class ClientEditorVoiceBridge {
     }
 
     const previous = this.burstCount;
-    if (previous === 0) this.holdPressedAt = Date.now();
+    if (previous === 0) {
+      this.holdStartedAt = now;
+      debugEvent({ event: "editor_bridge_press" });
+    }
     this.burstCount += 1;
-    if (this.burstCount >= COMMIT_EVENT_COUNT) {
+    if (this.burstCount >= COMMIT_EVENT_COUNT && now - this.holdStartedAt >= HOLD_COMMIT_MS) {
       for (let index = 0; index < this.leakedSpaces; index++) original("\x7f");
       this.leakedSpaces = 0;
       this.burstCount = 0;
@@ -709,7 +708,6 @@ export class ClientEditorVoiceBridge {
       this.targetInterim = "";
       this.meterIndex = 0;
       this.smoothMeterLevel = 0;
-      this.captureStartedAt = Date.now();
       debugEvent({ event: "editor_bridge_commit" });
       this.replaceMarker(this.liveMarker(""));
       this.captureStarted = false;
@@ -759,10 +757,9 @@ export class ClientEditorVoiceBridge {
     if (generation !== this.captureGeneration) return;
     const anchor = this.anchor;
     if (!anchor) return this.clearCaptureState();
-    const finalText = this.demoTimeline(text, "FINAL");
-    const leading = anchor.prefix.length > 0 && !/\s$/.test(anchor.prefix) && finalText ? " " : "";
-    const trailing = anchor.suffix.length > 0 && !/^\s/.test(anchor.suffix) && finalText ? " " : "";
-    if (!this.replaceMarker(`${leading}${finalText}${trailing}`)) {
+    const leading = anchor.prefix.length > 0 && !/\s$/.test(anchor.prefix) && text ? " " : "";
+    const trailing = anchor.suffix.length > 0 && !/^\s/.test(anchor.suffix) && text ? " " : "";
+    if (!this.replaceMarker(`${leading}${text}${trailing}`)) {
       this.clearCaptureState();
       return;
     }
@@ -816,8 +813,7 @@ export class ClientEditorVoiceBridge {
     this.burstCount = 0;
     this.leakedSpaces = 0;
     this.lastSpaceAt = 0;
-    this.holdPressedAt = 0;
-    this.captureStartedAt = 0;
+    this.holdStartedAt = 0;
     if (clearAnchor) this.anchor = undefined;
   }
 
@@ -829,9 +825,8 @@ export class ClientEditorVoiceBridge {
     if (!this.recording || this.processing) return;
     const generation = this.captureGeneration;
     this.processing = true;
-    if (process.env.PTT_DEMO_TIMELINE === "1") {
-      this.replaceMarker(this.demoTimeline(this.targetInterim || "finalizing", "RELEASE"));
-    } else if (this.hasInterim && this.targetInterim) {
+    debugEvent({ event: "editor_bridge_release" });
+    if (this.hasInterim && this.targetInterim) {
       this.replaceMarker(this.targetInterim);
     } else {
       this.replaceMarker("");
@@ -857,7 +852,7 @@ export class ClientEditorVoiceBridge {
     this.burstCount = 0;
     this.leakedSpaces = 0;
     this.lastSpaceAt = 0;
-    this.holdPressedAt = 0;
+    this.holdStartedAt = 0;
   }
 
   private observeVoiceCommand(data: string): void {

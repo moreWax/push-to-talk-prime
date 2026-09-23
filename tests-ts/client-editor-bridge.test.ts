@@ -57,9 +57,13 @@ const tick = () => new Promise<void>((resolve) => setImmediate(resolve));
 
 function setup(text = "", settings = holdSettings) {
   const worker = new FakeWorker();
-  const bridge = new ClientEditorVoiceBridge({ settings, workerFactory: () => worker, watchSettings: false });
+  let now = 0;
+  const bridge = new ClientEditorVoiceBridge({ settings, workerFactory: () => worker, watchSettings: false, now: () => now });
   const editor = new FakeEditor(text);
-  const send = (data: string) => bridge.handleInput(editor as unknown as CustomEditor, data, (value) => editor.input(value));
+  const send = (data: string) => {
+    now += 100;
+    bridge.handleInput(editor as unknown as CustomEditor, data, (value) => editor.input(value));
+  };
   return { worker, bridge, editor, send };
 }
 
@@ -69,6 +73,22 @@ test("normal Space typing is preserved", () => {
   send(releaseSpace);
   send("x");
   assert.equal(editor.text, " x");
+  bridge.close();
+});
+
+test("hold waits for Claude-style confirmation duration before recording", () => {
+  const worker = new FakeWorker();
+  let now = 0;
+  const bridge = new ClientEditorVoiceBridge({ settings: holdSettings, workerFactory: () => worker, watchSettings: false, now: () => now });
+  const editor = new FakeEditor();
+  const sendSpace = () => {
+    bridge.handleInput(editor as unknown as CustomEditor, " ", (value) => editor.input(value));
+    now += 40;
+  };
+  for (let i = 0; i < 9; i++) sendSpace();
+  assert.equal(worker.commands.includes("start"), false);
+  sendSpace();
+  assert.equal(editor.text, "▁");
   bridge.close();
 });
 
@@ -90,11 +110,11 @@ test("meter remains beside interim text without storing ANSI", async () => {
   for (let i = 0; i < 5; i++) send(" ");
   await tick();
   worker.onInterim?.("hello wor");
-  assert.equal(editor.text, "hello wor ▁");
+  assert.equal(editor.text, "hello wor▁");
   assert.equal(editor.text.includes("\x1b"), false);
   const renders = editor.renders;
   worker.onLevel?.(0.9);
-  assert.equal(editor.text, "hello wor ▁");
+  assert.equal(editor.text, "hello wor▁");
   assert.equal(editor.renders, renders + 1);
   worker.onLevel?.(0.9);
   assert.ok(editor.renders >= renders + 1);
