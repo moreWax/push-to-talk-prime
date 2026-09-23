@@ -3,6 +3,7 @@ import test from "node:test";
 import type { CustomEditor } from "@earendil-works/pi-coding-agent";
 import {
   ClientEditorVoiceBridge,
+  audioIndicatorRgb,
   decorateAudioIndicator,
   type VoiceSettings,
   type VoiceWorker,
@@ -107,17 +108,25 @@ test("meter remains beside interim text without storing ANSI", async () => {
 
 test("render decoration colors one owned placeholder without changing width", () => {
   const input = ["before ▁ and owned ▂ after"];
-  const output = decorateAudioIndicator(input, "▂", 6);
+  const output = decorateAudioIndicator(input, "▂", 6, [224, 82, 82]);
   assert.equal(input[0], "before ▁ and owned ▂ after");
-  assert.match(output[0]!, /before ▁ and owned \x1b\[38;2;250;179;135m▇ after\x1b\[39m/);
+  assert.match(output[0]!, /before ▁ and owned \x1b\[38;2;224;82;82m▆ after\x1b\[39m/);
   assert.equal(output[0]!.replace(/\x1b\[[0-9;]*m/g, "").length, input[0]!.length);
 });
 
 test("render decoration suppresses Prime's adjacent software cursor", () => {
   const cursor = "\x1b_pi:c\x07\x1b[7m \x1b[27m";
-  const output = decorateAudioIndicator([`prompt ▁${cursor} rest`], "▁", 4)[0]!;
+  const output = decorateAudioIndicator([`prompt ▁${cursor} rest`], "▁", 4, [82, 224, 224])[0]!;
   assert.equal(output.includes(cursor), false);
-  assert.match(output, /prompt \x1b\[38;2;166;227;161m▅  rest\x1b\[39m/);
+  assert.match(output, /prompt \x1b\[38;2;82;224;224m▄  rest\x1b\[39m/);
+});
+
+test("indicator color follows Claude's gray threshold and 90-degree hue rotation", () => {
+  assert.deepEqual(audioIndicatorRgb(0.149, 9000), [128, 128, 128]);
+  assert.deepEqual(audioIndicatorRgb(0.15, 0), [224, 82, 82]);
+  assert.deepEqual(audioIndicatorRgb(0.15, 1000), [153, 224, 82]);
+  assert.deepEqual(audioIndicatorRgb(0.15, 2000), [82, 224, 224]);
+  assert.deepEqual(audioIndicatorRgb(0.15, 3000), [153, 82, 224]);
 });
 
 test("capture chooses a placeholder absent from existing prompt text", () => {

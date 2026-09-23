@@ -22,41 +22,53 @@ const TAP_SILENCE_MS = 15_000;
 const TAP_MAX_MS = 120_000;
 const DOUBLE_TAP_MS = 300;
 const DOUBLE_TAP_DISAMBIGUATE_MS = 120;
-const AUDIO_LEVEL_GLYPHS = [..."▁▂▃▄▅▆▇█"];
+const AUDIO_LEVEL_GLYPHS = [..." ▁▂▃▄▅▆▇█"];
 const AUDIO_PLACEHOLDERS = [..."▁▂▃▄▅▆▇█◼◆●■"];
-// Distinct level bands stay legible at terminal-cell size and across themes.
-const AUDIO_LEVEL_COLORS: [number, number, number][] = [
-  [88, 91, 112],   // quiet: gray
-  [180, 190, 254], // lavender
-  [137, 180, 250], // blue
-  [148, 226, 213], // teal
-  [166, 227, 161], // green
-  [249, 226, 175], // yellow
-  [250, 179, 135], // peach
-  [243, 139, 168], // peak: red
-];
+const AUDIO_LEVEL_SMOOTHING = 0.7;
+const AUDIO_LEVEL_SCALE = 1.8;
+const AUDIO_SILENCE_THRESHOLD = 0.15;
+const AUDIO_HUE_DEGREES_PER_SECOND = 90;
+
+export function audioIndicatorRgb(rawLevel: number, elapsedMs: number): [number, number, number] {
+  if (rawLevel < AUDIO_SILENCE_THRESHOLD) return [128, 128, 128];
+  const hue = ((elapsedMs / 1000) * AUDIO_HUE_DEGREES_PER_SECOND) % 360;
+  const chroma = (1 - Math.abs(2 * 0.6 - 1)) * 0.7;
+  const intermediate = chroma * (1 - Math.abs((hue / 60) % 2 - 1));
+  const offset = 0.6 - chroma / 2;
+  let red = 0;
+  let green = 0;
+  let blue = 0;
+  if (hue < 60) [red, green] = [chroma, intermediate];
+  else if (hue < 120) [red, green] = [intermediate, chroma];
+  else if (hue < 180) [green, blue] = [chroma, intermediate];
+  else if (hue < 240) [green, blue] = [intermediate, chroma];
+  else if (hue < 300) [red, blue] = [intermediate, chroma];
+  else [red, blue] = [chroma, intermediate];
+  return [red, green, blue].map((component) => Math.round((component + offset) * 255)) as [number, number, number];
+}
 
 export function decorateAudioIndicator(
   lines: string[],
   placeholder: string | undefined,
   levelIndex: number,
+  color: [number, number, number] = [128, 128, 128],
 ): string[] {
   if (!placeholder) return lines;
-  const glyph = AUDIO_LEVEL_GLYPHS[Math.max(0, Math.min(AUDIO_LEVEL_GLYPHS.length - 1, levelIndex))]!;
-  const [red, green, blue] = AUDIO_LEVEL_COLORS[Math.max(0, Math.min(AUDIO_LEVEL_COLORS.length - 1, levelIndex))]!;
+  const glyph = AUDIO_LEVEL_GLYPHS[Math.max(1, Math.min(AUDIO_LEVEL_GLYPHS.length - 1, levelIndex))]!;
+  const [red, green, blue] = color;
   let pending = true;
   return lines.map((line) => {
     if (!pending || !line.includes(placeholder)) return line;
     pending = false;
-    const color = `\x1b[38;2;${red};${green};${blue}m`;
+    const foreground = `\x1b[38;2;${red};${green};${blue}m`;
     const softwareCursor = "\x1b_pi:c\x07\x1b[7m \x1b[27m";
     const ownedCursor = `${placeholder}${softwareCursor}`;
     if (line.includes(ownedCursor)) {
       // Keep the cell count stable, but replace Prime's adjacent inverse-video
       // cursor with an ordinary blank while the waveform owns the input edge.
-      return `${line.replace(ownedCursor, `${color}${glyph} `)}\x1b[39m`;
+      return `${line.replace(ownedCursor, `${foreground}${glyph} `)}\x1b[39m`;
     }
-    return `${line.replace(placeholder, `${color}${glyph}`)}\x1b[39m`;
+    return `${line.replace(placeholder, `${foreground}${glyph}`)}\x1b[39m`;
   });
 }
 
@@ -599,8 +611,10 @@ export class ClientEditorVoiceBridge {
   private hasInterim = false;
   private targetInterim = "";
   private marker = "";
-  private meterIndex = 0;
+  private meterIndex = 1;
   private smoothMeterLevel = 0;
+  private rawMeterLevel = 0;
+  private meterAnimationStartedAt = 0;
   private indicatorPlaceholder?: string;
   private editor?: CustomEditor;
   private originalInput?: (data: string) => void;
@@ -667,13 +681,19 @@ export class ClientEditorVoiceBridge {
   }
 
   private liveMarker(text = this.targetInterim): string {
-    const indicator = this.indicatorPlaceholder ?? AUDIO_LEVEL_GLYPHS[0]!;
+    const indicator = this.indicatorPlaceholder ?? AUDIO_LEVEL_GLYPHS[1]!;
     return text ? `${text}${indicator}` : indicator;
   }
 
   decorateRender(editor: CustomEditor, lines: string[]): string[] {
     if (editor !== this.editor || !this.recording || this.processing) return lines;
-    return decorateAudioIndicator(lines, this.indicatorPlaceholder, this.meterIndex);
+    const elapsed = Math.max(0, Date.now() - this.meterAnimationStartedAt);
+    return decorateAudioIndicator(
+      lines,
+      this.indicatorPlaceholder,
+      this.meterIndex,
+      audioIndicatorRgb(this.rawMeterLevel, elapsed),
+    );
   }
 
   private requestEditorRender(): void {
@@ -704,8 +724,10 @@ export class ClientEditorVoiceBridge {
       this.processing = false;
       this.hasInterim = false;
       this.targetInterim = "";
-      this.meterIndex = 0;
+      this.meterIndex = 1;
       this.smoothMeterLevel = 0;
+      this.rawMeterLevel = 0;
+      this.meterAnimationStartedAt = Date.now();
       debugEvent({ event: "editor_bridge_commit" });
       this.replaceMarker(this.liveMarker(""));
       this.captureStarted = false;
@@ -808,6 +830,8 @@ export class ClientEditorVoiceBridge {
     this.marker = "";
     this.indicatorPlaceholder = undefined;
     this.smoothMeterLevel = 0;
+    this.rawMeterLevel = 0;
+    this.meterAnimationStartedAt = 0;
     this.burstCount = 0;
     this.leakedSpaces = 0;
     this.lastSpaceAt = 0;
@@ -928,10 +952,14 @@ export class ClientEditorVoiceBridge {
     };
     worker.onLevel = (level) => {
       if (!this.recording || this.processing) return;
-      this.smoothMeterLevel = this.smoothMeterLevel * 0.6 + Math.min(level, 1) * 0.4;
-      const next = Math.max(0, Math.min(AUDIO_LEVEL_GLYPHS.length - 1, Math.round(this.smoothMeterLevel * (AUDIO_LEVEL_GLYPHS.length - 1))));
-      if (next === this.meterIndex) return;
-      this.meterIndex = next;
+      this.rawMeterLevel = level;
+      const scaled = Math.min(level * AUDIO_LEVEL_SCALE, 1);
+      this.smoothMeterLevel = this.smoothMeterLevel * AUDIO_LEVEL_SMOOTHING + scaled * (1 - AUDIO_LEVEL_SMOOTHING);
+      this.meterIndex = Math.max(1, Math.min(
+        AUDIO_LEVEL_GLYPHS.length - 1,
+        Math.round(this.smoothMeterLevel * (AUDIO_LEVEL_GLYPHS.length - 1)),
+      ));
+      // Claude redraws every 50 ms so hue continues moving even when height does not.
       this.requestEditorRender();
     };
     void worker.warm().catch(() => {});
