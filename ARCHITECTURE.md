@@ -2,7 +2,7 @@
 
 ## Purpose and boundaries
 
-`push-to-talk-prime` adds local speech-to-text to the Prime Agent and compatible pi editors. A hold gesture starts microphone capture, raw interim text replaces an in-editor meter, the locally stable prefix remains normal while the speculative suffix is dimmed, and the final transcript is inserted at the cursor that began the capture. Audio and transcript data stay local. The only normal network use is the initial model download.
+`push-to-talk-prime` adds local speech-to-text to the Prime Agent and compatible pi editors. A hold gesture starts microphone capture, stable interim text replaces an in-editor meter, and the final transcript is inserted at the cursor that began the capture. The opt-in `speculative` preset can additionally show an early dim draft and raw suffix. Audio and transcript data stay local. The only normal network use is the initial model download.
 
 The implementation has two integration paths:
 
@@ -154,9 +154,9 @@ sequenceDiagram
         B-->>C: level
         P-->>W: cumulative provisional snapshot
         W->>W: stabilize across snapshots
-        W-->>B: raw text + stable prefix
-        B-->>C: raw text + stable prefix
-        C-->>E: render stable prefix + dim speculative suffix
+        W-->>B: stable text (or speculative raw + stable prefix)
+        B-->>C: route current preset payload
+        C-->>E: render stable text; dim speculative suffix only when opted in
     end
     E->>C: stop on release or timeout
     C->>B: {id, command:stop}

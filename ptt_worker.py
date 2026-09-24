@@ -474,13 +474,26 @@ def transcribe_live(
     )
     required = max(1, int(os.getenv("PTT_INTERIM_STABILITY", "2")))
     stabilizer = InterimTranscriptStabilizer(required)
+    expose_raw = os.getenv("PTT_PRESET") == "speculative"
     last_raw = ""
     for update in stream:
         if update.get("provisional") is False:
             continue
         raw = normalize_text(str(update.get("text", "")))
-        stabilizer.push(raw)
-        if not raw or raw == last_raw or not is_current(session_id):
+        stable_update = stabilizer.push(raw)
+        if not is_current(session_id):
+            continue
+        if not expose_raw:
+            if stable_update is None:
+                continue
+            emit({
+                "event": "interim",
+                "text": stable_update,
+                "stable_text": stable_update,
+                "provisional": True,
+            })
+            continue
+        if not raw or raw == last_raw:
             continue
         last_raw = raw
         stable = stabilizer.visible if raw.startswith(stabilizer.visible) else ""

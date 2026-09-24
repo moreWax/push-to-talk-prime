@@ -187,13 +187,43 @@ class WorkerUtilitiesTest(unittest.TestCase):
         emitted = []
         with patch("ptt_worker.emit", emitted.append), patch.dict(
             os.environ,
-            {"PTT_INTERIM_STABILITY": "2", "PTT_EARLY_DRAFT_MS": "0"},
+            {"PTT_INTERIM_STABILITY": "2", "PTT_EARLY_DRAFT_MS": "0", "PTT_PRESET": "speculative"},
         ):
             result = transcribe_live(future, chunks, 16_000, 1, lambda _session: True)
         self.assertEqual(result["text"], "Refactor the code.")
         self.assertEqual(
             [(item["text"], item["stable_text"]) for item in emitted],
             [("Ref", ""), ("Refactor", ""), ("Refactor the", "Refactor")],
+        )
+
+    def test_balanced_stream_emits_only_stable_text(self):
+        class FakeStream:
+            def __iter__(self):
+                return iter([
+                    {"text": "Ref", "provisional": True},
+                    {"text": "Refactor", "provisional": True},
+                    {"text": "Refactor the", "provisional": True},
+                ])
+            def result(self):
+                return {"text": "Refactor the code."}
+
+        class FakeSpeech:
+            def transcribe(self, **_kwargs):
+                return FakeStream()
+
+        future = Future()
+        future.set_result((None, FakeSpeech()))
+        chunks = queue.Queue()
+        chunks.put(None)
+        emitted = []
+        with patch("ptt_worker.emit", emitted.append), patch.dict(
+            os.environ,
+            {"PTT_INTERIM_STABILITY": "2", "PTT_EARLY_DRAFT_MS": "0", "PTT_PRESET": "balanced"},
+        ):
+            transcribe_live(future, chunks, 16_000, 1, lambda _session: True)
+        self.assertEqual(
+            [(item["text"], item["stable_text"]) for item in emitted],
+            [("Refactor", "Refactor")],
         )
 
     def test_speculative_stream_emits_one_draft_before_authoritative_text(self):
@@ -231,7 +261,7 @@ class WorkerUtilitiesTest(unittest.TestCase):
         emitted = []
         with patch("ptt_worker.emit", emitted.append), patch.dict(
             os.environ,
-            {"PTT_INTERIM_STABILITY": "2", "PTT_EARLY_DRAFT_MS": "480"},
+            {"PTT_INTERIM_STABILITY": "2", "PTT_EARLY_DRAFT_MS": "480", "PTT_PRESET": "speculative"},
         ):
             result = transcribe_live(future, chunks, 1_000, 1, lambda _session: True)
         self.assertEqual(result["text"], "Refactor the code.")
