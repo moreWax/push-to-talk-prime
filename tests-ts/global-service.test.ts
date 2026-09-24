@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, readFileSync, rmSync, watch } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import net from "node:net";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
@@ -9,17 +9,20 @@ import test from "node:test";
 type Message = Record<string, any>;
 
 async function waitForState(path: string): Promise<any> {
-  try { return JSON.parse(readFileSync(path, "utf8")); } catch {}
+  const deadline = Date.now() + 10_000;
   return new Promise((resolveState, reject) => {
-    const timer = setTimeout(() => { watcher.close(); reject(new Error("state timeout")); }, 10_000);
-    const watcher = watch(join(path, ".."), () => {
+    const check = () => {
       try {
-        const state = JSON.parse(readFileSync(path, "utf8"));
-        clearTimeout(timer);
-        watcher.close();
-        resolveState(state);
+        resolveState(JSON.parse(readFileSync(path, "utf8")));
+        return;
       } catch {}
-    });
+      if (Date.now() >= deadline) {
+        reject(new Error("state timeout"));
+        return;
+      }
+      setTimeout(check, 25).unref();
+    };
+    check();
   });
 }
 

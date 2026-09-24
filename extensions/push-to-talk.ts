@@ -640,6 +640,7 @@ export class ClientEditorVoiceBridge {
     settings?: VoiceSettings;
     workerFactory?: () => VoiceWorker;
     watchSettings?: boolean;
+    watchFactory?: typeof watch;
   } = {}) {
     this.settings = options.settings ?? loadVoiceSettings();
     this.workerFactory = options.workerFactory;
@@ -647,12 +648,26 @@ export class ClientEditorVoiceBridge {
     this.applySettings(this.settings);
     if (options.watchSettings !== false) {
       try {
-        this.settingsWatcher = watch(dirname(SETTINGS_PATH), (_event, filename) => {
+        const watcher = (options.watchFactory ?? watch)(dirname(SETTINGS_PATH), (_event, filename) => {
           if (filename && filename.toString() !== basename(SETTINGS_PATH)) return;
           this.refreshSettingsFromDisk(true);
         });
-        this.settingsWatcher.unref();
-      } catch {}
+        watcher.on("error", (error) => {
+          debugEvent({
+            event: "settings_watch_error",
+            error: error instanceof Error ? error.message : String(error),
+          });
+          try { watcher.close(); } catch {}
+          if (this.settingsWatcher === watcher) this.settingsWatcher = undefined;
+        });
+        this.settingsWatcher = watcher;
+        watcher.unref();
+      } catch (error) {
+        debugEvent({
+          event: "settings_watch_start_error",
+          error: error instanceof Error ? error.message : String(error),
+        });
+      }
     }
   }
 

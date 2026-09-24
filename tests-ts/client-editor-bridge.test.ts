@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { EventEmitter } from "node:events";
 import test from "node:test";
 import type { CustomEditor } from "@earendil-works/pi-coding-agent";
 import {
@@ -64,6 +65,34 @@ function setup(text = "", settings = holdSettings) {
   const send = (data: string) => bridge.handleInput(editor as unknown as CustomEditor, data, (value) => editor.input(value));
   return { worker, bridge, editor, send };
 }
+
+test("asynchronous settings watcher errors are handled and closed", () => {
+  class FakeWatcher extends EventEmitter {
+    closed = false;
+    unref() { return this; }
+    close() { this.closed = true; }
+  }
+  const watcher = new FakeWatcher();
+  const bridge = new ClientEditorVoiceBridge({
+    settings: holdSettings,
+    workerFactory: () => new FakeWorker(),
+    watchFactory: (() => watcher) as any,
+  });
+  assert.doesNotThrow(() => watcher.emit("error", Object.assign(new Error("too many files"), { code: "EMFILE" })));
+  assert.equal(watcher.closed, true);
+  bridge.close();
+});
+
+test("synchronous settings watcher failures do not escape construction", () => {
+  assert.doesNotThrow(() => {
+    const bridge = new ClientEditorVoiceBridge({
+      settings: holdSettings,
+      workerFactory: () => new FakeWorker(),
+      watchFactory: (() => { throw Object.assign(new Error("too many files"), { code: "EMFILE" }); }) as any,
+    });
+    bridge.close();
+  });
+});
 
 test("normal Space typing is preserved", () => {
   const { bridge, editor, send } = setup();
