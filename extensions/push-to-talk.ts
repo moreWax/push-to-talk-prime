@@ -72,6 +72,19 @@ export function decorateAudioIndicator(
   });
 }
 
+export function decorateSpeculativeSuffix(lines: string[], suffix: string): string[] {
+  if (!suffix) return lines;
+  for (let index = lines.length - 1; index >= 0; index--) {
+    const line = lines[index]!;
+    const offset = line.indexOf(suffix);
+    if (offset < 0) continue;
+    const result = [...lines];
+    result[index] = `${line.slice(0, offset)}\x1b[2m${suffix}\x1b[22m${line.slice(offset + suffix.length)}`;
+    return result;
+  }
+  return lines;
+}
+
 export type VoiceMode = "hold" | "tap";
 export type VoicePreset = "fast" | "balanced" | "realtime" | "smooth";
 export type VoiceDevice = "auto" | "cpu" | "gpu" | "mps" | "cuda";
@@ -177,6 +190,7 @@ type Reply = {
   ok?: boolean;
   event?: string;
   text?: string;
+  stable_text?: string;
   error?: string;
   level?: number;
   provisional?: boolean;
@@ -186,7 +200,7 @@ type WorkerCommand = "start" | "stop" | "cancel" | "devices" | "shutdown" | "arm
 
 export interface VoiceWorker {
   onLevel?: (level: number) => void;
-  onInterim?: (text: string) => void;
+  onInterim?: (text: string, stableText: string) => void;
   onReleaseTimeout?: () => void;
   onFatalError?: (error: Error) => void;
   warm(): Promise<void>;
@@ -213,7 +227,7 @@ class WorkerClient implements VoiceWorker {
   private stderrTail = "";
   private closed = false;
   onLevel?: (level: number) => void;
-  onInterim?: (text: string) => void;
+  onInterim?: (text: string, stableText: string) => void;
   onReleaseTimeout?: () => void;
   onFatalError?: (error: Error) => void;
 
@@ -265,7 +279,7 @@ class WorkerClient implements VoiceWorker {
             this.onLevel?.(Math.max(0, Math.min(1, message.level)));
           }
           if (message.event === "interim" && typeof message.text === "string") {
-            this.onInterim?.(message.text);
+            this.onInterim?.(message.text, message.stable_text ?? "");
           }
           if (message.event === "release_timeout") this.onReleaseTimeout?.();
           if (message.event === "model_error") {
@@ -382,7 +396,7 @@ export class SharedWorkerClient implements VoiceWorker {
     timer: ReturnType<typeof setTimeout>;
   }>();
   onLevel?: (level: number) => void;
-  onInterim?: (text: string) => void;
+  onInterim?: (text: string, stableText: string) => void;
   onReleaseTimeout?: () => void;
   onFatalError?: (error: Error) => void;
 
@@ -496,7 +510,7 @@ export class SharedWorkerClient implements VoiceWorker {
             resolve();
           }
           if (message.event === "level" && typeof message.level === "number") this.onLevel?.(Math.max(0, Math.min(1, message.level)));
-          if (message.event === "interim" && typeof message.text === "string") this.onInterim?.(message.text);
+          if (message.event === "interim" && typeof message.text === "string") this.onInterim?.(message.text, message.stable_text ?? "");
           if (message.event === "release_timeout") this.onReleaseTimeout?.();
           if (message.event === "model_ready") this.markModelReady();
           if (message.event === "model_error" || message.event === "worker_exit") {
@@ -610,6 +624,8 @@ export class ClientEditorVoiceBridge {
   private captureStart?: Promise<void>;
   private hasInterim = false;
   private targetInterim = "";
+  private stableInterim = "";
+  private hasStableInterim = false;
   private marker = "";
   private meterIndex = 1;
   private smoothMeterLevel = 0;
@@ -688,12 +704,14 @@ export class ClientEditorVoiceBridge {
   decorateRender(editor: CustomEditor, lines: string[]): string[] {
     if (editor !== this.editor || !this.recording || this.processing) return lines;
     const elapsed = Math.max(0, Date.now() - this.meterAnimationStartedAt);
-    return decorateAudioIndicator(
+    const withIndicator = decorateAudioIndicator(
       lines,
       this.indicatorPlaceholder,
       this.meterIndex,
       audioIndicatorRgb(this.rawMeterLevel, elapsed),
     );
+    const stable = this.targetInterim.startsWith(this.stableInterim) ? this.stableInterim : "";
+    return decorateSpeculativeSuffix(withIndicator, this.targetInterim.slice(stable.length));
   }
 
   private requestEditorRender(): void {
@@ -724,6 +742,8 @@ export class ClientEditorVoiceBridge {
       this.processing = false;
       this.hasInterim = false;
       this.targetInterim = "";
+      this.stableInterim = "";
+      this.hasStableInterim = false;
       this.meterIndex = 1;
       this.smoothMeterLevel = 0;
       this.rawMeterLevel = 0;
@@ -827,6 +847,8 @@ export class ClientEditorVoiceBridge {
     this.captureStart = undefined;
     this.hasInterim = false;
     this.targetInterim = "";
+    this.stableInterim = "";
+    this.hasStableInterim = false;
     this.marker = "";
     this.indicatorPlaceholder = undefined;
     this.smoothMeterLevel = 0;
@@ -943,11 +965,18 @@ export class ClientEditorVoiceBridge {
     this.worker = worker;
     worker.onReleaseTimeout = () => this.releaseHold();
     worker.onFatalError = () => this.failRecording(this.captureGeneration);
-    worker.onInterim = (text) => {
+    worker.onInterim = (text, stableText) => {
       const value = text.trim();
+      const stable = stableText.trim();
       if (!this.recording || !value) return;
+      if (!this.hasInterim) debugEvent({ event: "editor_bridge_first_raw_interim" });
+      if (!this.hasStableInterim && stable) {
+        this.hasStableInterim = true;
+        debugEvent({ event: "editor_bridge_first_stable_interim" });
+      }
       this.hasInterim = true;
       this.targetInterim = value;
+      this.stableInterim = value.startsWith(stable) ? stable : "";
       this.replaceMarker(this.liveMarker(value));
     };
     worker.onLevel = (level) => {
@@ -1019,8 +1048,8 @@ class RecordingController {
       this.targetLevel = level;
       if (this.captureMode === "tap" && this.state === "recording" && level > 0.03) this.armTapSilence();
     };
-    worker.onInterim = (text) => {
-      this.insertInterim?.(text);
+    worker.onInterim = (text, stableText) => {
+      this.insertInterim?.(stableText || text);
       if (this.captureMode === "tap" && this.state === "recording") this.armTapSilence();
     };
   }

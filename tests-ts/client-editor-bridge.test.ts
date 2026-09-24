@@ -5,6 +5,7 @@ import {
   ClientEditorVoiceBridge,
   audioIndicatorRgb,
   decorateAudioIndicator,
+  decorateSpeculativeSuffix,
   type VoiceSettings,
   type VoiceWorker,
 } from "../extensions/push-to-talk.ts";
@@ -90,7 +91,7 @@ test("meter remains beside interim text without storing ANSI", async () => {
   worker.stopResult = Promise.resolve({ ok: true, event: "transcript", text: "hello world" });
   for (let i = 0; i < 5; i++) send(" ");
   await tick();
-  worker.onInterim?.("hello wor");
+  worker.onInterim?.("hello wor", "hello");
   assert.equal(editor.text, "hello wor▁");
   assert.equal(editor.text.includes("\x1b"), false);
   const renders = editor.renders;
@@ -127,6 +128,14 @@ test("indicator color follows Claude's gray threshold and 90-degree hue rotation
   assert.deepEqual(audioIndicatorRgb(0.15, 1000), [153, 224, 82]);
   assert.deepEqual(audioIndicatorRgb(0.15, 2000), [82, 224, 224]);
   assert.deepEqual(audioIndicatorRgb(0.15, 3000), [153, 82, 224]);
+});
+
+test("render decoration dims only the speculative suffix", () => {
+  const input = [" > hello speculative▁"];
+  const output = decorateSpeculativeSuffix(input, " speculative");
+  assert.equal(output[0], " > hello\x1b[2m speculative\x1b[22m▁");
+  assert.equal(output[0]!.replace(/\x1b\[[0-9;]*m/g, ""), input[0]);
+  assert.equal(input[0], " > hello speculative▁");
 });
 
 test("capture chooses a placeholder absent from existing prompt text", () => {

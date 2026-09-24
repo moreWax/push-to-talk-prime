@@ -7,3 +7,5 @@
 - Added a single authenticated warm speech service shared across daemon-backed Prime sessions.
 - Added production documentation, community health files, and singleton integration coverage.
 - Added a reproducible actual Prime PTY demo using real MPS transcription and generated source audio.
+- Added model-native 16 kHz capture with device-native fallback and corpus-backed diagnostics.
+- Added Claude-style raw/stable streaming: stable words remain normal while the speculative suffix is dimmed.

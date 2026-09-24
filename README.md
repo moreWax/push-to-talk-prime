@@ -26,7 +26,7 @@ Transcription uses [moondream/parakeet-redux](https://huggingface.co/moondream/p
 - Normal Space typing stays immediate; one candidate Space is removed when a hold commits.
 - Minimal `▁▂▃▄▅▆▇█` recording indicator with no processing text left in the prompt.
 - Native stateful Parakeet streaming with named asymmetric latency/stability presets.
-- Stable live words replace the meter as speech is recognized; unstable partial words stay hidden.
+- Raw text appears immediately; stable words stay normal while the speculative suffix is dimmed.
 - Transcript insertion at the activation cursor without automatic submission by default.
 - One `/voice` command toggles the warm worker on or off.
 - `/voice status` reports enabled state, preset, worker state, and device.
@@ -172,7 +172,7 @@ Voice is enabled in hold mode by default for this package.
 
 A single Space remains immediate normal typing. Five repeat events commit a hold; the one candidate Space is removed and native streaming capture starts. Kitty key release stops immediately. A 200 ms worker timer is the fallback when release events are unavailable.
 
-Parakeet uses native 320 ms stateful streaming windows with 320 ms lookahead. Smaller windows lowered the first-token gate but produced empty, unstable, or stalled previews. This configuration grew the transcript consistently on every tested snapshot. The UI reveals each stable snapshot suffix in two revision-aware stages about 150 ms apart, giving a smoother visual stream without exposing lower-quality 160 ms hypotheses.
+The recommended `balanced` preset uses 160 ms updates, 480 ms lookahead, and 4 seconds of bounded left context. The worker forwards each raw cumulative hypothesis and its locally agreed stable prefix from the same inference pass. The editor renders stable text normally and dims only the speculative suffix, then replaces the complete provisional region with the exact final transcript after release. This exposes text roughly one update earlier without adding another model or inference pass.
 
 By default, release inserts text and leaves it for review. Set `autoSubmit` to `true` in the settings file to submit hold transcripts of at least three words.
 

@@ -2,7 +2,7 @@
 
 ## Purpose and boundaries
 
-`push-to-talk-prime` adds local speech-to-text to the Prime Agent and compatible pi editors. A hold gesture starts microphone capture, stable interim text replaces an in-editor meter, and the final transcript is inserted at the cursor that began the capture. Audio and transcript data stay local. The only normal network use is the initial model download.
+`push-to-talk-prime` adds local speech-to-text to the Prime Agent and compatible pi editors. A hold gesture starts microphone capture, raw interim text replaces an in-editor meter, the locally stable prefix remains normal while the speculative suffix is dimmed, and the final transcript is inserted at the cursor that began the capture. Audio and transcript data stay local. The only normal network use is the initial model download.
 
 The implementation has two integration paths:
 
@@ -131,7 +131,7 @@ The broker owns exactly one Python worker and permits one recording owner at a t
 
 ## Capture and transcription protocol
 
-All IPC is newline-delimited JSON with request IDs. Async events (`ready`, `model_ready`, `level`, `interim`, `release_timeout`, `model_error`, `worker_exit`) have no client request ID. The broker remaps client IDs to worker IDs and routes recording events only to the current owner.
+All IPC is newline-delimited JSON with request IDs. Async events (`ready`, `model_ready`, `level`, `interim`, `release_timeout`, `model_error`, `worker_exit`) have no client request ID. Each `interim` carries the cumulative raw `text` and a `stable_text` prefix from the same model update. The broker remaps client IDs to worker IDs and routes recording events only to the current owner.
 
 ```mermaid
 sequenceDiagram
@@ -154,9 +154,9 @@ sequenceDiagram
         B-->>C: level
         P-->>W: cumulative provisional snapshot
         W->>W: stabilize across snapshots
-        W-->>B: interim stable text
-        B-->>C: interim stable text
-        C-->>E: replace anchored marker/interim
+        W-->>B: raw text + stable prefix
+        B-->>C: raw text + stable prefix
+        C-->>E: render stable prefix + dim speculative suffix
     end
     E->>C: stop on release or timeout
     C->>B: {id, command:stop}

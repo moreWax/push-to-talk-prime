@@ -1,11 +1,18 @@
 import os
 import queue
 import unittest
+from concurrent.futures import Future
 from unittest.mock import patch
 
 import numpy as np
 
-from ptt_worker import InterimTranscriptStabilizer, Recorder, normalize_text, select_capture_sample_rate
+from ptt_worker import (
+    InterimTranscriptStabilizer,
+    Recorder,
+    normalize_text,
+    select_capture_sample_rate,
+    transcribe_live,
+)
 
 
 class WorkerUtilitiesTest(unittest.TestCase):
@@ -157,6 +164,37 @@ class WorkerUtilitiesTest(unittest.TestCase):
         self.assertIsNone(recorder.live_queue)
         self.assertEqual(recorder.frames, [])
         self.assertIsNone(live_queue.get_nowait())
+
+    def test_live_transcription_emits_raw_and_stable_from_one_stream(self):
+        class FakeStream:
+            def __iter__(self):
+                return iter([
+                    {"text": "Ref", "provisional": True},
+                    {"text": "Refactor", "provisional": True},
+                    {"text": "Refactor the", "provisional": True},
+                ])
+            def result(self):
+                return {"text": "Refactor the code."}
+
+        class FakeSpeech:
+            def transcribe(self, **_kwargs):
+                return FakeStream()
+
+        future = Future()
+        future.set_result((None, FakeSpeech()))
+        chunks = queue.Queue()
+        chunks.put(None)
+        emitted = []
+        with patch("ptt_worker.emit", emitted.append), patch.dict(
+            os.environ,
+            {"PTT_INTERIM_STABILITY": "2"},
+        ):
+            result = transcribe_live(future, chunks, 16_000, 1, lambda _session: True)
+        self.assertEqual(result["text"], "Refactor the code.")
+        self.assertEqual(
+            [(item["text"], item["stable_text"]) for item in emitted],
+            [("Ref", ""), ("Refactor", ""), ("Refactor the", "Refactor")],
+        )
 
     def test_interim_stabilizer_hides_partial_words(self):
         stabilizer = InterimTranscriptStabilizer(2)
