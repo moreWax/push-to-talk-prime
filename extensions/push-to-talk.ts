@@ -404,6 +404,7 @@ export class SharedWorkerClient implements VoiceWorker {
     private readonly preset: VoicePreset,
     private readonly device: VoiceDevice,
     private readonly modelReadyTimeoutMs = 300_000,
+    private readonly unrefModelReadyTimer = true,
   ) {}
 
   private get statePath(): string {
@@ -568,7 +569,7 @@ export class SharedWorkerClient implements VoiceWorker {
         rejectWait?.(error);
         staleSocket?.destroy();
       }, this.modelReadyTimeoutMs);
-      timer.unref();
+      if (this.unrefModelReadyTimer) timer.unref();
       this.resolveModelReady = () => { clearWait(); resolve(); };
       this.rejectModelReady = (error) => { clearWait(); reject(error); };
     });

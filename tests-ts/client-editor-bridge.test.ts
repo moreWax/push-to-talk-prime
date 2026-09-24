@@ -96,7 +96,7 @@ test("synchronous settings watcher failures do not escape construction", () => {
 });
 
 test("model warm-up timeout clears stale connection for retry", async () => {
-  const client = new SharedWorkerClient("balanced", "cpu", 1) as any;
+  const client = new SharedWorkerClient("balanced", "cpu", 1, false) as any;
   let destroyed = false;
   client.socket = { destroy: () => { destroyed = true; } };
   client.ready = Promise.resolve();
