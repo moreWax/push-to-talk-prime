@@ -4,6 +4,7 @@ import test from "node:test";
 import type { CustomEditor } from "@earendil-works/pi-coding-agent";
 import {
   ClientEditorVoiceBridge,
+  SharedWorkerClient,
   audioIndicatorRgb,
   decorateAudioIndicator,
   decorateSpeculativeSuffix,
@@ -92,6 +93,19 @@ test("synchronous settings watcher failures do not escape construction", () => {
     });
     bridge.close();
   });
+});
+
+test("model warm-up timeout clears stale connection for retry", async () => {
+  const client = new SharedWorkerClient("balanced", "cpu", 1) as any;
+  let destroyed = false;
+  client.socket = { destroy: () => { destroyed = true; } };
+  client.ready = Promise.resolve();
+  await assert.rejects(client.waitForModel(), /warm-up timed out/);
+  assert.equal(destroyed, true);
+  assert.equal(client.socket, undefined);
+  assert.equal(client.ready, undefined);
+  assert.equal(client.modelReadyPromise, undefined);
+  assert.equal(client.rejectModelReady, undefined);
 });
 
 test("normal Space typing is preserved", () => {

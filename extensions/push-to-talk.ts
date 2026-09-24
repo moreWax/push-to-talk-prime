@@ -403,6 +403,7 @@ export class SharedWorkerClient implements VoiceWorker {
   constructor(
     private readonly preset: VoicePreset,
     private readonly device: VoiceDevice,
+    private readonly modelReadyTimeoutMs = 300_000,
   ) {}
 
   private get statePath(): string {
@@ -551,10 +552,25 @@ export class SharedWorkerClient implements VoiceWorker {
     if (this.modelReady) return Promise.resolve();
     if (this.modelReadyPromise) return this.modelReadyPromise;
     this.modelReadyPromise = new Promise<void>((resolve, reject) => {
-      const timer = setTimeout(() => reject(new Error("global speech model warm-up timed out")), 300_000);
+      const clearWait = () => {
+        clearTimeout(timer);
+        this.modelReadyPromise = undefined;
+        this.resolveModelReady = undefined;
+        this.rejectModelReady = undefined;
+      };
+      const timer = setTimeout(() => {
+        const error = new Error("global speech model warm-up timed out");
+        const rejectWait = this.rejectModelReady;
+        const staleSocket = this.socket;
+        this.modelReady = false;
+        this.socket = undefined;
+        this.ready = undefined;
+        rejectWait?.(error);
+        staleSocket?.destroy();
+      }, this.modelReadyTimeoutMs);
       timer.unref();
-      this.resolveModelReady = () => { clearTimeout(timer); resolve(); };
-      this.rejectModelReady = (error) => { clearTimeout(timer); reject(error); };
+      this.resolveModelReady = () => { clearWait(); resolve(); };
+      this.rejectModelReady = (error) => { clearWait(); reject(error); };
     });
     return this.modelReadyPromise;
   }
