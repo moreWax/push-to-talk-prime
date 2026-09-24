@@ -63,7 +63,7 @@ A quick Space tap remains ordinary typing. Press Escape or type another key to c
 /voice device auto     choose the best available compute backend
 ```
 
-Available presets: `fast`, `balanced`, `realtime`, and `smooth`.
+Available presets: `fast`, `balanced`, `realtime`, `smooth`, and experimental `speculative`. `speculative` keeps the `balanced` authoritative stream but adds one serialized 480 ms dim draft.
 
 Available devices: `auto`, `cpu`, `gpu`, `mps`, and `cuda`. `gpu` maps to MPS on macOS and CUDA elsewhere.
 

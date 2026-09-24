@@ -86,7 +86,7 @@ export function decorateSpeculativeSuffix(lines: string[], suffix: string): stri
 }
 
 export type VoiceMode = "hold" | "tap";
-export type VoicePreset = "fast" | "balanced" | "realtime" | "smooth";
+export type VoicePreset = "fast" | "balanced" | "realtime" | "smooth" | "speculative";
 export type VoiceDevice = "auto" | "cpu" | "gpu" | "mps" | "cuda";
 export type VoiceSettings = {
   enabled: boolean;
@@ -96,15 +96,16 @@ export type VoiceSettings = {
   device: VoiceDevice;
 };
 
-const STREAM_PRESETS: Record<VoicePreset, { chunkMs: number; rightMs: number; leftMs: number }> = {
+export const STREAM_PRESETS: Record<VoicePreset, { chunkMs: number; rightMs: number; leftMs: number; earlyDraftMs?: number }> = {
   fast: { chunkMs: 160, rightMs: 160, leftMs: 2_000 },
   balanced: { chunkMs: 160, rightMs: 480, leftMs: 4_000 },
   realtime: { chunkMs: 80, rightMs: 560, leftMs: 1_000 },
   smooth: { chunkMs: 320, rightMs: 320, leftMs: 5_000 },
+  speculative: { chunkMs: 160, rightMs: 480, leftMs: 4_000, earlyDraftMs: 480 },
 };
 
 function parsePreset(value: unknown): VoicePreset {
-  return value === "fast" || value === "realtime" || value === "smooth" ? value : "balanced";
+  return value === "fast" || value === "realtime" || value === "smooth" || value === "speculative" ? value : "balanced";
 }
 
 function parseDevice(value: unknown): VoiceDevice {
@@ -144,6 +145,7 @@ function workerEnvironment(preset: VoicePreset, device: VoiceDevice): NodeJS.Pro
   environment.PTT_STREAM_CHUNK_MS = process.env.PTT_STREAM_CHUNK_MS ?? String(stream.chunkMs);
   environment.PTT_STREAM_RIGHT_MS = process.env.PTT_STREAM_RIGHT_MS ?? String(stream.rightMs);
   environment.PTT_STREAM_LEFT_MS = process.env.PTT_STREAM_LEFT_MS ?? String(stream.leftMs);
+  if (stream.earlyDraftMs !== undefined) environment.PTT_EARLY_DRAFT_MS = String(stream.earlyDraftMs);
   environment.PTT_DEVICE = resolveDevice(device);
   environment.PTT_PRESET = preset;
   return environment;
@@ -194,13 +196,14 @@ type Reply = {
   error?: string;
   level?: number;
   provisional?: boolean;
+  draft?: boolean;
 };
 
 type WorkerCommand = "start" | "stop" | "cancel" | "devices" | "shutdown" | "arm_release" | "disarm_release";
 
 export interface VoiceWorker {
   onLevel?: (level: number) => void;
-  onInterim?: (text: string, stableText: string) => void;
+  onInterim?: (text: string, stableText: string, draft?: boolean) => void;
   onReleaseTimeout?: () => void;
   onFatalError?: (error: Error) => void;
   warm(): Promise<void>;
@@ -227,7 +230,7 @@ class WorkerClient implements VoiceWorker {
   private stderrTail = "";
   private closed = false;
   onLevel?: (level: number) => void;
-  onInterim?: (text: string, stableText: string) => void;
+  onInterim?: (text: string, stableText: string, draft?: boolean) => void;
   onReleaseTimeout?: () => void;
   onFatalError?: (error: Error) => void;
 
@@ -279,7 +282,7 @@ class WorkerClient implements VoiceWorker {
             this.onLevel?.(Math.max(0, Math.min(1, message.level)));
           }
           if (message.event === "interim" && typeof message.text === "string") {
-            this.onInterim?.(message.text, message.stable_text ?? "");
+            this.onInterim?.(message.text, message.stable_text ?? "", message.draft === true);
           }
           if (message.event === "release_timeout") this.onReleaseTimeout?.();
           if (message.event === "model_error") {
@@ -396,7 +399,7 @@ export class SharedWorkerClient implements VoiceWorker {
     timer: ReturnType<typeof setTimeout>;
   }>();
   onLevel?: (level: number) => void;
-  onInterim?: (text: string, stableText: string) => void;
+  onInterim?: (text: string, stableText: string, draft?: boolean) => void;
   onReleaseTimeout?: () => void;
   onFatalError?: (error: Error) => void;
 
@@ -512,7 +515,7 @@ export class SharedWorkerClient implements VoiceWorker {
             resolve();
           }
           if (message.event === "level" && typeof message.level === "number") this.onLevel?.(Math.max(0, Math.min(1, message.level)));
-          if (message.event === "interim" && typeof message.text === "string") this.onInterim?.(message.text, message.stable_text ?? "");
+          if (message.event === "interim" && typeof message.text === "string") this.onInterim?.(message.text, message.stable_text ?? "", message.draft === true);
           if (message.event === "release_timeout") this.onReleaseTimeout?.();
           if (message.event === "model_ready") this.markModelReady();
           if (message.event === "model_error" || message.event === "worker_exit") {
@@ -640,6 +643,7 @@ export class ClientEditorVoiceBridge {
   private captureStarted = false;
   private captureStart?: Promise<void>;
   private hasInterim = false;
+  private hasRawInterim = false;
   private targetInterim = "";
   private stableInterim = "";
   private hasStableInterim = false;
@@ -773,6 +777,7 @@ export class ClientEditorVoiceBridge {
       this.recording = true;
       this.processing = false;
       this.hasInterim = false;
+      this.hasRawInterim = false;
       this.targetInterim = "";
       this.stableInterim = "";
       this.hasStableInterim = false;
@@ -878,6 +883,7 @@ export class ClientEditorVoiceBridge {
     this.captureStarted = false;
     this.captureStart = undefined;
     this.hasInterim = false;
+    this.hasRawInterim = false;
     this.targetInterim = "";
     this.stableInterim = "";
     this.hasStableInterim = false;
@@ -948,7 +954,7 @@ export class ClientEditorVoiceBridge {
       }
       if (option.startsWith("preset ")) {
         const requested = option.slice("preset ".length).trim();
-        if (requested !== "fast" && requested !== "balanced" && requested !== "realtime" && requested !== "smooth") return;
+        if (requested !== "fast" && requested !== "balanced" && requested !== "realtime" && requested !== "smooth" && requested !== "speculative") return;
         this.applySettings({ ...this.settings, preset: requested });
         return;
       }
@@ -997,11 +1003,16 @@ export class ClientEditorVoiceBridge {
     this.worker = worker;
     worker.onReleaseTimeout = () => this.releaseHold();
     worker.onFatalError = () => this.failRecording(this.captureGeneration);
-    worker.onInterim = (text, stableText) => {
+    worker.onInterim = (text, stableText, draft = false) => {
       const value = text.trim();
       const stable = stableText.trim();
-      if (!this.recording || !value) return;
-      if (!this.hasInterim) debugEvent({ event: "editor_bridge_first_raw_interim" });
+      if (!this.recording || !value || (draft && this.hasRawInterim)) return;
+      if (draft) {
+        debugEvent({ event: "editor_bridge_first_draft_interim" });
+      } else if (!this.hasRawInterim) {
+        this.hasRawInterim = true;
+        debugEvent({ event: "editor_bridge_first_raw_interim" });
+      }
       if (!this.hasStableInterim && stable) {
         this.hasStableInterim = true;
         debugEvent({ event: "editor_bridge_first_stable_interim" });
@@ -1080,7 +1091,7 @@ class RecordingController {
       this.targetLevel = level;
       if (this.captureMode === "tap" && this.state === "recording" && level > 0.03) this.armTapSilence();
     };
-    worker.onInterim = (text, stableText) => {
+    worker.onInterim = (text, stableText, _draft) => {
       this.insertInterim?.(stableText || text);
       if (this.captureMode === "tap" && this.state === "recording") this.armTapSilence();
     };
@@ -1554,13 +1565,13 @@ export default function pushToTalk(pi: ExtensionAPI): void {
         return;
       }
       if (option === "preset") {
-        ctx.ui.notify(`Voice preset: ${settings.preset}. Available: fast, balanced, realtime, smooth.`, "info");
+        ctx.ui.notify(`Voice preset: ${settings.preset}. Available: fast, balanced, realtime, smooth, speculative.`, "info");
         return;
       }
       if (option.startsWith("preset ")) {
         const requested = option.slice("preset ".length).trim();
-        if (requested !== "fast" && requested !== "balanced" && requested !== "realtime" && requested !== "smooth") {
-          ctx.ui.notify("Usage: /voice preset [fast|balanced|realtime|smooth]", "warning");
+        if (requested !== "fast" && requested !== "balanced" && requested !== "realtime" && requested !== "smooth" && requested !== "speculative") {
+          ctx.ui.notify("Usage: /voice preset [fast|balanced|realtime|smooth|speculative]", "warning");
           return;
         }
         settings.preset = requested;
@@ -1572,7 +1583,7 @@ export default function pushToTalk(pi: ExtensionAPI): void {
         return;
       }
       if (option) {
-        ctx.ui.notify("Usage: /voice [status|preset [fast|balanced|realtime|smooth]|device [auto|cpu|gpu|mps|cuda]]", "warning");
+        ctx.ui.notify("Usage: /voice [status|preset [fast|balanced|realtime|smooth|speculative]|device [auto|cpu|gpu|mps|cuda]]", "warning");
         return;
       }
       settings.enabled = !settings.enabled;

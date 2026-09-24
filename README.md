@@ -30,7 +30,7 @@ Transcription uses [moondream/parakeet-redux](https://huggingface.co/moondream/p
 - Transcript insertion at the activation cursor without automatic submission by default.
 - One `/voice` command toggles the warm worker on or off.
 - `/voice status` reports enabled state, preset, worker state, and device.
-- `/voice preset fast|balanced|smooth` selects latency versus provisional stability without numeric tuning.
+- `/voice preset fast|balanced|realtime|smooth|speculative` selects latency versus provisional behavior without numeric tuning.
 - One authenticated warm model service shared across all Prime sessions and clients.
 - Local CPU, Apple Metal, or CUDA inference.
 
@@ -59,12 +59,14 @@ Choose streaming behavior with a named preset:
 /voice preset balanced
 /voice preset realtime
 /voice preset smooth
+/voice preset speculative
 ```
 
 - `fast`: 160 ms chunk + 160 ms lookahead; lowest first-token latency, less stable previews
 - `balanced`: 160 ms chunk + 480 ms lookahead; recommended stable 160 ms cadence
 - `realtime`: 80 ms chunk + 560 ms lookahead + 1 s left context; smoothest 80 ms cadence, higher compute
 - `smooth`: 320 ms chunk + 320 ms lookahead; fewer, larger stable updates
+- `speculative`: unchanged `balanced` authoritative stream plus one serialized 480 ms dim draft; experimental
 
 Choose inference hardware:
 
@@ -164,7 +166,7 @@ Voice is enabled in hold mode by default for this package.
 | `/voice` | Toggle hold-Space voice input and its warm worker |
 | `/voice status` | Show enabled state, preset, worker state, and selected device |
 | `/voice preset` | Show current preset and available names |
-| `/voice preset fast|balanced|smooth` | Change and persist streaming behavior |
+| `/voice preset fast|balanced|realtime|smooth|speculative` | Change and persist streaming behavior |
 | Escape while recording | Cancel and restore the anchored prompt |
 | `npm run doctor` | Validate dependencies and list microphones |
 
@@ -200,7 +202,7 @@ Runtime environment variables:
 | `PTT_MODE` | `hold` | Initial mode before a settings file exists |
 | `PTT_ENABLED` | `1` | Set `0` to start disabled before settings exist |
 | `PTT_AUTO_SUBMIT` | `0` | Initial hold auto-submit setting |
-| `PTT_PRESET` | `balanced` | Initial `fast`, `balanced`, or `smooth` preset |
+| `PTT_PRESET` | `balanced` | Initial `fast`, `balanced`, `realtime`, `smooth`, or `speculative` preset |
 | `PTT_CONFIG` | `~/.prime/agent/push-to-talk.json` | Alternate settings path |
 | `PTT_UV` | `uv` | Path to the `uv` executable |
 | `PTT_STREAM_CHUNK_MS` | preset value | Advanced numeric override for the update window |

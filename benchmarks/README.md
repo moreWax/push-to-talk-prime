@@ -20,6 +20,7 @@ These isolated harnesses record the Apple/MPS inference investigation. They do n
 | 160/320/1000 streaming context | 44% less amplification and earlier median interim, but worse preview-tail completeness | Rejected |
 | 160/320/2000 streaming context | 21.7% less amplification, but preview completion fell from 36.2% to 18.1% | Rejected |
 | Dense Core ML conversion | Would expand packed ternary projections and defeat the required ternary execution path | Rejected before artifact creation |
+| Serialized 480 ms early draft | Draft median 555 ms; authoritative final parity 12/12; 10/12 nonempty and 8 common-prefix words across corpus | Shipped only as opt-in experimental `speculative`; `balanced` unchanged |
 
 ## Environment
 

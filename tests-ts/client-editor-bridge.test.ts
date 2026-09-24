@@ -5,6 +5,7 @@ import type { CustomEditor } from "@earendil-works/pi-coding-agent";
 import {
   ClientEditorVoiceBridge,
   SharedWorkerClient,
+  STREAM_PRESETS,
   audioIndicatorRgb,
   decorateAudioIndicator,
   decorateSpeculativeSuffix,
@@ -106,6 +107,16 @@ test("model warm-up timeout clears stale connection for retry", async () => {
   assert.equal(client.ready, undefined);
   assert.equal(client.modelReadyPromise, undefined);
   assert.equal(client.rejectModelReady, undefined);
+});
+
+test("speculative preset preserves the balanced authoritative baseline", () => {
+  assert.deepEqual(STREAM_PRESETS.balanced, { chunkMs: 160, rightMs: 480, leftMs: 4_000 });
+  assert.deepEqual(STREAM_PRESETS.speculative, {
+    chunkMs: 160,
+    rightMs: 480,
+    leftMs: 4_000,
+    earlyDraftMs: 480,
+  });
 });
 
 test("normal Space typing is preserved", () => {
@@ -224,6 +235,19 @@ test("preset command restarts the worker with persisted selection", () => {
   const editor = new FakeEditor();
   const send = (data: string) => bridge.handleInput(editor as unknown as CustomEditor, data, (value) => editor.input(value));
   for (const char of "/voice preset smooth\r") send(char);
+  assert.equal(first.closed, true);
+  assert.equal(second.warmed, 1);
+  bridge.close();
+});
+
+test("speculative preset restarts the worker without changing balanced", () => {
+  const first = new FakeWorker();
+  const second = new FakeWorker();
+  const workers = [first, second];
+  const bridge = new ClientEditorVoiceBridge({ settings: holdSettings, workerFactory: () => workers.shift()!, watchSettings: false });
+  const editor = new FakeEditor();
+  const send = (data: string) => bridge.handleInput(editor as unknown as CustomEditor, data, (value) => editor.input(value));
+  for (const char of "/voice preset speculative\r") send(char);
   assert.equal(first.closed, true);
   assert.equal(second.warmed, 1);
   bridge.close();

@@ -414,16 +414,58 @@ def transcribe_live(
     session_id: int,
     is_current: Any,
 ) -> dict[str, object]:
+    _photon, speech = model_future.result(timeout=300)
+    early_draft_ms = max(0.0, float(os.getenv("PTT_EARLY_DRAFT_MS", "0")))
+    early_draft_frames = round(sample_rate * early_draft_ms / 1000.0)
+
+    def transcribe_draft(audio: Any) -> str:
+        try:
+            result = speech.transcribe(
+                audio=audio,
+                sample_rate=sample_rate,
+                timestamps="none",
+                stream=False,
+            )
+            if not isinstance(result, dict):
+                return ""
+            return normalize_text(str(result.get("text", "")))
+        except Exception as exc:
+            print(f"early draft warning: {type(exc).__name__}: {exc}", file=sys.stderr)
+            return ""
+
     async def audio_chunks():
         import asyncio
+        import numpy as np
 
+        draft_parts: list[Any] = []
+        draft_captured = 0
+        draft_complete = early_draft_frames <= 0
         while True:
             chunk = await asyncio.to_thread(chunks.get)
             if chunk is None:
                 return
+            if not draft_complete:
+                needed = early_draft_frames - draft_captured
+                if needed > 0:
+                    part = chunk[:needed]
+                    if len(part):
+                        draft_parts.append(part.copy())
+                        draft_captured += len(part)
+                if draft_captured >= early_draft_frames:
+                    draft_complete = True
+                    draft_audio = np.concatenate(draft_parts)[:early_draft_frames]
+                    draft_parts.clear()
+                    draft = await asyncio.to_thread(transcribe_draft, draft_audio)
+                    if draft and is_current(session_id):
+                        emit({
+                            "event": "interim",
+                            "text": draft,
+                            "stable_text": "",
+                            "provisional": True,
+                            "draft": True,
+                        })
             yield chunk
 
-    _photon, speech = model_future.result(timeout=300)
     stream = speech.transcribe(
         audio=audio_chunks(),
         sample_rate=sample_rate,

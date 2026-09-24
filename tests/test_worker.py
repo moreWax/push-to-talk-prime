@@ -187,7 +187,7 @@ class WorkerUtilitiesTest(unittest.TestCase):
         emitted = []
         with patch("ptt_worker.emit", emitted.append), patch.dict(
             os.environ,
-            {"PTT_INTERIM_STABILITY": "2"},
+            {"PTT_INTERIM_STABILITY": "2", "PTT_EARLY_DRAFT_MS": "0"},
         ):
             result = transcribe_live(future, chunks, 16_000, 1, lambda _session: True)
         self.assertEqual(result["text"], "Refactor the code.")
@@ -195,6 +195,52 @@ class WorkerUtilitiesTest(unittest.TestCase):
             [(item["text"], item["stable_text"]) for item in emitted],
             [("Ref", ""), ("Refactor", ""), ("Refactor the", "Refactor")],
         )
+
+    def test_speculative_stream_emits_one_draft_before_authoritative_text(self):
+        import asyncio
+
+        class FakeStream:
+            def __init__(self, audio):
+                self.audio = audio
+            def __iter__(self):
+                async def consume():
+                    async for _chunk in self.audio:
+                        pass
+                asyncio.run(consume())
+                return iter([{"text": "Refactor the", "provisional": True}])
+            def result(self):
+                return {"text": "Refactor the code."}
+
+        class FakeSpeech:
+            def __init__(self):
+                self.draft_calls = 0
+            def transcribe(self, **kwargs):
+                if callable(getattr(kwargs["audio"], "__aiter__", None)):
+                    return FakeStream(kwargs["audio"])
+                self.draft_calls += 1
+                self.draft_audio_length = len(kwargs["audio"])
+                return {"text": "Ref"}
+
+        speech = FakeSpeech()
+        future = Future()
+        future.set_result((None, speech))
+        chunks = queue.Queue()
+        chunks.put(np.zeros(240, dtype=np.float32))
+        chunks.put(np.zeros(240, dtype=np.float32))
+        chunks.put(None)
+        emitted = []
+        with patch("ptt_worker.emit", emitted.append), patch.dict(
+            os.environ,
+            {"PTT_INTERIM_STABILITY": "2", "PTT_EARLY_DRAFT_MS": "480"},
+        ):
+            result = transcribe_live(future, chunks, 1_000, 1, lambda _session: True)
+        self.assertEqual(result["text"], "Refactor the code.")
+        self.assertEqual(speech.draft_calls, 1)
+        self.assertEqual(speech.draft_audio_length, 480)
+        self.assertTrue(emitted[0]["draft"])
+        self.assertEqual(emitted[0]["text"], "Ref")
+        self.assertFalse(emitted[1].get("draft", False))
+        self.assertEqual(emitted[1]["text"], "Refactor the")
 
     def test_interim_stabilizer_hides_partial_words(self):
         stabilizer = InterimTranscriptStabilizer(2)

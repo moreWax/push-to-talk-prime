@@ -192,6 +192,7 @@ Telemetry is replaced with a no-op reporter unless `PTT_ALLOW_TELEMETRY=1` is ex
 | `balanced` | 160 ms | 480 ms | 4,000 ms | Default latency/stability trade-off |
 | `realtime` | 80 ms | 560 ms | 1,000 ms | Highest update cadence; more compute |
 | `smooth` | 320 ms | 320 ms | 5,000 ms | Fewer, larger stable updates |
+| `speculative` | 160 ms | 480 ms | 4,000 ms | Experimental: identical to `balanced` plus one serialized 480 ms stateless draft |
 
 `PTT_STREAM_CHUNK_MS`, `PTT_STREAM_RIGHT_MS`, and `PTT_STREAM_LEFT_MS` can override preset values. Named settings are preferred because they are persisted and participate in broker configuration matching.
 

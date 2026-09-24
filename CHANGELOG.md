@@ -9,3 +9,4 @@
 - Added a reproducible actual Prime PTY demo using real MPS transcription and generated source audio.
 - Added model-native 16 kHz capture with device-native fallback and corpus-backed diagnostics.
 - Added Claude-style raw/stable streaming: stable words remain normal while the speculative suffix is dimmed.
+- Added an opt-in `speculative` preset with one serialized 480 ms early draft while preserving the `balanced` authoritative baseline.

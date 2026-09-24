@@ -1,0 +1,5762 @@
+{
+  "experiment": "single-model-early-draft-preview-apple-mps",
+  "versions": {
+    "kestrel": "0.8.0",
+    "kestrel-kernels": "0.7.0",
+    "torch": "2.14.0"
+  },
+  "platform": "macOS-15.5-arm64-arm-64bit",
+  "macos_product_version": "15.5",
+  "corpus_dir": "/tmp/ptt-stream-corpus",
+  "corpus_reused": true,
+  "corpus": [
+    {
+      "id": "code-terms",
+      "category": "code_terms",
+      "reference": "Refactor the async function and return a JSON object.",
+      "say_text": "Refactor the async function and return a JSON object.",
+      "voice": "Samantha",
+      "rate": 185,
+      "wav": "/tmp/ptt-stream-corpus/code-terms.wav",
+      "seconds": 2.88875,
+      "sha256": "81123a604b57e7718997e200b19adba6d219539b793ade5973603e43ba1fa19a"
+    },
+    {
+      "id": "filenames",
+      "category": "filenames",
+      "reference": "Open README.md and edit config.yaml.",
+      "say_text": "Open README dot M D and edit config dot YAML.",
+      "voice": "Daniel",
+      "rate": 170,
+      "wav": "/tmp/ptt-stream-corpus/filenames.wav",
+      "seconds": 3.434375,
+      "sha256": "897c2cc28def0bacdbb4aff02f5ec99ff471fc1248cd2b710b6878941d70ceec"
+    },
+    {
+      "id": "acronyms",
+      "category": "acronyms",
+      "reference": "Restart the HTTP API and verify TLS.",
+      "say_text": "Restart the H T T P A P I and verify T L S.",
+      "voice": "Karen",
+      "rate": 190,
+      "wav": "/tmp/ptt-stream-corpus/acronyms.wav",
+      "seconds": 3.059312,
+      "sha256": "658982aa2c1f3974a5cc77dec7863187bd580be3bacb686899e067810bc422ae"
+    },
+    {
+      "id": "numbers",
+      "category": "numbers",
+      "reference": "Set port 8080 and retry in 25 seconds.",
+      "say_text": "Set port eight thousand eighty and retry in twenty five seconds.",
+      "voice": "Moira",
+      "rate": 180,
+      "wav": "/tmp/ptt-stream-corpus/numbers.wav",
+      "seconds": 3.538875,
+      "sha256": "f5f0d4b351d5832dca164533cc074360f9c0687d6c2f04f94fdb6b31c6eb460c"
+    },
+    {
+      "id": "punctuation",
+      "category": "punctuation",
+      "reference": "Print hello, world, then exit.",
+      "say_text": "Print hello, world, then exit.",
+      "voice": "Tessa",
+      "rate": 175,
+      "wav": "/tmp/ptt-stream-corpus/punctuation.wav",
+      "seconds": 2.532375,
+      "sha256": "5f4e77b885495f02ca36bc738754e1319331828fb65b1e737fdb59527b19b849"
+    },
+    {
+      "id": "short-command",
+      "category": "short_command",
+      "reference": "Run tests.",
+      "say_text": "Run tests.",
+      "voice": "Samantha",
+      "rate": 210,
+      "wav": "/tmp/ptt-stream-corpus/short-command.wav",
+      "seconds": 0.594,
+      "sha256": "9c1b81491bcea0c264eae957354a6ae92d64daa9df6545f162d7307440a6a582"
+    },
+    {
+      "id": "long-command",
+      "category": "long_command",
+      "reference": "Search the repository for deprecated flags, update every call site, run the unit tests, and summarize the failures.",
+      "say_text": "Search the repository for deprecated flags, update every call site, run the unit tests, and summarize the failures.",
+      "voice": "Daniel",
+      "rate": 165,
+      "wav": "/tmp/ptt-stream-corpus/long-command.wav",
+      "seconds": 7.826,
+      "sha256": "679464d4e36dbee8d526272eb97c2779192a749c8503afc9d4edb00c40c9f578"
+    },
+    {
+      "id": "git-command",
+      "category": "code_terms",
+      "reference": "Create a feature branch, commit the parser fix, and push it to origin.",
+      "say_text": "Create a feature branch, commit the parser fix, and push it to origin.",
+      "voice": "Karen",
+      "rate": 200,
+      "wav": "/tmp/ptt-stream-corpus/git-command.wav",
+      "seconds": 3.255813,
+      "sha256": "fb3c4161f807307cdf48be9b190553fa78520f6dc688cbfc194c552a88fd5766"
+    },
+    {
+      "id": "cli-terms",
+      "category": "code_terms",
+      "reference": "Run pytest with the verbose flag, then inspect stderr.",
+      "say_text": "Run pie test with the verbose flag, then inspect standard error.",
+      "voice": "Moira",
+      "rate": 155,
+      "wav": "/tmp/ptt-stream-corpus/cli-terms.wav",
+      "seconds": 4.52725,
+      "sha256": "9a850ac943efb1f7fddcd4e945e5018db502ff7705ee3a611205c5cc4cf3a96d"
+    },
+    {
+      "id": "mixed-file",
+      "category": "filenames",
+      "reference": "Rename server_test.go to server_integration_test.go.",
+      "say_text": "Rename server underscore test dot go to server underscore integration underscore test dot go.",
+      "voice": "Tessa",
+      "rate": 180,
+      "wav": "/tmp/ptt-stream-corpus/mixed-file.wav",
+      "seconds": 5.826125,
+      "sha256": "696290bba4ff0103180a68dfa34f339c36327cfbdd17da0e0fb8d161fe41acaa"
+    },
+    {
+      "id": "paused-command",
+      "category": "pause",
+      "reference": "Build the release binary, then wait for the checksum.",
+      "say_text": "Build the release binary, [[slnc 700]] then wait for the checksum.",
+      "voice": "Samantha",
+      "rate": 185,
+      "wav": "/tmp/ptt-stream-corpus/paused-command.wav",
+      "seconds": 3.061437,
+      "sha256": "3bee6940988f4e94f9a18a805909605591df36ba2751bd2283507c85591bd1ea"
+    },
+    {
+      "id": "database-command",
+      "category": "long_command",
+      "reference": "Back up the database before applying migration 42, and do not restart the primary server.",
+      "say_text": "Back up the database before applying migration forty two, and do not restart the primary server.",
+      "voice": "Daniel",
+      "rate": 175,
+      "wav": "/tmp/ptt-stream-corpus/database-command.wav",
+      "seconds": 5.90025,
+      "sha256": "749540dfaf64665f1028e6556dccc2bdabff9f9686762ef86ceb00f233584b24"
+    }
+  ],
+  "frame_ms": 20.0,
+  "tail_ms": 320.0,
+  "realtime_feed": true,
+  "authoritative_settings": {
+    "chunk_ms": 160,
+    "right_ms": 480,
+    "left_ms": 4000,
+    "stability": 2
+  },
+  "single_warm_photon_engine": true,
+  "mps_lock": "/tmp/ptt-mps-benchmark.lock",
+  "rotating_candidate_order": true,
+  "order_schedule": "balanced/speculative variants rotate one position per utterance across all five candidates",
+  "candidates": [
+    {
+      "name": "balanced",
+      "preset": "balanced",
+      "schedule": "none",
+      "draft_ms": null
+    },
+    {
+      "name": "speculative-parallel-320",
+      "preset": "speculative",
+      "schedule": "parallel",
+      "draft_ms": 320.0
+    },
+    {
+      "name": "speculative-serialized-320",
+      "preset": "speculative",
+      "schedule": "serialized",
+      "draft_ms": 320.0
+    },
+    {
+      "name": "speculative-parallel-480",
+      "preset": "speculative",
+      "schedule": "parallel",
+      "draft_ms": 480.0
+    },
+    {
+      "name": "speculative-serialized-480",
+      "preset": "speculative",
+      "schedule": "serialized",
+      "draft_ms": 480.0
+    }
+  ],
+  "runs": [
+    {
+      "candidate": {
+        "name": "balanced",
+        "preset": "balanced",
+        "schedule": "none",
+        "draft_ms": null
+      },
+      "authoritative": {
+        "first_raw_ms": 713.61,
+        "first_stable_ms": 1219.39,
+        "release_to_final_ms": 417.97,
+        "wall_to_final_ms": 3307.8,
+        "final_text": "Refactor the async function and return a JSON object.",
+        "raw_churn": {
+          "snapshot_count": 17,
+          "changed_transitions": 13,
+          "character_edits": 45,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 6,
+          "changed_transitions": 5,
+          "character_edits": 35,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 18,
+          "decoded_input_seconds": 35.8488,
+          "source_seconds_including_tail": 3.2088,
+          "audio_compute_amplification": 11.172185
+        },
+        "errors_vs_reference": {
+          "normalized_match": true,
+          "normalized_word_edits": 0,
+          "normalized_reference_words": 9
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": false,
+        "stateless_invocations": 0,
+        "launch_ms": null,
+        "visible_ms": null,
+        "compute_wall_ms": null,
+        "input_seconds": 0.0,
+        "text": "",
+        "nonempty": false,
+        "visible_before_first_raw": false,
+        "visible_before_first_stable": false,
+        "errors_vs_reference": null,
+        "prefix_vs_final": null
+      },
+      "first_visible_ms": 1219.39,
+      "combined_visible_churn": {
+        "snapshot_count": 6,
+        "changed_transitions": 5,
+        "character_edits": 35,
+        "retracted_characters": 0
+      },
+      "backlog": {
+        "max_queued_chunks": 5,
+        "max_queued_audio_ms": 100.0,
+        "max_consume_lag_ms": 98.391,
+        "mean_consume_lag_ms": 21.533
+      },
+      "utterance": {
+        "id": "code-terms",
+        "category": "code_terms",
+        "reference": "Refactor the async function and return a JSON object.",
+        "say_text": "Refactor the async function and return a JSON object.",
+        "voice": "Samantha",
+        "rate": 185
+      },
+      "audio_seconds": 2.88875,
+      "order_in_utterance": 1
+    },
+    {
+      "candidate": {
+        "name": "speculative-parallel-320",
+        "preset": "speculative",
+        "schedule": "parallel",
+        "draft_ms": 320.0
+      },
+      "authoritative": {
+        "first_raw_ms": 708.5,
+        "first_stable_ms": 1186.92,
+        "release_to_final_ms": 299.49,
+        "wall_to_final_ms": 3188.97,
+        "final_text": "Refactor the async function and return a JSON object.",
+        "raw_churn": {
+          "snapshot_count": 17,
+          "changed_transitions": 13,
+          "character_edits": 45,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 6,
+          "changed_transitions": 5,
+          "character_edits": 35,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 18,
+          "decoded_input_seconds": 35.8488,
+          "source_seconds_including_tail": 3.2088,
+          "audio_compute_amplification": 11.172185
+        },
+        "errors_vs_reference": {
+          "normalized_match": true,
+          "normalized_word_edits": 0,
+          "normalized_reference_words": 9
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": true,
+        "stateless_invocations": 1,
+        "launch_ms": 321.12,
+        "visible_ms": 444.13,
+        "compute_wall_ms": 123.01,
+        "input_seconds": 0.32,
+        "text": "Resemble",
+        "nonempty": true,
+        "visible_before_first_raw": true,
+        "visible_before_first_stable": true,
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 9,
+          "normalized_reference_words": 9
+        },
+        "prefix_vs_final": {
+          "is_final_word_prefix": false,
+          "draft_words": 1,
+          "common_prefix_words": 0,
+          "wrong_or_extra_words": 1,
+          "word_edits_to_final": 9
+        }
+      },
+      "first_visible_ms": 444.13,
+      "combined_visible_churn": {
+        "snapshot_count": 7,
+        "changed_transitions": 6,
+        "character_edits": 41,
+        "retracted_characters": 6
+      },
+      "backlog": {
+        "max_queued_chunks": 3,
+        "max_queued_audio_ms": 60.0,
+        "max_consume_lag_ms": 63.357,
+        "mean_consume_lag_ms": 9.88
+      },
+      "utterance": {
+        "id": "code-terms",
+        "category": "code_terms",
+        "reference": "Refactor the async function and return a JSON object.",
+        "say_text": "Refactor the async function and return a JSON object.",
+        "voice": "Samantha",
+        "rate": 185
+      },
+      "audio_seconds": 2.88875,
+      "order_in_utterance": 2
+    },
+    {
+      "candidate": {
+        "name": "speculative-serialized-320",
+        "preset": "speculative",
+        "schedule": "serialized",
+        "draft_ms": 320.0
+      },
+      "authoritative": {
+        "first_raw_ms": 710.24,
+        "first_stable_ms": 1183.34,
+        "release_to_final_ms": 300.97,
+        "wall_to_final_ms": 3190.75,
+        "final_text": "Refactor the async function and return a JSON object.",
+        "raw_churn": {
+          "snapshot_count": 17,
+          "changed_transitions": 13,
+          "character_edits": 45,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 6,
+          "changed_transitions": 5,
+          "character_edits": 35,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 18,
+          "decoded_input_seconds": 35.8488,
+          "source_seconds_including_tail": 3.2088,
+          "audio_compute_amplification": 11.172185
+        },
+        "errors_vs_reference": {
+          "normalized_match": true,
+          "normalized_word_edits": 0,
+          "normalized_reference_words": 9
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": true,
+        "stateless_invocations": 1,
+        "launch_ms": 321.1,
+        "visible_ms": 394.81,
+        "compute_wall_ms": 73.71,
+        "input_seconds": 0.32,
+        "text": "Resemble",
+        "nonempty": true,
+        "visible_before_first_raw": true,
+        "visible_before_first_stable": true,
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 9,
+          "normalized_reference_words": 9
+        },
+        "prefix_vs_final": {
+          "is_final_word_prefix": false,
+          "draft_words": 1,
+          "common_prefix_words": 0,
+          "wrong_or_extra_words": 1,
+          "word_edits_to_final": 9
+        }
+      },
+      "first_visible_ms": 394.81,
+      "combined_visible_churn": {
+        "snapshot_count": 7,
+        "changed_transitions": 6,
+        "character_edits": 41,
+        "retracted_characters": 6
+      },
+      "backlog": {
+        "max_queued_chunks": 3,
+        "max_queued_audio_ms": 60.0,
+        "max_consume_lag_ms": 74.851,
+        "mean_consume_lag_ms": 10.944
+      },
+      "utterance": {
+        "id": "code-terms",
+        "category": "code_terms",
+        "reference": "Refactor the async function and return a JSON object.",
+        "say_text": "Refactor the async function and return a JSON object.",
+        "voice": "Samantha",
+        "rate": 185
+      },
+      "audio_seconds": 2.88875,
+      "order_in_utterance": 3
+    },
+    {
+      "candidate": {
+        "name": "speculative-parallel-480",
+        "preset": "speculative",
+        "schedule": "parallel",
+        "draft_ms": 480.0
+      },
+      "authoritative": {
+        "first_raw_ms": 704.48,
+        "first_stable_ms": 1191.44,
+        "release_to_final_ms": 301.11,
+        "wall_to_final_ms": 3191.14,
+        "final_text": "Refactor the async function and return a JSON object.",
+        "raw_churn": {
+          "snapshot_count": 17,
+          "changed_transitions": 13,
+          "character_edits": 45,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 6,
+          "changed_transitions": 5,
+          "character_edits": 35,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 18,
+          "decoded_input_seconds": 35.8488,
+          "source_seconds_including_tail": 3.2088,
+          "audio_compute_amplification": 11.172185
+        },
+        "errors_vs_reference": {
+          "normalized_match": true,
+          "normalized_word_edits": 0,
+          "normalized_reference_words": 9
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": true,
+        "stateless_invocations": 1,
+        "launch_ms": 481.16,
+        "visible_ms": 596.02,
+        "compute_wall_ms": 114.86,
+        "input_seconds": 0.48,
+        "text": "Refactor",
+        "nonempty": true,
+        "visible_before_first_raw": true,
+        "visible_before_first_stable": true,
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 8,
+          "normalized_reference_words": 9
+        },
+        "prefix_vs_final": {
+          "is_final_word_prefix": true,
+          "draft_words": 1,
+          "common_prefix_words": 1,
+          "wrong_or_extra_words": 0,
+          "word_edits_to_final": 8
+        }
+      },
+      "first_visible_ms": 596.02,
+      "combined_visible_churn": {
+        "snapshot_count": 7,
+        "changed_transitions": 5,
+        "character_edits": 35,
+        "retracted_characters": 0
+      },
+      "backlog": {
+        "max_queued_chunks": 3,
+        "max_queued_audio_ms": 60.0,
+        "max_consume_lag_ms": 58.691,
+        "mean_consume_lag_ms": 9.406
+      },
+      "utterance": {
+        "id": "code-terms",
+        "category": "code_terms",
+        "reference": "Refactor the async function and return a JSON object.",
+        "say_text": "Refactor the async function and return a JSON object.",
+        "voice": "Samantha",
+        "rate": 185
+      },
+      "audio_seconds": 2.88875,
+      "order_in_utterance": 4
+    },
+    {
+      "candidate": {
+        "name": "speculative-serialized-480",
+        "preset": "speculative",
+        "schedule": "serialized",
+        "draft_ms": 480.0
+      },
+      "authoritative": {
+        "first_raw_ms": 708.98,
+        "first_stable_ms": 1189.64,
+        "release_to_final_ms": 291.73,
+        "wall_to_final_ms": 3181.64,
+        "final_text": "Refactor the async function and return a JSON object.",
+        "raw_churn": {
+          "snapshot_count": 17,
+          "changed_transitions": 13,
+          "character_edits": 45,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 6,
+          "changed_transitions": 5,
+          "character_edits": 35,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 18,
+          "decoded_input_seconds": 35.8488,
+          "source_seconds_including_tail": 3.2088,
+          "audio_compute_amplification": 11.172185
+        },
+        "errors_vs_reference": {
+          "normalized_match": true,
+          "normalized_word_edits": 0,
+          "normalized_reference_words": 9
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": true,
+        "stateless_invocations": 1,
+        "launch_ms": 481.19,
+        "visible_ms": 555.04,
+        "compute_wall_ms": 73.86,
+        "input_seconds": 0.48,
+        "text": "Refactor",
+        "nonempty": true,
+        "visible_before_first_raw": true,
+        "visible_before_first_stable": true,
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 8,
+          "normalized_reference_words": 9
+        },
+        "prefix_vs_final": {
+          "is_final_word_prefix": true,
+          "draft_words": 1,
+          "common_prefix_words": 1,
+          "wrong_or_extra_words": 0,
+          "word_edits_to_final": 8
+        }
+      },
+      "first_visible_ms": 555.04,
+      "combined_visible_churn": {
+        "snapshot_count": 7,
+        "changed_transitions": 5,
+        "character_edits": 35,
+        "retracted_characters": 0
+      },
+      "backlog": {
+        "max_queued_chunks": 3,
+        "max_queued_audio_ms": 60.0,
+        "max_consume_lag_ms": 75.091,
+        "mean_consume_lag_ms": 10.418
+      },
+      "utterance": {
+        "id": "code-terms",
+        "category": "code_terms",
+        "reference": "Refactor the async function and return a JSON object.",
+        "say_text": "Refactor the async function and return a JSON object.",
+        "voice": "Samantha",
+        "rate": 185
+      },
+      "audio_seconds": 2.88875,
+      "order_in_utterance": 5
+    },
+    {
+      "candidate": {
+        "name": "speculative-parallel-320",
+        "preset": "speculative",
+        "schedule": "parallel",
+        "draft_ms": 320.0
+      },
+      "authoritative": {
+        "first_raw_ms": 705.62,
+        "first_stable_ms": 1027.15,
+        "release_to_final_ms": 350.23,
+        "wall_to_final_ms": 3785.68,
+        "final_text": "Open readme.md and edit config.yaml",
+        "raw_churn": {
+          "snapshot_count": 20,
+          "changed_transitions": 10,
+          "character_edits": 24,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 6,
+          "changed_transitions": 5,
+          "character_edits": 20,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 21,
+          "decoded_input_seconds": 46.9544,
+          "source_seconds_including_tail": 3.7544,
+          "audio_compute_amplification": 12.506576
+        },
+        "errors_vs_reference": {
+          "normalized_match": true,
+          "normalized_word_edits": 0,
+          "normalized_reference_words": 7
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": true,
+        "stateless_invocations": 1,
+        "launch_ms": 321.15,
+        "visible_ms": 392.28,
+        "compute_wall_ms": 71.13,
+        "input_seconds": 0.32,
+        "text": "Open",
+        "nonempty": true,
+        "visible_before_first_raw": true,
+        "visible_before_first_stable": true,
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 6,
+          "normalized_reference_words": 7
+        },
+        "prefix_vs_final": {
+          "is_final_word_prefix": true,
+          "draft_words": 1,
+          "common_prefix_words": 1,
+          "wrong_or_extra_words": 0,
+          "word_edits_to_final": 6
+        }
+      },
+      "first_visible_ms": 392.28,
+      "combined_visible_churn": {
+        "snapshot_count": 7,
+        "changed_transitions": 5,
+        "character_edits": 20,
+        "retracted_characters": 0
+      },
+      "backlog": {
+        "max_queued_chunks": 5,
+        "max_queued_audio_ms": 100.0,
+        "max_consume_lag_ms": 86.178,
+        "mean_consume_lag_ms": 9.815
+      },
+      "utterance": {
+        "id": "filenames",
+        "category": "filenames",
+        "reference": "Open README.md and edit config.yaml.",
+        "say_text": "Open README dot M D and edit config dot YAML.",
+        "voice": "Daniel",
+        "rate": 170
+      },
+      "audio_seconds": 3.434375,
+      "order_in_utterance": 1
+    },
+    {
+      "candidate": {
+        "name": "speculative-serialized-320",
+        "preset": "speculative",
+        "schedule": "serialized",
+        "draft_ms": 320.0
+      },
+      "authoritative": {
+        "first_raw_ms": 706.65,
+        "first_stable_ms": 1027.84,
+        "release_to_final_ms": 233.83,
+        "wall_to_final_ms": 3668.85,
+        "final_text": "Open readme.md and edit config.yaml",
+        "raw_churn": {
+          "snapshot_count": 20,
+          "changed_transitions": 10,
+          "character_edits": 24,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 6,
+          "changed_transitions": 5,
+          "character_edits": 20,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 21,
+          "decoded_input_seconds": 46.9544,
+          "source_seconds_including_tail": 3.7544,
+          "audio_compute_amplification": 12.506576
+        },
+        "errors_vs_reference": {
+          "normalized_match": true,
+          "normalized_word_edits": 0,
+          "normalized_reference_words": 7
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": true,
+        "stateless_invocations": 1,
+        "launch_ms": 320.96,
+        "visible_ms": 392.87,
+        "compute_wall_ms": 71.91,
+        "input_seconds": 0.32,
+        "text": "Open",
+        "nonempty": true,
+        "visible_before_first_raw": true,
+        "visible_before_first_stable": true,
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 6,
+          "normalized_reference_words": 7
+        },
+        "prefix_vs_final": {
+          "is_final_word_prefix": true,
+          "draft_words": 1,
+          "common_prefix_words": 1,
+          "wrong_or_extra_words": 0,
+          "word_edits_to_final": 6
+        }
+      },
+      "first_visible_ms": 392.87,
+      "combined_visible_churn": {
+        "snapshot_count": 7,
+        "changed_transitions": 5,
+        "character_edits": 20,
+        "retracted_characters": 0
+      },
+      "backlog": {
+        "max_queued_chunks": 3,
+        "max_queued_audio_ms": 60.0,
+        "max_consume_lag_ms": 72.918,
+        "mean_consume_lag_ms": 10.075
+      },
+      "utterance": {
+        "id": "filenames",
+        "category": "filenames",
+        "reference": "Open README.md and edit config.yaml.",
+        "say_text": "Open README dot M D and edit config dot YAML.",
+        "voice": "Daniel",
+        "rate": 170
+      },
+      "audio_seconds": 3.434375,
+      "order_in_utterance": 2
+    },
+    {
+      "candidate": {
+        "name": "speculative-parallel-480",
+        "preset": "speculative",
+        "schedule": "parallel",
+        "draft_ms": 480.0
+      },
+      "authoritative": {
+        "first_raw_ms": 703.01,
+        "first_stable_ms": 1027.64,
+        "release_to_final_ms": 230.36,
+        "wall_to_final_ms": 3664.85,
+        "final_text": "Open readme.md and edit config.yaml",
+        "raw_churn": {
+          "snapshot_count": 20,
+          "changed_transitions": 10,
+          "character_edits": 24,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 6,
+          "changed_transitions": 5,
+          "character_edits": 20,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 21,
+          "decoded_input_seconds": 46.9544,
+          "source_seconds_including_tail": 3.7544,
+          "audio_compute_amplification": 12.506576
+        },
+        "errors_vs_reference": {
+          "normalized_match": true,
+          "normalized_word_edits": 0,
+          "normalized_reference_words": 7
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": true,
+        "stateless_invocations": 1,
+        "launch_ms": 481.18,
+        "visible_ms": 552.83,
+        "compute_wall_ms": 71.64,
+        "input_seconds": 0.48,
+        "text": "Open",
+        "nonempty": true,
+        "visible_before_first_raw": true,
+        "visible_before_first_stable": true,
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 6,
+          "normalized_reference_words": 7
+        },
+        "prefix_vs_final": {
+          "is_final_word_prefix": true,
+          "draft_words": 1,
+          "common_prefix_words": 1,
+          "wrong_or_extra_words": 0,
+          "word_edits_to_final": 6
+        }
+      },
+      "first_visible_ms": 552.83,
+      "combined_visible_churn": {
+        "snapshot_count": 7,
+        "changed_transitions": 5,
+        "character_edits": 20,
+        "retracted_characters": 0
+      },
+      "backlog": {
+        "max_queued_chunks": 3,
+        "max_queued_audio_ms": 60.0,
+        "max_consume_lag_ms": 53.49,
+        "mean_consume_lag_ms": 8.819
+      },
+      "utterance": {
+        "id": "filenames",
+        "category": "filenames",
+        "reference": "Open README.md and edit config.yaml.",
+        "say_text": "Open README dot M D and edit config dot YAML.",
+        "voice": "Daniel",
+        "rate": 170
+      },
+      "audio_seconds": 3.434375,
+      "order_in_utterance": 3
+    },
+    {
+      "candidate": {
+        "name": "speculative-serialized-480",
+        "preset": "speculative",
+        "schedule": "serialized",
+        "draft_ms": 480.0
+      },
+      "authoritative": {
+        "first_raw_ms": 703.49,
+        "first_stable_ms": 1025.31,
+        "release_to_final_ms": 228.24,
+        "wall_to_final_ms": 3663.12,
+        "final_text": "Open readme.md and edit config.yaml",
+        "raw_churn": {
+          "snapshot_count": 20,
+          "changed_transitions": 10,
+          "character_edits": 24,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 6,
+          "changed_transitions": 5,
+          "character_edits": 20,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 21,
+          "decoded_input_seconds": 46.9544,
+          "source_seconds_including_tail": 3.7544,
+          "audio_compute_amplification": 12.506576
+        },
+        "errors_vs_reference": {
+          "normalized_match": true,
+          "normalized_word_edits": 0,
+          "normalized_reference_words": 7
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": true,
+        "stateless_invocations": 1,
+        "launch_ms": 481.11,
+        "visible_ms": 552.01,
+        "compute_wall_ms": 70.9,
+        "input_seconds": 0.48,
+        "text": "Open",
+        "nonempty": true,
+        "visible_before_first_raw": true,
+        "visible_before_first_stable": true,
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 6,
+          "normalized_reference_words": 7
+        },
+        "prefix_vs_final": {
+          "is_final_word_prefix": true,
+          "draft_words": 1,
+          "common_prefix_words": 1,
+          "wrong_or_extra_words": 0,
+          "word_edits_to_final": 6
+        }
+      },
+      "first_visible_ms": 552.01,
+      "combined_visible_churn": {
+        "snapshot_count": 7,
+        "changed_transitions": 5,
+        "character_edits": 20,
+        "retracted_characters": 0
+      },
+      "backlog": {
+        "max_queued_chunks": 3,
+        "max_queued_audio_ms": 60.0,
+        "max_consume_lag_ms": 72.065,
+        "mean_consume_lag_ms": 9.817
+      },
+      "utterance": {
+        "id": "filenames",
+        "category": "filenames",
+        "reference": "Open README.md and edit config.yaml.",
+        "say_text": "Open README dot M D and edit config dot YAML.",
+        "voice": "Daniel",
+        "rate": 170
+      },
+      "audio_seconds": 3.434375,
+      "order_in_utterance": 4
+    },
+    {
+      "candidate": {
+        "name": "balanced",
+        "preset": "balanced",
+        "schedule": "none",
+        "draft_ms": null
+      },
+      "authoritative": {
+        "first_raw_ms": 707.22,
+        "first_stable_ms": 1027.57,
+        "release_to_final_ms": 228.99,
+        "wall_to_final_ms": 3663.92,
+        "final_text": "Open readme.md and edit config.yaml",
+        "raw_churn": {
+          "snapshot_count": 20,
+          "changed_transitions": 10,
+          "character_edits": 24,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 6,
+          "changed_transitions": 5,
+          "character_edits": 20,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 21,
+          "decoded_input_seconds": 46.9544,
+          "source_seconds_including_tail": 3.7544,
+          "audio_compute_amplification": 12.506576
+        },
+        "errors_vs_reference": {
+          "normalized_match": true,
+          "normalized_word_edits": 0,
+          "normalized_reference_words": 7
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": false,
+        "stateless_invocations": 0,
+        "launch_ms": null,
+        "visible_ms": null,
+        "compute_wall_ms": null,
+        "input_seconds": 0.0,
+        "text": "",
+        "nonempty": false,
+        "visible_before_first_raw": false,
+        "visible_before_first_stable": false,
+        "errors_vs_reference": null,
+        "prefix_vs_final": null
+      },
+      "first_visible_ms": 1027.57,
+      "combined_visible_churn": {
+        "snapshot_count": 6,
+        "changed_transitions": 5,
+        "character_edits": 20,
+        "retracted_characters": 0
+      },
+      "backlog": {
+        "max_queued_chunks": 3,
+        "max_queued_audio_ms": 60.0,
+        "max_consume_lag_ms": 56.335,
+        "mean_consume_lag_ms": 9.371
+      },
+      "utterance": {
+        "id": "filenames",
+        "category": "filenames",
+        "reference": "Open README.md and edit config.yaml.",
+        "say_text": "Open README dot M D and edit config dot YAML.",
+        "voice": "Daniel",
+        "rate": 170
+      },
+      "audio_seconds": 3.434375,
+      "order_in_utterance": 5
+    },
+    {
+      "candidate": {
+        "name": "speculative-serialized-320",
+        "preset": "speculative",
+        "schedule": "serialized",
+        "draft_ms": 320.0
+      },
+      "authoritative": {
+        "first_raw_ms": 709.55,
+        "first_stable_ms": 1021.69,
+        "release_to_final_ms": 539.97,
+        "wall_to_final_ms": 3600.16,
+        "final_text": "Restart the HTTP API and verify TLS.",
+        "raw_churn": {
+          "snapshot_count": 18,
+          "changed_transitions": 14,
+          "character_edits": 31,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 6,
+          "changed_transitions": 5,
+          "character_edits": 24,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 19,
+          "decoded_input_seconds": 39.3793,
+          "source_seconds_including_tail": 3.3793,
+          "audio_compute_amplification": 11.653054
+        },
+        "errors_vs_reference": {
+          "normalized_match": true,
+          "normalized_word_edits": 0,
+          "normalized_reference_words": 7
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": true,
+        "stateless_invocations": 1,
+        "launch_ms": 321.09,
+        "visible_ms": 392.32,
+        "compute_wall_ms": 71.23,
+        "input_seconds": 0.32,
+        "text": "Rista",
+        "nonempty": true,
+        "visible_before_first_raw": true,
+        "visible_before_first_stable": true,
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 7,
+          "normalized_reference_words": 7
+        },
+        "prefix_vs_final": {
+          "is_final_word_prefix": false,
+          "draft_words": 1,
+          "common_prefix_words": 0,
+          "wrong_or_extra_words": 1,
+          "word_edits_to_final": 7
+        }
+      },
+      "first_visible_ms": 392.32,
+      "combined_visible_churn": {
+        "snapshot_count": 7,
+        "changed_transitions": 6,
+        "character_edits": 27,
+        "retracted_characters": 4
+      },
+      "backlog": {
+        "max_queued_chunks": 3,
+        "max_queued_audio_ms": 60.0,
+        "max_consume_lag_ms": 72.375,
+        "mean_consume_lag_ms": 9.851
+      },
+      "utterance": {
+        "id": "acronyms",
+        "category": "acronyms",
+        "reference": "Restart the HTTP API and verify TLS.",
+        "say_text": "Restart the H T T P A P I and verify T L S.",
+        "voice": "Karen",
+        "rate": 190
+      },
+      "audio_seconds": 3.059312,
+      "order_in_utterance": 1
+    },
+    {
+      "candidate": {
+        "name": "speculative-parallel-480",
+        "preset": "speculative",
+        "schedule": "parallel",
+        "draft_ms": 480.0
+      },
+      "authoritative": {
+        "first_raw_ms": 701.42,
+        "first_stable_ms": 1026.02,
+        "release_to_final_ms": 286.35,
+        "wall_to_final_ms": 3346.73,
+        "final_text": "Restart the HTTP API and verify TLS.",
+        "raw_churn": {
+          "snapshot_count": 18,
+          "changed_transitions": 14,
+          "character_edits": 31,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 6,
+          "changed_transitions": 5,
+          "character_edits": 24,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 19,
+          "decoded_input_seconds": 39.3793,
+          "source_seconds_including_tail": 3.3793,
+          "audio_compute_amplification": 11.653054
+        },
+        "errors_vs_reference": {
+          "normalized_match": true,
+          "normalized_word_edits": 0,
+          "normalized_reference_words": 7
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": true,
+        "stateless_invocations": 1,
+        "launch_ms": 480.41,
+        "visible_ms": 557.53,
+        "compute_wall_ms": 77.12,
+        "input_seconds": 0.48,
+        "text": "Restart",
+        "nonempty": true,
+        "visible_before_first_raw": true,
+        "visible_before_first_stable": true,
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 6,
+          "normalized_reference_words": 7
+        },
+        "prefix_vs_final": {
+          "is_final_word_prefix": true,
+          "draft_words": 1,
+          "common_prefix_words": 1,
+          "wrong_or_extra_words": 0,
+          "word_edits_to_final": 6
+        }
+      },
+      "first_visible_ms": 557.53,
+      "combined_visible_churn": {
+        "snapshot_count": 7,
+        "changed_transitions": 5,
+        "character_edits": 24,
+        "retracted_characters": 0
+      },
+      "backlog": {
+        "max_queued_chunks": 3,
+        "max_queued_audio_ms": 60.0,
+        "max_consume_lag_ms": 52.642,
+        "mean_consume_lag_ms": 9.105
+      },
+      "utterance": {
+        "id": "acronyms",
+        "category": "acronyms",
+        "reference": "Restart the HTTP API and verify TLS.",
+        "say_text": "Restart the H T T P A P I and verify T L S.",
+        "voice": "Karen",
+        "rate": 190
+      },
+      "audio_seconds": 3.059312,
+      "order_in_utterance": 2
+    },
+    {
+      "candidate": {
+        "name": "speculative-serialized-480",
+        "preset": "speculative",
+        "schedule": "serialized",
+        "draft_ms": 480.0
+      },
+      "authoritative": {
+        "first_raw_ms": 705.01,
+        "first_stable_ms": 1028.89,
+        "release_to_final_ms": 283.13,
+        "wall_to_final_ms": 3343.52,
+        "final_text": "Restart the HTTP API and verify TLS.",
+        "raw_churn": {
+          "snapshot_count": 18,
+          "changed_transitions": 14,
+          "character_edits": 31,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 6,
+          "changed_transitions": 5,
+          "character_edits": 24,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 19,
+          "decoded_input_seconds": 39.3793,
+          "source_seconds_including_tail": 3.3793,
+          "audio_compute_amplification": 11.653054
+        },
+        "errors_vs_reference": {
+          "normalized_match": true,
+          "normalized_word_edits": 0,
+          "normalized_reference_words": 7
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": true,
+        "stateless_invocations": 1,
+        "launch_ms": 480.4,
+        "visible_ms": 551.36,
+        "compute_wall_ms": 70.96,
+        "input_seconds": 0.48,
+        "text": "Restart",
+        "nonempty": true,
+        "visible_before_first_raw": true,
+        "visible_before_first_stable": true,
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 6,
+          "normalized_reference_words": 7
+        },
+        "prefix_vs_final": {
+          "is_final_word_prefix": true,
+          "draft_words": 1,
+          "common_prefix_words": 1,
+          "wrong_or_extra_words": 0,
+          "word_edits_to_final": 6
+        }
+      },
+      "first_visible_ms": 551.36,
+      "combined_visible_churn": {
+        "snapshot_count": 7,
+        "changed_transitions": 5,
+        "character_edits": 24,
+        "retracted_characters": 0
+      },
+      "backlog": {
+        "max_queued_chunks": 3,
+        "max_queued_audio_ms": 60.0,
+        "max_consume_lag_ms": 71.417,
+        "mean_consume_lag_ms": 10.308
+      },
+      "utterance": {
+        "id": "acronyms",
+        "category": "acronyms",
+        "reference": "Restart the HTTP API and verify TLS.",
+        "say_text": "Restart the H T T P A P I and verify T L S.",
+        "voice": "Karen",
+        "rate": 190
+      },
+      "audio_seconds": 3.059312,
+      "order_in_utterance": 3
+    },
+    {
+      "candidate": {
+        "name": "balanced",
+        "preset": "balanced",
+        "schedule": "none",
+        "draft_ms": null
+      },
+      "authoritative": {
+        "first_raw_ms": 707.36,
+        "first_stable_ms": 1022.02,
+        "release_to_final_ms": 281.68,
+        "wall_to_final_ms": 3341.74,
+        "final_text": "Restart the HTTP API and verify TLS.",
+        "raw_churn": {
+          "snapshot_count": 18,
+          "changed_transitions": 14,
+          "character_edits": 31,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 6,
+          "changed_transitions": 5,
+          "character_edits": 24,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 19,
+          "decoded_input_seconds": 39.3793,
+          "source_seconds_including_tail": 3.3793,
+          "audio_compute_amplification": 11.653054
+        },
+        "errors_vs_reference": {
+          "normalized_match": true,
+          "normalized_word_edits": 0,
+          "normalized_reference_words": 7
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": false,
+        "stateless_invocations": 0,
+        "launch_ms": null,
+        "visible_ms": null,
+        "compute_wall_ms": null,
+        "input_seconds": 0.0,
+        "text": "",
+        "nonempty": false,
+        "visible_before_first_raw": false,
+        "visible_before_first_stable": false,
+        "errors_vs_reference": null,
+        "prefix_vs_final": null
+      },
+      "first_visible_ms": 1022.02,
+      "combined_visible_churn": {
+        "snapshot_count": 6,
+        "changed_transitions": 5,
+        "character_edits": 24,
+        "retracted_characters": 0
+      },
+      "backlog": {
+        "max_queued_chunks": 3,
+        "max_queued_audio_ms": 60.0,
+        "max_consume_lag_ms": 53.04,
+        "mean_consume_lag_ms": 9.423
+      },
+      "utterance": {
+        "id": "acronyms",
+        "category": "acronyms",
+        "reference": "Restart the HTTP API and verify TLS.",
+        "say_text": "Restart the H T T P A P I and verify T L S.",
+        "voice": "Karen",
+        "rate": 190
+      },
+      "audio_seconds": 3.059312,
+      "order_in_utterance": 4
+    },
+    {
+      "candidate": {
+        "name": "speculative-parallel-320",
+        "preset": "speculative",
+        "schedule": "parallel",
+        "draft_ms": 320.0
+      },
+      "authoritative": {
+        "first_raw_ms": 708.44,
+        "first_stable_ms": 1027.1,
+        "release_to_final_ms": 294.7,
+        "wall_to_final_ms": 3355.06,
+        "final_text": "Restart the HTTP API and verify TLS.",
+        "raw_churn": {
+          "snapshot_count": 18,
+          "changed_transitions": 14,
+          "character_edits": 31,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 6,
+          "changed_transitions": 5,
+          "character_edits": 24,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 19,
+          "decoded_input_seconds": 39.3793,
+          "source_seconds_including_tail": 3.3793,
+          "audio_compute_amplification": 11.653054
+        },
+        "errors_vs_reference": {
+          "normalized_match": true,
+          "normalized_word_edits": 0,
+          "normalized_reference_words": 7
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": true,
+        "stateless_invocations": 1,
+        "launch_ms": 320.37,
+        "visible_ms": 391.61,
+        "compute_wall_ms": 71.23,
+        "input_seconds": 0.32,
+        "text": "Rista",
+        "nonempty": true,
+        "visible_before_first_raw": true,
+        "visible_before_first_stable": true,
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 7,
+          "normalized_reference_words": 7
+        },
+        "prefix_vs_final": {
+          "is_final_word_prefix": false,
+          "draft_words": 1,
+          "common_prefix_words": 0,
+          "wrong_or_extra_words": 1,
+          "word_edits_to_final": 7
+        }
+      },
+      "first_visible_ms": 391.61,
+      "combined_visible_churn": {
+        "snapshot_count": 7,
+        "changed_transitions": 6,
+        "character_edits": 27,
+        "retracted_characters": 4
+      },
+      "backlog": {
+        "max_queued_chunks": 3,
+        "max_queued_audio_ms": 60.0,
+        "max_consume_lag_ms": 55.823,
+        "mean_consume_lag_ms": 9.332
+      },
+      "utterance": {
+        "id": "acronyms",
+        "category": "acronyms",
+        "reference": "Restart the HTTP API and verify TLS.",
+        "say_text": "Restart the H T T P A P I and verify T L S.",
+        "voice": "Karen",
+        "rate": 190
+      },
+      "audio_seconds": 3.059312,
+      "order_in_utterance": 5
+    },
+    {
+      "candidate": {
+        "name": "speculative-parallel-480",
+        "preset": "speculative",
+        "schedule": "parallel",
+        "draft_ms": 480.0
+      },
+      "authoritative": {
+        "first_raw_ms": 703.51,
+        "first_stable_ms": 1029.31,
+        "release_to_final_ms": 795.02,
+        "wall_to_final_ms": 4334.95,
+        "final_text": "Set port 8080 and retrie in 25 seconds.",
+        "raw_churn": {
+          "snapshot_count": 21,
+          "changed_transitions": 13,
+          "character_edits": 37,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 7,
+          "changed_transitions": 6,
+          "character_edits": 29,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 22,
+          "decoded_input_seconds": 50.8989,
+          "source_seconds_including_tail": 3.8589,
+          "audio_compute_amplification": 13.190081
+        },
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 1,
+          "normalized_reference_words": 8
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": true,
+        "stateless_invocations": 1,
+        "launch_ms": 481.14,
+        "visible_ms": null,
+        "compute_wall_ms": 69.68,
+        "input_seconds": 0.48,
+        "text": "",
+        "nonempty": false,
+        "visible_before_first_raw": false,
+        "visible_before_first_stable": false,
+        "errors_vs_reference": null,
+        "prefix_vs_final": null
+      },
+      "first_visible_ms": 1029.31,
+      "combined_visible_churn": {
+        "snapshot_count": 7,
+        "changed_transitions": 6,
+        "character_edits": 29,
+        "retracted_characters": 0
+      },
+      "backlog": {
+        "max_queued_chunks": 3,
+        "max_queued_audio_ms": 60.0,
+        "max_consume_lag_ms": 56.507,
+        "mean_consume_lag_ms": 10.233
+      },
+      "utterance": {
+        "id": "numbers",
+        "category": "numbers",
+        "reference": "Set port 8080 and retry in 25 seconds.",
+        "say_text": "Set port eight thousand eighty and retry in twenty five seconds.",
+        "voice": "Moira",
+        "rate": 180
+      },
+      "audio_seconds": 3.538875,
+      "order_in_utterance": 1
+    },
+    {
+      "candidate": {
+        "name": "speculative-serialized-480",
+        "preset": "speculative",
+        "schedule": "serialized",
+        "draft_ms": 480.0
+      },
+      "authoritative": {
+        "first_raw_ms": 704.63,
+        "first_stable_ms": 1020.5,
+        "release_to_final_ms": 292.22,
+        "wall_to_final_ms": 3832.16,
+        "final_text": "Set port 8080 and retrie in 25 seconds.",
+        "raw_churn": {
+          "snapshot_count": 21,
+          "changed_transitions": 13,
+          "character_edits": 37,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 7,
+          "changed_transitions": 6,
+          "character_edits": 29,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 22,
+          "decoded_input_seconds": 50.8989,
+          "source_seconds_including_tail": 3.8589,
+          "audio_compute_amplification": 13.190081
+        },
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 1,
+          "normalized_reference_words": 8
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": true,
+        "stateless_invocations": 1,
+        "launch_ms": 481.34,
+        "visible_ms": null,
+        "compute_wall_ms": 73.16,
+        "input_seconds": 0.48,
+        "text": "",
+        "nonempty": false,
+        "visible_before_first_raw": false,
+        "visible_before_first_stable": false,
+        "errors_vs_reference": null,
+        "prefix_vs_final": null
+      },
+      "first_visible_ms": 1020.5,
+      "combined_visible_churn": {
+        "snapshot_count": 7,
+        "changed_transitions": 6,
+        "character_edits": 29,
+        "retracted_characters": 0
+      },
+      "backlog": {
+        "max_queued_chunks": 3,
+        "max_queued_audio_ms": 60.0,
+        "max_consume_lag_ms": 74.533,
+        "mean_consume_lag_ms": 10.533
+      },
+      "utterance": {
+        "id": "numbers",
+        "category": "numbers",
+        "reference": "Set port 8080 and retry in 25 seconds.",
+        "say_text": "Set port eight thousand eighty and retry in twenty five seconds.",
+        "voice": "Moira",
+        "rate": 180
+      },
+      "audio_seconds": 3.538875,
+      "order_in_utterance": 2
+    },
+    {
+      "candidate": {
+        "name": "balanced",
+        "preset": "balanced",
+        "schedule": "none",
+        "draft_ms": null
+      },
+      "authoritative": {
+        "first_raw_ms": 713.3,
+        "first_stable_ms": 1027.91,
+        "release_to_final_ms": 285.19,
+        "wall_to_final_ms": 3824.18,
+        "final_text": "Set port 8080 and retrie in 25 seconds.",
+        "raw_churn": {
+          "snapshot_count": 21,
+          "changed_transitions": 13,
+          "character_edits": 37,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 7,
+          "changed_transitions": 6,
+          "character_edits": 29,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 22,
+          "decoded_input_seconds": 50.8989,
+          "source_seconds_including_tail": 3.8589,
+          "audio_compute_amplification": 13.190081
+        },
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 1,
+          "normalized_reference_words": 8
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": false,
+        "stateless_invocations": 0,
+        "launch_ms": null,
+        "visible_ms": null,
+        "compute_wall_ms": null,
+        "input_seconds": 0.0,
+        "text": "",
+        "nonempty": false,
+        "visible_before_first_raw": false,
+        "visible_before_first_stable": false,
+        "errors_vs_reference": null,
+        "prefix_vs_final": null
+      },
+      "first_visible_ms": 1027.91,
+      "combined_visible_churn": {
+        "snapshot_count": 7,
+        "changed_transitions": 6,
+        "character_edits": 29,
+        "retracted_characters": 0
+      },
+      "backlog": {
+        "max_queued_chunks": 3,
+        "max_queued_audio_ms": 60.0,
+        "max_consume_lag_ms": 53.014,
+        "mean_consume_lag_ms": 9.635
+      },
+      "utterance": {
+        "id": "numbers",
+        "category": "numbers",
+        "reference": "Set port 8080 and retry in 25 seconds.",
+        "say_text": "Set port eight thousand eighty and retry in twenty five seconds.",
+        "voice": "Moira",
+        "rate": 180
+      },
+      "audio_seconds": 3.538875,
+      "order_in_utterance": 3
+    },
+    {
+      "candidate": {
+        "name": "speculative-parallel-320",
+        "preset": "speculative",
+        "schedule": "parallel",
+        "draft_ms": 320.0
+      },
+      "authoritative": {
+        "first_raw_ms": 709.55,
+        "first_stable_ms": 1030.01,
+        "release_to_final_ms": 295.96,
+        "wall_to_final_ms": 3835.89,
+        "final_text": "Set port 8080 and retrie in 25 seconds.",
+        "raw_churn": {
+          "snapshot_count": 21,
+          "changed_transitions": 13,
+          "character_edits": 37,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 7,
+          "changed_transitions": 6,
+          "character_edits": 29,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 22,
+          "decoded_input_seconds": 50.8989,
+          "source_seconds_including_tail": 3.8589,
+          "audio_compute_amplification": 13.190081
+        },
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 1,
+          "normalized_reference_words": 8
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": true,
+        "stateless_invocations": 1,
+        "launch_ms": 321.17,
+        "visible_ms": 393.11,
+        "compute_wall_ms": 71.95,
+        "input_seconds": 0.32,
+        "text": "So",
+        "nonempty": true,
+        "visible_before_first_raw": true,
+        "visible_before_first_stable": true,
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 8,
+          "normalized_reference_words": 8
+        },
+        "prefix_vs_final": {
+          "is_final_word_prefix": false,
+          "draft_words": 1,
+          "common_prefix_words": 0,
+          "wrong_or_extra_words": 1,
+          "word_edits_to_final": 8
+        }
+      },
+      "first_visible_ms": 393.11,
+      "combined_visible_churn": {
+        "snapshot_count": 8,
+        "changed_transitions": 7,
+        "character_edits": 31,
+        "retracted_characters": 1
+      },
+      "backlog": {
+        "max_queued_chunks": 3,
+        "max_queued_audio_ms": 60.0,
+        "max_consume_lag_ms": 57.024,
+        "mean_consume_lag_ms": 9.539
+      },
+      "utterance": {
+        "id": "numbers",
+        "category": "numbers",
+        "reference": "Set port 8080 and retry in 25 seconds.",
+        "say_text": "Set port eight thousand eighty and retry in twenty five seconds.",
+        "voice": "Moira",
+        "rate": 180
+      },
+      "audio_seconds": 3.538875,
+      "order_in_utterance": 4
+    },
+    {
+      "candidate": {
+        "name": "speculative-serialized-320",
+        "preset": "speculative",
+        "schedule": "serialized",
+        "draft_ms": 320.0
+      },
+      "authoritative": {
+        "first_raw_ms": 721.73,
+        "first_stable_ms": 1027.49,
+        "release_to_final_ms": 300.83,
+        "wall_to_final_ms": 3840.79,
+        "final_text": "Set port 8080 and retrie in 25 seconds.",
+        "raw_churn": {
+          "snapshot_count": 21,
+          "changed_transitions": 13,
+          "character_edits": 37,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 7,
+          "changed_transitions": 6,
+          "character_edits": 29,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 22,
+          "decoded_input_seconds": 50.8989,
+          "source_seconds_including_tail": 3.8589,
+          "audio_compute_amplification": 13.190081
+        },
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 1,
+          "normalized_reference_words": 8
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": true,
+        "stateless_invocations": 1,
+        "launch_ms": 321.15,
+        "visible_ms": 394.37,
+        "compute_wall_ms": 73.22,
+        "input_seconds": 0.32,
+        "text": "So",
+        "nonempty": true,
+        "visible_before_first_raw": true,
+        "visible_before_first_stable": true,
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 8,
+          "normalized_reference_words": 8
+        },
+        "prefix_vs_final": {
+          "is_final_word_prefix": false,
+          "draft_words": 1,
+          "common_prefix_words": 0,
+          "wrong_or_extra_words": 1,
+          "word_edits_to_final": 8
+        }
+      },
+      "first_visible_ms": 394.37,
+      "combined_visible_churn": {
+        "snapshot_count": 8,
+        "changed_transitions": 7,
+        "character_edits": 31,
+        "retracted_characters": 1
+      },
+      "backlog": {
+        "max_queued_chunks": 4,
+        "max_queued_audio_ms": 80.0,
+        "max_consume_lag_ms": 74.424,
+        "mean_consume_lag_ms": 11.301
+      },
+      "utterance": {
+        "id": "numbers",
+        "category": "numbers",
+        "reference": "Set port 8080 and retry in 25 seconds.",
+        "say_text": "Set port eight thousand eighty and retry in twenty five seconds.",
+        "voice": "Moira",
+        "rate": 180
+      },
+      "audio_seconds": 3.538875,
+      "order_in_utterance": 5
+    },
+    {
+      "candidate": {
+        "name": "speculative-serialized-480",
+        "preset": "speculative",
+        "schedule": "serialized",
+        "draft_ms": 480.0
+      },
+      "authoritative": {
+        "first_raw_ms": 704.19,
+        "first_stable_ms": 1026.6,
+        "release_to_final_ms": 466.19,
+        "wall_to_final_ms": 2999.59,
+        "final_text": "Print hello, world, then exit.",
+        "raw_churn": {
+          "snapshot_count": 14,
+          "changed_transitions": 10,
+          "character_edits": 25,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 6,
+          "changed_transitions": 5,
+          "character_edits": 19,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 15,
+          "decoded_input_seconds": 26.3724,
+          "source_seconds_including_tail": 2.8524,
+          "audio_compute_amplification": 9.24576
+        },
+        "errors_vs_reference": {
+          "normalized_match": true,
+          "normalized_word_edits": 0,
+          "normalized_reference_words": 5
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": true,
+        "stateless_invocations": 1,
+        "launch_ms": 481.17,
+        "visible_ms": 556.23,
+        "compute_wall_ms": 75.06,
+        "input_seconds": 0.48,
+        "text": "Crintanna",
+        "nonempty": true,
+        "visible_before_first_raw": true,
+        "visible_before_first_stable": true,
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 5,
+          "normalized_reference_words": 5
+        },
+        "prefix_vs_final": {
+          "is_final_word_prefix": false,
+          "draft_words": 1,
+          "common_prefix_words": 0,
+          "wrong_or_extra_words": 1,
+          "word_edits_to_final": 5
+        }
+      },
+      "first_visible_ms": 556.23,
+      "combined_visible_churn": {
+        "snapshot_count": 7,
+        "changed_transitions": 6,
+        "character_edits": 24,
+        "retracted_characters": 9
+      },
+      "backlog": {
+        "max_queued_chunks": 3,
+        "max_queued_audio_ms": 60.0,
+        "max_consume_lag_ms": 76.269,
+        "mean_consume_lag_ms": 9.709
+      },
+      "utterance": {
+        "id": "punctuation",
+        "category": "punctuation",
+        "reference": "Print hello, world, then exit.",
+        "say_text": "Print hello, world, then exit.",
+        "voice": "Tessa",
+        "rate": 175
+      },
+      "audio_seconds": 2.532375,
+      "order_in_utterance": 1
+    },
+    {
+      "candidate": {
+        "name": "balanced",
+        "preset": "balanced",
+        "schedule": "none",
+        "draft_ms": null
+      },
+      "authoritative": {
+        "first_raw_ms": 706.28,
+        "first_stable_ms": 1030.38,
+        "release_to_final_ms": 216.41,
+        "wall_to_final_ms": 2749.85,
+        "final_text": "Print hello, world, then exit.",
+        "raw_churn": {
+          "snapshot_count": 14,
+          "changed_transitions": 10,
+          "character_edits": 25,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 6,
+          "changed_transitions": 5,
+          "character_edits": 19,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 15,
+          "decoded_input_seconds": 26.3724,
+          "source_seconds_including_tail": 2.8524,
+          "audio_compute_amplification": 9.24576
+        },
+        "errors_vs_reference": {
+          "normalized_match": true,
+          "normalized_word_edits": 0,
+          "normalized_reference_words": 5
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": false,
+        "stateless_invocations": 0,
+        "launch_ms": null,
+        "visible_ms": null,
+        "compute_wall_ms": null,
+        "input_seconds": 0.0,
+        "text": "",
+        "nonempty": false,
+        "visible_before_first_raw": false,
+        "visible_before_first_stable": false,
+        "errors_vs_reference": null,
+        "prefix_vs_final": null
+      },
+      "first_visible_ms": 1030.38,
+      "combined_visible_churn": {
+        "snapshot_count": 6,
+        "changed_transitions": 5,
+        "character_edits": 19,
+        "retracted_characters": 0
+      },
+      "backlog": {
+        "max_queued_chunks": 3,
+        "max_queued_audio_ms": 60.0,
+        "max_consume_lag_ms": 50.227,
+        "mean_consume_lag_ms": 7.721
+      },
+      "utterance": {
+        "id": "punctuation",
+        "category": "punctuation",
+        "reference": "Print hello, world, then exit.",
+        "say_text": "Print hello, world, then exit.",
+        "voice": "Tessa",
+        "rate": 175
+      },
+      "audio_seconds": 2.532375,
+      "order_in_utterance": 2
+    },
+    {
+      "candidate": {
+        "name": "speculative-parallel-320",
+        "preset": "speculative",
+        "schedule": "parallel",
+        "draft_ms": 320.0
+      },
+      "authoritative": {
+        "first_raw_ms": 708.42,
+        "first_stable_ms": 1022.88,
+        "release_to_final_ms": 229.39,
+        "wall_to_final_ms": 2761.93,
+        "final_text": "Print hello, world, then exit.",
+        "raw_churn": {
+          "snapshot_count": 14,
+          "changed_transitions": 10,
+          "character_edits": 25,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 6,
+          "changed_transitions": 5,
+          "character_edits": 19,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 15,
+          "decoded_input_seconds": 26.3724,
+          "source_seconds_including_tail": 2.8524,
+          "audio_compute_amplification": 9.24576
+        },
+        "errors_vs_reference": {
+          "normalized_match": true,
+          "normalized_word_edits": 0,
+          "normalized_reference_words": 5
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": true,
+        "stateless_invocations": 1,
+        "launch_ms": 321.15,
+        "visible_ms": 395.77,
+        "compute_wall_ms": 74.62,
+        "input_seconds": 0.32,
+        "text": "Print",
+        "nonempty": true,
+        "visible_before_first_raw": true,
+        "visible_before_first_stable": true,
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 4,
+          "normalized_reference_words": 5
+        },
+        "prefix_vs_final": {
+          "is_final_word_prefix": true,
+          "draft_words": 1,
+          "common_prefix_words": 1,
+          "wrong_or_extra_words": 0,
+          "word_edits_to_final": 4
+        }
+      },
+      "first_visible_ms": 395.77,
+      "combined_visible_churn": {
+        "snapshot_count": 7,
+        "changed_transitions": 6,
+        "character_edits": 20,
+        "retracted_characters": 5
+      },
+      "backlog": {
+        "max_queued_chunks": 3,
+        "max_queued_audio_ms": 60.0,
+        "max_consume_lag_ms": 52.091,
+        "mean_consume_lag_ms": 8.254
+      },
+      "utterance": {
+        "id": "punctuation",
+        "category": "punctuation",
+        "reference": "Print hello, world, then exit.",
+        "say_text": "Print hello, world, then exit.",
+        "voice": "Tessa",
+        "rate": 175
+      },
+      "audio_seconds": 2.532375,
+      "order_in_utterance": 3
+    },
+    {
+      "candidate": {
+        "name": "speculative-serialized-320",
+        "preset": "speculative",
+        "schedule": "serialized",
+        "draft_ms": 320.0
+      },
+      "authoritative": {
+        "first_raw_ms": 710.12,
+        "first_stable_ms": 1022.31,
+        "release_to_final_ms": 217.34,
+        "wall_to_final_ms": 2750.77,
+        "final_text": "Print hello, world, then exit.",
+        "raw_churn": {
+          "snapshot_count": 14,
+          "changed_transitions": 10,
+          "character_edits": 25,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 6,
+          "changed_transitions": 5,
+          "character_edits": 19,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 15,
+          "decoded_input_seconds": 26.3724,
+          "source_seconds_including_tail": 2.8524,
+          "audio_compute_amplification": 9.24576
+        },
+        "errors_vs_reference": {
+          "normalized_match": true,
+          "normalized_word_edits": 0,
+          "normalized_reference_words": 5
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": true,
+        "stateless_invocations": 1,
+        "launch_ms": 321.14,
+        "visible_ms": 391.34,
+        "compute_wall_ms": 70.2,
+        "input_seconds": 0.32,
+        "text": "Print",
+        "nonempty": true,
+        "visible_before_first_raw": true,
+        "visible_before_first_stable": true,
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 4,
+          "normalized_reference_words": 5
+        },
+        "prefix_vs_final": {
+          "is_final_word_prefix": true,
+          "draft_words": 1,
+          "common_prefix_words": 1,
+          "wrong_or_extra_words": 0,
+          "word_edits_to_final": 4
+        }
+      },
+      "first_visible_ms": 391.34,
+      "combined_visible_churn": {
+        "snapshot_count": 7,
+        "changed_transitions": 6,
+        "character_edits": 20,
+        "retracted_characters": 5
+      },
+      "backlog": {
+        "max_queued_chunks": 3,
+        "max_queued_audio_ms": 60.0,
+        "max_consume_lag_ms": 71.389,
+        "mean_consume_lag_ms": 8.871
+      },
+      "utterance": {
+        "id": "punctuation",
+        "category": "punctuation",
+        "reference": "Print hello, world, then exit.",
+        "say_text": "Print hello, world, then exit.",
+        "voice": "Tessa",
+        "rate": 175
+      },
+      "audio_seconds": 2.532375,
+      "order_in_utterance": 4
+    },
+    {
+      "candidate": {
+        "name": "speculative-parallel-480",
+        "preset": "speculative",
+        "schedule": "parallel",
+        "draft_ms": 480.0
+      },
+      "authoritative": {
+        "first_raw_ms": 700.47,
+        "first_stable_ms": 1021.61,
+        "release_to_final_ms": 213.33,
+        "wall_to_final_ms": 2746.74,
+        "final_text": "Print hello, world, then exit.",
+        "raw_churn": {
+          "snapshot_count": 14,
+          "changed_transitions": 10,
+          "character_edits": 25,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 6,
+          "changed_transitions": 5,
+          "character_edits": 19,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 15,
+          "decoded_input_seconds": 26.3724,
+          "source_seconds_including_tail": 2.8524,
+          "audio_compute_amplification": 9.24576
+        },
+        "errors_vs_reference": {
+          "normalized_match": true,
+          "normalized_word_edits": 0,
+          "normalized_reference_words": 5
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": true,
+        "stateless_invocations": 1,
+        "launch_ms": 481.16,
+        "visible_ms": 557.13,
+        "compute_wall_ms": 75.96,
+        "input_seconds": 0.48,
+        "text": "Crintanna",
+        "nonempty": true,
+        "visible_before_first_raw": true,
+        "visible_before_first_stable": true,
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 5,
+          "normalized_reference_words": 5
+        },
+        "prefix_vs_final": {
+          "is_final_word_prefix": false,
+          "draft_words": 1,
+          "common_prefix_words": 0,
+          "wrong_or_extra_words": 1,
+          "word_edits_to_final": 5
+        }
+      },
+      "first_visible_ms": 557.13,
+      "combined_visible_churn": {
+        "snapshot_count": 7,
+        "changed_transitions": 6,
+        "character_edits": 24,
+        "retracted_characters": 9
+      },
+      "backlog": {
+        "max_queued_chunks": 3,
+        "max_queued_audio_ms": 60.0,
+        "max_consume_lag_ms": 49.146,
+        "mean_consume_lag_ms": 7.37
+      },
+      "utterance": {
+        "id": "punctuation",
+        "category": "punctuation",
+        "reference": "Print hello, world, then exit.",
+        "say_text": "Print hello, world, then exit.",
+        "voice": "Tessa",
+        "rate": 175
+      },
+      "audio_seconds": 2.532375,
+      "order_in_utterance": 5
+    },
+    {
+      "candidate": {
+        "name": "balanced",
+        "preset": "balanced",
+        "schedule": "none",
+        "draft_ms": null
+      },
+      "authoritative": {
+        "first_raw_ms": 660.16,
+        "first_stable_ms": 717.14,
+        "release_to_final_ms": 397.54,
+        "wall_to_final_ms": 992.58,
+        "final_text": "Run tests",
+        "raw_churn": {
+          "snapshot_count": 2,
+          "changed_transitions": 1,
+          "character_edits": 5,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 1,
+          "changed_transitions": 0,
+          "character_edits": 0,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 3,
+          "decoded_input_seconds": 2.354,
+          "source_seconds_including_tail": 0.914,
+          "audio_compute_amplification": 2.575492
+        },
+        "errors_vs_reference": {
+          "normalized_match": true,
+          "normalized_word_edits": 0,
+          "normalized_reference_words": 2
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": false,
+        "stateless_invocations": 0,
+        "launch_ms": null,
+        "visible_ms": null,
+        "compute_wall_ms": null,
+        "input_seconds": 0.0,
+        "text": "",
+        "nonempty": false,
+        "visible_before_first_raw": false,
+        "visible_before_first_stable": false,
+        "errors_vs_reference": null,
+        "prefix_vs_final": null
+      },
+      "first_visible_ms": 717.14,
+      "combined_visible_churn": {
+        "snapshot_count": 1,
+        "changed_transitions": 0,
+        "character_edits": 0,
+        "retracted_characters": 0
+      },
+      "backlog": {
+        "max_queued_chunks": 2,
+        "max_queued_audio_ms": 40.0,
+        "max_consume_lag_ms": 1.156,
+        "mean_consume_lag_ms": 0.995
+      },
+      "utterance": {
+        "id": "short-command",
+        "category": "short_command",
+        "reference": "Run tests.",
+        "say_text": "Run tests.",
+        "voice": "Samantha",
+        "rate": 210
+      },
+      "audio_seconds": 0.594,
+      "order_in_utterance": 1
+    },
+    {
+      "candidate": {
+        "name": "speculative-parallel-320",
+        "preset": "speculative",
+        "schedule": "parallel",
+        "draft_ms": 320.0
+      },
+      "authoritative": {
+        "first_raw_ms": 664.76,
+        "first_stable_ms": 724.04,
+        "release_to_final_ms": 195.83,
+        "wall_to_final_ms": 790.87,
+        "final_text": "Run tests",
+        "raw_churn": {
+          "snapshot_count": 2,
+          "changed_transitions": 1,
+          "character_edits": 5,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 1,
+          "changed_transitions": 0,
+          "character_edits": 0,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 3,
+          "decoded_input_seconds": 2.354,
+          "source_seconds_including_tail": 0.914,
+          "audio_compute_amplification": 2.575492
+        },
+        "errors_vs_reference": {
+          "normalized_match": true,
+          "normalized_word_edits": 0,
+          "normalized_reference_words": 2
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": true,
+        "stateless_invocations": 1,
+        "launch_ms": 320.81,
+        "visible_ms": 393.56,
+        "compute_wall_ms": 72.75,
+        "input_seconds": 0.32,
+        "text": "Runte",
+        "nonempty": true,
+        "visible_before_first_raw": true,
+        "visible_before_first_stable": true,
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 2,
+          "normalized_reference_words": 2
+        },
+        "prefix_vs_final": {
+          "is_final_word_prefix": false,
+          "draft_words": 1,
+          "common_prefix_words": 0,
+          "wrong_or_extra_words": 1,
+          "word_edits_to_final": 2
+        }
+      },
+      "first_visible_ms": 393.56,
+      "combined_visible_churn": {
+        "snapshot_count": 2,
+        "changed_transitions": 1,
+        "character_edits": 2,
+        "retracted_characters": 2
+      },
+      "backlog": {
+        "max_queued_chunks": 2,
+        "max_queued_audio_ms": 40.0,
+        "max_consume_lag_ms": 1.244,
+        "mean_consume_lag_ms": 1.046
+      },
+      "utterance": {
+        "id": "short-command",
+        "category": "short_command",
+        "reference": "Run tests.",
+        "say_text": "Run tests.",
+        "voice": "Samantha",
+        "rate": 210
+      },
+      "audio_seconds": 0.594,
+      "order_in_utterance": 2
+    },
+    {
+      "candidate": {
+        "name": "speculative-serialized-320",
+        "preset": "speculative",
+        "schedule": "serialized",
+        "draft_ms": 320.0
+      },
+      "authoritative": {
+        "first_raw_ms": 659.25,
+        "first_stable_ms": 716.05,
+        "release_to_final_ms": 187.84,
+        "wall_to_final_ms": 782.91,
+        "final_text": "Run tests",
+        "raw_churn": {
+          "snapshot_count": 2,
+          "changed_transitions": 1,
+          "character_edits": 5,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 1,
+          "changed_transitions": 0,
+          "character_edits": 0,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 3,
+          "decoded_input_seconds": 2.354,
+          "source_seconds_including_tail": 0.914,
+          "audio_compute_amplification": 2.575492
+        },
+        "errors_vs_reference": {
+          "normalized_match": true,
+          "normalized_word_edits": 0,
+          "normalized_reference_words": 2
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": true,
+        "stateless_invocations": 1,
+        "launch_ms": 320.48,
+        "visible_ms": 397.49,
+        "compute_wall_ms": 77.01,
+        "input_seconds": 0.32,
+        "text": "Runte",
+        "nonempty": true,
+        "visible_before_first_raw": true,
+        "visible_before_first_stable": true,
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 2,
+          "normalized_reference_words": 2
+        },
+        "prefix_vs_final": {
+          "is_final_word_prefix": false,
+          "draft_words": 1,
+          "common_prefix_words": 0,
+          "wrong_or_extra_words": 1,
+          "word_edits_to_final": 2
+        }
+      },
+      "first_visible_ms": 397.49,
+      "combined_visible_churn": {
+        "snapshot_count": 2,
+        "changed_transitions": 1,
+        "character_edits": 2,
+        "retracted_characters": 2
+      },
+      "backlog": {
+        "max_queued_chunks": 3,
+        "max_queued_audio_ms": 60.0,
+        "max_consume_lag_ms": 77.527,
+        "mean_consume_lag_ms": 6.909
+      },
+      "utterance": {
+        "id": "short-command",
+        "category": "short_command",
+        "reference": "Run tests.",
+        "say_text": "Run tests.",
+        "voice": "Samantha",
+        "rate": 210
+      },
+      "audio_seconds": 0.594,
+      "order_in_utterance": 3
+    },
+    {
+      "candidate": {
+        "name": "speculative-parallel-480",
+        "preset": "speculative",
+        "schedule": "parallel",
+        "draft_ms": 480.0
+      },
+      "authoritative": {
+        "first_raw_ms": 656.67,
+        "first_stable_ms": 715.11,
+        "release_to_final_ms": 185.83,
+        "wall_to_final_ms": 780.88,
+        "final_text": "Run tests",
+        "raw_churn": {
+          "snapshot_count": 2,
+          "changed_transitions": 1,
+          "character_edits": 5,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 1,
+          "changed_transitions": 0,
+          "character_edits": 0,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 3,
+          "decoded_input_seconds": 2.354,
+          "source_seconds_including_tail": 0.914,
+          "audio_compute_amplification": 2.575492
+        },
+        "errors_vs_reference": {
+          "normalized_match": true,
+          "normalized_word_edits": 0,
+          "normalized_reference_words": 2
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": true,
+        "stateless_invocations": 1,
+        "launch_ms": 481.17,
+        "visible_ms": 559.21,
+        "compute_wall_ms": 78.04,
+        "input_seconds": 0.48,
+        "text": "Run test",
+        "nonempty": true,
+        "visible_before_first_raw": true,
+        "visible_before_first_stable": true,
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 1,
+          "normalized_reference_words": 2
+        },
+        "prefix_vs_final": {
+          "is_final_word_prefix": false,
+          "draft_words": 2,
+          "common_prefix_words": 1,
+          "wrong_or_extra_words": 1,
+          "word_edits_to_final": 1
+        }
+      },
+      "first_visible_ms": 559.21,
+      "combined_visible_churn": {
+        "snapshot_count": 2,
+        "changed_transitions": 1,
+        "character_edits": 5,
+        "retracted_characters": 5
+      },
+      "backlog": {
+        "max_queued_chunks": 2,
+        "max_queued_audio_ms": 40.0,
+        "max_consume_lag_ms": 1.236,
+        "mean_consume_lag_ms": 0.902
+      },
+      "utterance": {
+        "id": "short-command",
+        "category": "short_command",
+        "reference": "Run tests.",
+        "say_text": "Run tests.",
+        "voice": "Samantha",
+        "rate": 210
+      },
+      "audio_seconds": 0.594,
+      "order_in_utterance": 4
+    },
+    {
+      "candidate": {
+        "name": "speculative-serialized-480",
+        "preset": "speculative",
+        "schedule": "serialized",
+        "draft_ms": 480.0
+      },
+      "authoritative": {
+        "first_raw_ms": 653.95,
+        "first_stable_ms": 711.77,
+        "release_to_final_ms": 181.59,
+        "wall_to_final_ms": 776.64,
+        "final_text": "Run tests",
+        "raw_churn": {
+          "snapshot_count": 2,
+          "changed_transitions": 1,
+          "character_edits": 5,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 1,
+          "changed_transitions": 0,
+          "character_edits": 0,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 3,
+          "decoded_input_seconds": 2.354,
+          "source_seconds_including_tail": 0.914,
+          "audio_compute_amplification": 2.575492
+        },
+        "errors_vs_reference": {
+          "normalized_match": true,
+          "normalized_word_edits": 0,
+          "normalized_reference_words": 2
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": true,
+        "stateless_invocations": 1,
+        "launch_ms": 481.09,
+        "visible_ms": 550.97,
+        "compute_wall_ms": 69.88,
+        "input_seconds": 0.48,
+        "text": "Run test",
+        "nonempty": true,
+        "visible_before_first_raw": true,
+        "visible_before_first_stable": true,
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 1,
+          "normalized_reference_words": 2
+        },
+        "prefix_vs_final": {
+          "is_final_word_prefix": false,
+          "draft_words": 2,
+          "common_prefix_words": 1,
+          "wrong_or_extra_words": 1,
+          "word_edits_to_final": 1
+        }
+      },
+      "first_visible_ms": 550.97,
+      "combined_visible_churn": {
+        "snapshot_count": 2,
+        "changed_transitions": 1,
+        "character_edits": 5,
+        "retracted_characters": 5
+      },
+      "backlog": {
+        "max_queued_chunks": 3,
+        "max_queued_audio_ms": 60.0,
+        "max_consume_lag_ms": 71.02,
+        "mean_consume_lag_ms": 6.079
+      },
+      "utterance": {
+        "id": "short-command",
+        "category": "short_command",
+        "reference": "Run tests.",
+        "say_text": "Run tests.",
+        "voice": "Samantha",
+        "rate": 210
+      },
+      "audio_seconds": 0.594,
+      "order_in_utterance": 5
+    },
+    {
+      "candidate": {
+        "name": "speculative-parallel-320",
+        "preset": "speculative",
+        "schedule": "parallel",
+        "draft_ms": 320.0
+      },
+      "authoritative": {
+        "first_raw_ms": 709.48,
+        "first_stable_ms": 1023.5,
+        "release_to_final_ms": 691.23,
+        "wall_to_final_ms": 8517.92,
+        "final_text": "Search the repository for deprecated flags, update every call site, run the unit tests, and summarize the failures.",
+        "raw_churn": {
+          "snapshot_count": 47,
+          "changed_transitions": 37,
+          "character_edits": 106,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 18,
+          "changed_transitions": 17,
+          "character_edits": 99,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 48,
+          "decoded_input_seconds": 174.226,
+          "source_seconds_including_tail": 8.146,
+          "audio_compute_amplification": 21.38792
+        },
+        "errors_vs_reference": {
+          "normalized_match": true,
+          "normalized_word_edits": 0,
+          "normalized_reference_words": 18
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": true,
+        "stateless_invocations": 1,
+        "launch_ms": 321.14,
+        "visible_ms": null,
+        "compute_wall_ms": 66.88,
+        "input_seconds": 0.32,
+        "text": "",
+        "nonempty": false,
+        "visible_before_first_raw": false,
+        "visible_before_first_stable": false,
+        "errors_vs_reference": null,
+        "prefix_vs_final": null
+      },
+      "first_visible_ms": 1023.5,
+      "combined_visible_churn": {
+        "snapshot_count": 18,
+        "changed_transitions": 17,
+        "character_edits": 99,
+        "retracted_characters": 0
+      },
+      "backlog": {
+        "max_queued_chunks": 31,
+        "max_queued_audio_ms": 620.0,
+        "max_consume_lag_ms": 605.612,
+        "mean_consume_lag_ms": 71.454
+      },
+      "utterance": {
+        "id": "long-command",
+        "category": "long_command",
+        "reference": "Search the repository for deprecated flags, update every call site, run the unit tests, and summarize the failures.",
+        "say_text": "Search the repository for deprecated flags, update every call site, run the unit tests, and summarize the failures.",
+        "voice": "Daniel",
+        "rate": 165
+      },
+      "audio_seconds": 7.826,
+      "order_in_utterance": 1
+    },
+    {
+      "candidate": {
+        "name": "speculative-serialized-320",
+        "preset": "speculative",
+        "schedule": "serialized",
+        "draft_ms": 320.0
+      },
+      "authoritative": {
+        "first_raw_ms": 708.02,
+        "first_stable_ms": 1024.72,
+        "release_to_final_ms": 320.44,
+        "wall_to_final_ms": 8147.09,
+        "final_text": "Search the repository for deprecated flags, update every call site, run the unit tests, and summarize the failures.",
+        "raw_churn": {
+          "snapshot_count": 47,
+          "changed_transitions": 37,
+          "character_edits": 106,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 18,
+          "changed_transitions": 17,
+          "character_edits": 99,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 48,
+          "decoded_input_seconds": 174.226,
+          "source_seconds_including_tail": 8.146,
+          "audio_compute_amplification": 21.38792
+        },
+        "errors_vs_reference": {
+          "normalized_match": true,
+          "normalized_word_edits": 0,
+          "normalized_reference_words": 18
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": true,
+        "stateless_invocations": 1,
+        "launch_ms": 321.14,
+        "visible_ms": null,
+        "compute_wall_ms": 68.71,
+        "input_seconds": 0.32,
+        "text": "",
+        "nonempty": false,
+        "visible_before_first_raw": false,
+        "visible_before_first_stable": false,
+        "errors_vs_reference": null,
+        "prefix_vs_final": null
+      },
+      "first_visible_ms": 1024.72,
+      "combined_visible_churn": {
+        "snapshot_count": 18,
+        "changed_transitions": 17,
+        "character_edits": 99,
+        "retracted_characters": 0
+      },
+      "backlog": {
+        "max_queued_chunks": 3,
+        "max_queued_audio_ms": 60.0,
+        "max_consume_lag_ms": 69.914,
+        "mean_consume_lag_ms": 11.786
+      },
+      "utterance": {
+        "id": "long-command",
+        "category": "long_command",
+        "reference": "Search the repository for deprecated flags, update every call site, run the unit tests, and summarize the failures.",
+        "say_text": "Search the repository for deprecated flags, update every call site, run the unit tests, and summarize the failures.",
+        "voice": "Daniel",
+        "rate": 165
+      },
+      "audio_seconds": 7.826,
+      "order_in_utterance": 2
+    },
+    {
+      "candidate": {
+        "name": "speculative-parallel-480",
+        "preset": "speculative",
+        "schedule": "parallel",
+        "draft_ms": 480.0
+      },
+      "authoritative": {
+        "first_raw_ms": 708.87,
+        "first_stable_ms": 1026.75,
+        "release_to_final_ms": 319.3,
+        "wall_to_final_ms": 8145.97,
+        "final_text": "Search the repository for deprecated flags, update every call site, run the unit tests, and summarize the failures.",
+        "raw_churn": {
+          "snapshot_count": 47,
+          "changed_transitions": 37,
+          "character_edits": 106,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 18,
+          "changed_transitions": 17,
+          "character_edits": 99,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 48,
+          "decoded_input_seconds": 174.226,
+          "source_seconds_including_tail": 8.146,
+          "audio_compute_amplification": 21.38792
+        },
+        "errors_vs_reference": {
+          "normalized_match": true,
+          "normalized_word_edits": 0,
+          "normalized_reference_words": 18
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": true,
+        "stateless_invocations": 1,
+        "launch_ms": 480.19,
+        "visible_ms": null,
+        "compute_wall_ms": 74.97,
+        "input_seconds": 0.48,
+        "text": "",
+        "nonempty": false,
+        "visible_before_first_raw": false,
+        "visible_before_first_stable": false,
+        "errors_vs_reference": null,
+        "prefix_vs_final": null
+      },
+      "first_visible_ms": 1026.75,
+      "combined_visible_churn": {
+        "snapshot_count": 18,
+        "changed_transitions": 17,
+        "character_edits": 99,
+        "retracted_characters": 0
+      },
+      "backlog": {
+        "max_queued_chunks": 4,
+        "max_queued_audio_ms": 80.0,
+        "max_consume_lag_ms": 61.542,
+        "mean_consume_lag_ms": 11.839
+      },
+      "utterance": {
+        "id": "long-command",
+        "category": "long_command",
+        "reference": "Search the repository for deprecated flags, update every call site, run the unit tests, and summarize the failures.",
+        "say_text": "Search the repository for deprecated flags, update every call site, run the unit tests, and summarize the failures.",
+        "voice": "Daniel",
+        "rate": 165
+      },
+      "audio_seconds": 7.826,
+      "order_in_utterance": 3
+    },
+    {
+      "candidate": {
+        "name": "speculative-serialized-480",
+        "preset": "speculative",
+        "schedule": "serialized",
+        "draft_ms": 480.0
+      },
+      "authoritative": {
+        "first_raw_ms": 709.03,
+        "first_stable_ms": 1024.66,
+        "release_to_final_ms": 325.05,
+        "wall_to_final_ms": 8151.32,
+        "final_text": "Search the repository for deprecated flags, update every call site, run the unit tests, and summarize the failures.",
+        "raw_churn": {
+          "snapshot_count": 47,
+          "changed_transitions": 37,
+          "character_edits": 106,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 18,
+          "changed_transitions": 17,
+          "character_edits": 99,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 48,
+          "decoded_input_seconds": 174.226,
+          "source_seconds_including_tail": 8.146,
+          "audio_compute_amplification": 21.38792
+        },
+        "errors_vs_reference": {
+          "normalized_match": true,
+          "normalized_word_edits": 0,
+          "normalized_reference_words": 18
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": true,
+        "stateless_invocations": 1,
+        "launch_ms": 481.12,
+        "visible_ms": null,
+        "compute_wall_ms": 68.19,
+        "input_seconds": 0.48,
+        "text": "",
+        "nonempty": false,
+        "visible_before_first_raw": false,
+        "visible_before_first_stable": false,
+        "errors_vs_reference": null,
+        "prefix_vs_final": null
+      },
+      "first_visible_ms": 1024.66,
+      "combined_visible_churn": {
+        "snapshot_count": 18,
+        "changed_transitions": 17,
+        "character_edits": 99,
+        "retracted_characters": 0
+      },
+      "backlog": {
+        "max_queued_chunks": 4,
+        "max_queued_audio_ms": 80.0,
+        "max_consume_lag_ms": 69.363,
+        "mean_consume_lag_ms": 12.351
+      },
+      "utterance": {
+        "id": "long-command",
+        "category": "long_command",
+        "reference": "Search the repository for deprecated flags, update every call site, run the unit tests, and summarize the failures.",
+        "say_text": "Search the repository for deprecated flags, update every call site, run the unit tests, and summarize the failures.",
+        "voice": "Daniel",
+        "rate": 165
+      },
+      "audio_seconds": 7.826,
+      "order_in_utterance": 4
+    },
+    {
+      "candidate": {
+        "name": "balanced",
+        "preset": "balanced",
+        "schedule": "none",
+        "draft_ms": null
+      },
+      "authoritative": {
+        "first_raw_ms": 708.51,
+        "first_stable_ms": 1024.52,
+        "release_to_final_ms": 332.43,
+        "wall_to_final_ms": 8159.18,
+        "final_text": "Search the repository for deprecated flags, update every call site, run the unit tests, and summarize the failures.",
+        "raw_churn": {
+          "snapshot_count": 47,
+          "changed_transitions": 37,
+          "character_edits": 106,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 18,
+          "changed_transitions": 17,
+          "character_edits": 99,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 48,
+          "decoded_input_seconds": 174.226,
+          "source_seconds_including_tail": 8.146,
+          "audio_compute_amplification": 21.38792
+        },
+        "errors_vs_reference": {
+          "normalized_match": true,
+          "normalized_word_edits": 0,
+          "normalized_reference_words": 18
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": false,
+        "stateless_invocations": 0,
+        "launch_ms": null,
+        "visible_ms": null,
+        "compute_wall_ms": null,
+        "input_seconds": 0.0,
+        "text": "",
+        "nonempty": false,
+        "visible_before_first_raw": false,
+        "visible_before_first_stable": false,
+        "errors_vs_reference": null,
+        "prefix_vs_final": null
+      },
+      "first_visible_ms": 1024.52,
+      "combined_visible_churn": {
+        "snapshot_count": 18,
+        "changed_transitions": 17,
+        "character_edits": 99,
+        "retracted_characters": 0
+      },
+      "backlog": {
+        "max_queued_chunks": 3,
+        "max_queued_audio_ms": 60.0,
+        "max_consume_lag_ms": 55.228,
+        "mean_consume_lag_ms": 10.612
+      },
+      "utterance": {
+        "id": "long-command",
+        "category": "long_command",
+        "reference": "Search the repository for deprecated flags, update every call site, run the unit tests, and summarize the failures.",
+        "say_text": "Search the repository for deprecated flags, update every call site, run the unit tests, and summarize the failures.",
+        "voice": "Daniel",
+        "rate": 165
+      },
+      "audio_seconds": 7.826,
+      "order_in_utterance": 5
+    },
+    {
+      "candidate": {
+        "name": "speculative-serialized-320",
+        "preset": "speculative",
+        "schedule": "serialized",
+        "draft_ms": 320.0
+      },
+      "authoritative": {
+        "first_raw_ms": 707.66,
+        "first_stable_ms": 861.56,
+        "release_to_final_ms": 471.74,
+        "wall_to_final_ms": 3728.62,
+        "final_text": "Create a feature branch, commit the parser fix, and push it to origin.",
+        "raw_churn": {
+          "snapshot_count": 19,
+          "changed_transitions": 14,
+          "character_edits": 62,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 12,
+          "changed_transitions": 11,
+          "character_edits": 55,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 20,
+          "decoded_input_seconds": 43.0958,
+          "source_seconds_including_tail": 3.5758,
+          "audio_compute_amplification": 12.052034
+        },
+        "errors_vs_reference": {
+          "normalized_match": true,
+          "normalized_word_edits": 0,
+          "normalized_reference_words": 13
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": true,
+        "stateless_invocations": 1,
+        "launch_ms": 321.25,
+        "visible_ms": null,
+        "compute_wall_ms": 74.3,
+        "input_seconds": 0.32,
+        "text": "",
+        "nonempty": false,
+        "visible_before_first_raw": false,
+        "visible_before_first_stable": false,
+        "errors_vs_reference": null,
+        "prefix_vs_final": null
+      },
+      "first_visible_ms": 861.56,
+      "combined_visible_churn": {
+        "snapshot_count": 12,
+        "changed_transitions": 11,
+        "character_edits": 55,
+        "retracted_characters": 0
+      },
+      "backlog": {
+        "max_queued_chunks": 4,
+        "max_queued_audio_ms": 80.0,
+        "max_consume_lag_ms": 75.604,
+        "mean_consume_lag_ms": 9.982
+      },
+      "utterance": {
+        "id": "git-command",
+        "category": "code_terms",
+        "reference": "Create a feature branch, commit the parser fix, and push it to origin.",
+        "say_text": "Create a feature branch, commit the parser fix, and push it to origin.",
+        "voice": "Karen",
+        "rate": 200
+      },
+      "audio_seconds": 3.255813,
+      "order_in_utterance": 1
+    },
+    {
+      "candidate": {
+        "name": "speculative-parallel-480",
+        "preset": "speculative",
+        "schedule": "parallel",
+        "draft_ms": 480.0
+      },
+      "authoritative": {
+        "first_raw_ms": 706.47,
+        "first_stable_ms": 872.92,
+        "release_to_final_ms": 253.31,
+        "wall_to_final_ms": 3510.21,
+        "final_text": "Create a feature branch, commit the parser fix, and push it to origin.",
+        "raw_churn": {
+          "snapshot_count": 19,
+          "changed_transitions": 14,
+          "character_edits": 62,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 12,
+          "changed_transitions": 11,
+          "character_edits": 55,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 20,
+          "decoded_input_seconds": 43.0958,
+          "source_seconds_including_tail": 3.5758,
+          "audio_compute_amplification": 12.052034
+        },
+        "errors_vs_reference": {
+          "normalized_match": true,
+          "normalized_word_edits": 0,
+          "normalized_reference_words": 13
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": true,
+        "stateless_invocations": 1,
+        "launch_ms": 481.11,
+        "visible_ms": 561.25,
+        "compute_wall_ms": 80.14,
+        "input_seconds": 0.48,
+        "text": "Create a fee.",
+        "nonempty": true,
+        "visible_before_first_raw": true,
+        "visible_before_first_stable": true,
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 11,
+          "normalized_reference_words": 13
+        },
+        "prefix_vs_final": {
+          "is_final_word_prefix": false,
+          "draft_words": 3,
+          "common_prefix_words": 2,
+          "wrong_or_extra_words": 1,
+          "word_edits_to_final": 11
+        }
+      },
+      "first_visible_ms": 561.25,
+      "combined_visible_churn": {
+        "snapshot_count": 13,
+        "changed_transitions": 12,
+        "character_edits": 62,
+        "retracted_characters": 7
+      },
+      "backlog": {
+        "max_queued_chunks": 4,
+        "max_queued_audio_ms": 80.0,
+        "max_consume_lag_ms": 53.942,
+        "mean_consume_lag_ms": 9.298
+      },
+      "utterance": {
+        "id": "git-command",
+        "category": "code_terms",
+        "reference": "Create a feature branch, commit the parser fix, and push it to origin.",
+        "say_text": "Create a feature branch, commit the parser fix, and push it to origin.",
+        "voice": "Karen",
+        "rate": 200
+      },
+      "audio_seconds": 3.255813,
+      "order_in_utterance": 2
+    },
+    {
+      "candidate": {
+        "name": "speculative-serialized-480",
+        "preset": "speculative",
+        "schedule": "serialized",
+        "draft_ms": 480.0
+      },
+      "authoritative": {
+        "first_raw_ms": 704.28,
+        "first_stable_ms": 863.78,
+        "release_to_final_ms": 248.97,
+        "wall_to_final_ms": 3505.96,
+        "final_text": "Create a feature branch, commit the parser fix, and push it to origin.",
+        "raw_churn": {
+          "snapshot_count": 19,
+          "changed_transitions": 14,
+          "character_edits": 62,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 12,
+          "changed_transitions": 11,
+          "character_edits": 55,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 20,
+          "decoded_input_seconds": 43.0958,
+          "source_seconds_including_tail": 3.5758,
+          "audio_compute_amplification": 12.052034
+        },
+        "errors_vs_reference": {
+          "normalized_match": true,
+          "normalized_word_edits": 0,
+          "normalized_reference_words": 13
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": true,
+        "stateless_invocations": 1,
+        "launch_ms": 481.13,
+        "visible_ms": 559.67,
+        "compute_wall_ms": 78.55,
+        "input_seconds": 0.48,
+        "text": "Create a fee.",
+        "nonempty": true,
+        "visible_before_first_raw": true,
+        "visible_before_first_stable": true,
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 11,
+          "normalized_reference_words": 13
+        },
+        "prefix_vs_final": {
+          "is_final_word_prefix": false,
+          "draft_words": 3,
+          "common_prefix_words": 2,
+          "wrong_or_extra_words": 1,
+          "word_edits_to_final": 11
+        }
+      },
+      "first_visible_ms": 559.67,
+      "combined_visible_churn": {
+        "snapshot_count": 13,
+        "changed_transitions": 12,
+        "character_edits": 62,
+        "retracted_characters": 7
+      },
+      "backlog": {
+        "max_queued_chunks": 4,
+        "max_queued_audio_ms": 80.0,
+        "max_consume_lag_ms": 79.71,
+        "mean_consume_lag_ms": 10.086
+      },
+      "utterance": {
+        "id": "git-command",
+        "category": "code_terms",
+        "reference": "Create a feature branch, commit the parser fix, and push it to origin.",
+        "say_text": "Create a feature branch, commit the parser fix, and push it to origin.",
+        "voice": "Karen",
+        "rate": 200
+      },
+      "audio_seconds": 3.255813,
+      "order_in_utterance": 3
+    },
+    {
+      "candidate": {
+        "name": "balanced",
+        "preset": "balanced",
+        "schedule": "none",
+        "draft_ms": null
+      },
+      "authoritative": {
+        "first_raw_ms": 708.62,
+        "first_stable_ms": 863.39,
+        "release_to_final_ms": 248.31,
+        "wall_to_final_ms": 3505.32,
+        "final_text": "Create a feature branch, commit the parser fix, and push it to origin.",
+        "raw_churn": {
+          "snapshot_count": 19,
+          "changed_transitions": 14,
+          "character_edits": 62,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 12,
+          "changed_transitions": 11,
+          "character_edits": 55,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 20,
+          "decoded_input_seconds": 43.0958,
+          "source_seconds_including_tail": 3.5758,
+          "audio_compute_amplification": 12.052034
+        },
+        "errors_vs_reference": {
+          "normalized_match": true,
+          "normalized_word_edits": 0,
+          "normalized_reference_words": 13
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": false,
+        "stateless_invocations": 0,
+        "launch_ms": null,
+        "visible_ms": null,
+        "compute_wall_ms": null,
+        "input_seconds": 0.0,
+        "text": "",
+        "nonempty": false,
+        "visible_before_first_raw": false,
+        "visible_before_first_stable": false,
+        "errors_vs_reference": null,
+        "prefix_vs_final": null
+      },
+      "first_visible_ms": 863.39,
+      "combined_visible_churn": {
+        "snapshot_count": 12,
+        "changed_transitions": 11,
+        "character_edits": 55,
+        "retracted_characters": 0
+      },
+      "backlog": {
+        "max_queued_chunks": 4,
+        "max_queued_audio_ms": 80.0,
+        "max_consume_lag_ms": 51.225,
+        "mean_consume_lag_ms": 8.804
+      },
+      "utterance": {
+        "id": "git-command",
+        "category": "code_terms",
+        "reference": "Create a feature branch, commit the parser fix, and push it to origin.",
+        "say_text": "Create a feature branch, commit the parser fix, and push it to origin.",
+        "voice": "Karen",
+        "rate": 200
+      },
+      "audio_seconds": 3.255813,
+      "order_in_utterance": 4
+    },
+    {
+      "candidate": {
+        "name": "speculative-parallel-320",
+        "preset": "speculative",
+        "schedule": "parallel",
+        "draft_ms": 320.0
+      },
+      "authoritative": {
+        "first_raw_ms": 710.35,
+        "first_stable_ms": 864.17,
+        "release_to_final_ms": 253.07,
+        "wall_to_final_ms": 3509.98,
+        "final_text": "Create a feature branch, commit the parser fix, and push it to origin.",
+        "raw_churn": {
+          "snapshot_count": 19,
+          "changed_transitions": 14,
+          "character_edits": 62,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 12,
+          "changed_transitions": 11,
+          "character_edits": 55,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 20,
+          "decoded_input_seconds": 43.0958,
+          "source_seconds_including_tail": 3.5758,
+          "audio_compute_amplification": 12.052034
+        },
+        "errors_vs_reference": {
+          "normalized_match": true,
+          "normalized_word_edits": 0,
+          "normalized_reference_words": 13
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": true,
+        "stateless_invocations": 1,
+        "launch_ms": 321.25,
+        "visible_ms": null,
+        "compute_wall_ms": 69.13,
+        "input_seconds": 0.32,
+        "text": "",
+        "nonempty": false,
+        "visible_before_first_raw": false,
+        "visible_before_first_stable": false,
+        "errors_vs_reference": null,
+        "prefix_vs_final": null
+      },
+      "first_visible_ms": 864.17,
+      "combined_visible_churn": {
+        "snapshot_count": 12,
+        "changed_transitions": 11,
+        "character_edits": 55,
+        "retracted_characters": 0
+      },
+      "backlog": {
+        "max_queued_chunks": 4,
+        "max_queued_audio_ms": 80.0,
+        "max_consume_lag_ms": 51.96,
+        "mean_consume_lag_ms": 9.075
+      },
+      "utterance": {
+        "id": "git-command",
+        "category": "code_terms",
+        "reference": "Create a feature branch, commit the parser fix, and push it to origin.",
+        "say_text": "Create a feature branch, commit the parser fix, and push it to origin.",
+        "voice": "Karen",
+        "rate": 200
+      },
+      "audio_seconds": 3.255813,
+      "order_in_utterance": 5
+    },
+    {
+      "candidate": {
+        "name": "speculative-parallel-480",
+        "preset": "speculative",
+        "schedule": "parallel",
+        "draft_ms": 480.0
+      },
+      "authoritative": {
+        "first_raw_ms": 704.48,
+        "first_stable_ms": 861.13,
+        "release_to_final_ms": 507.83,
+        "wall_to_final_ms": 5035.89,
+        "final_text": "Run Pi test with the Vedbose flag, then inspect standard error.",
+        "raw_churn": {
+          "snapshot_count": 27,
+          "changed_transitions": 19,
+          "character_edits": 59,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 11,
+          "changed_transitions": 10,
+          "character_edits": 53,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 28,
+          "decoded_input_seconds": 78.1273,
+          "source_seconds_including_tail": 4.8472,
+          "audio_compute_amplification": 16.11785
+        },
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 5,
+          "normalized_reference_words": 9
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": true,
+        "stateless_invocations": 1,
+        "launch_ms": 481.18,
+        "visible_ms": 552.86,
+        "compute_wall_ms": 71.68,
+        "input_seconds": 0.48,
+        "text": "Run.",
+        "nonempty": true,
+        "visible_before_first_raw": true,
+        "visible_before_first_stable": true,
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 8,
+          "normalized_reference_words": 9
+        },
+        "prefix_vs_final": {
+          "is_final_word_prefix": true,
+          "draft_words": 1,
+          "common_prefix_words": 1,
+          "wrong_or_extra_words": 0,
+          "word_edits_to_final": 10
+        }
+      },
+      "first_visible_ms": 552.86,
+      "combined_visible_churn": {
+        "snapshot_count": 12,
+        "changed_transitions": 11,
+        "character_edits": 54,
+        "retracted_characters": 1
+      },
+      "backlog": {
+        "max_queued_chunks": 4,
+        "max_queued_audio_ms": 80.0,
+        "max_consume_lag_ms": 52.839,
+        "mean_consume_lag_ms": 9.833
+      },
+      "utterance": {
+        "id": "cli-terms",
+        "category": "code_terms",
+        "reference": "Run pytest with the verbose flag, then inspect stderr.",
+        "say_text": "Run pie test with the verbose flag, then inspect standard error.",
+        "voice": "Moira",
+        "rate": 155
+      },
+      "audio_seconds": 4.52725,
+      "order_in_utterance": 1
+    },
+    {
+      "candidate": {
+        "name": "speculative-serialized-480",
+        "preset": "speculative",
+        "schedule": "serialized",
+        "draft_ms": 480.0
+      },
+      "authoritative": {
+        "first_raw_ms": 709.49,
+        "first_stable_ms": 863.96,
+        "release_to_final_ms": 276.41,
+        "wall_to_final_ms": 4804.46,
+        "final_text": "Run Pi test with the Vedbose flag, then inspect standard error.",
+        "raw_churn": {
+          "snapshot_count": 27,
+          "changed_transitions": 19,
+          "character_edits": 59,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 11,
+          "changed_transitions": 10,
+          "character_edits": 53,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 28,
+          "decoded_input_seconds": 78.1273,
+          "source_seconds_including_tail": 4.8472,
+          "audio_compute_amplification": 16.11785
+        },
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 5,
+          "normalized_reference_words": 9
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": true,
+        "stateless_invocations": 1,
+        "launch_ms": 481.13,
+        "visible_ms": 553.05,
+        "compute_wall_ms": 71.92,
+        "input_seconds": 0.48,
+        "text": "Run.",
+        "nonempty": true,
+        "visible_before_first_raw": true,
+        "visible_before_first_stable": true,
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 8,
+          "normalized_reference_words": 9
+        },
+        "prefix_vs_final": {
+          "is_final_word_prefix": true,
+          "draft_words": 1,
+          "common_prefix_words": 1,
+          "wrong_or_extra_words": 0,
+          "word_edits_to_final": 10
+        }
+      },
+      "first_visible_ms": 553.05,
+      "combined_visible_churn": {
+        "snapshot_count": 12,
+        "changed_transitions": 11,
+        "character_edits": 54,
+        "retracted_characters": 1
+      },
+      "backlog": {
+        "max_queued_chunks": 4,
+        "max_queued_audio_ms": 80.0,
+        "max_consume_lag_ms": 73.095,
+        "mean_consume_lag_ms": 10.656
+      },
+      "utterance": {
+        "id": "cli-terms",
+        "category": "code_terms",
+        "reference": "Run pytest with the verbose flag, then inspect stderr.",
+        "say_text": "Run pie test with the verbose flag, then inspect standard error.",
+        "voice": "Moira",
+        "rate": 155
+      },
+      "audio_seconds": 4.52725,
+      "order_in_utterance": 2
+    },
+    {
+      "candidate": {
+        "name": "balanced",
+        "preset": "balanced",
+        "schedule": "none",
+        "draft_ms": null
+      },
+      "authoritative": {
+        "first_raw_ms": 710.22,
+        "first_stable_ms": 872.36,
+        "release_to_final_ms": 275.93,
+        "wall_to_final_ms": 4804.14,
+        "final_text": "Run Pi test with the Vedbose flag, then inspect standard error.",
+        "raw_churn": {
+          "snapshot_count": 27,
+          "changed_transitions": 19,
+          "character_edits": 59,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 11,
+          "changed_transitions": 10,
+          "character_edits": 53,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 28,
+          "decoded_input_seconds": 78.1273,
+          "source_seconds_including_tail": 4.8472,
+          "audio_compute_amplification": 16.11785
+        },
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 5,
+          "normalized_reference_words": 9
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": false,
+        "stateless_invocations": 0,
+        "launch_ms": null,
+        "visible_ms": null,
+        "compute_wall_ms": null,
+        "input_seconds": 0.0,
+        "text": "",
+        "nonempty": false,
+        "visible_before_first_raw": false,
+        "visible_before_first_stable": false,
+        "errors_vs_reference": null,
+        "prefix_vs_final": null
+      },
+      "first_visible_ms": 872.36,
+      "combined_visible_churn": {
+        "snapshot_count": 11,
+        "changed_transitions": 10,
+        "character_edits": 53,
+        "retracted_characters": 0
+      },
+      "backlog": {
+        "max_queued_chunks": 4,
+        "max_queued_audio_ms": 80.0,
+        "max_consume_lag_ms": 53.898,
+        "mean_consume_lag_ms": 10.0
+      },
+      "utterance": {
+        "id": "cli-terms",
+        "category": "code_terms",
+        "reference": "Run pytest with the verbose flag, then inspect stderr.",
+        "say_text": "Run pie test with the verbose flag, then inspect standard error.",
+        "voice": "Moira",
+        "rate": 155
+      },
+      "audio_seconds": 4.52725,
+      "order_in_utterance": 3
+    },
+    {
+      "candidate": {
+        "name": "speculative-parallel-320",
+        "preset": "speculative",
+        "schedule": "parallel",
+        "draft_ms": 320.0
+      },
+      "authoritative": {
+        "first_raw_ms": 707.52,
+        "first_stable_ms": 859.96,
+        "release_to_final_ms": 271.31,
+        "wall_to_final_ms": 4799.37,
+        "final_text": "Run Pi test with the Vedbose flag, then inspect standard error.",
+        "raw_churn": {
+          "snapshot_count": 27,
+          "changed_transitions": 19,
+          "character_edits": 59,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 11,
+          "changed_transitions": 10,
+          "character_edits": 53,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 28,
+          "decoded_input_seconds": 78.1273,
+          "source_seconds_including_tail": 4.8472,
+          "audio_compute_amplification": 16.11785
+        },
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 5,
+          "normalized_reference_words": 9
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": true,
+        "stateless_invocations": 1,
+        "launch_ms": 321.11,
+        "visible_ms": 393.41,
+        "compute_wall_ms": 72.3,
+        "input_seconds": 0.32,
+        "text": "Run",
+        "nonempty": true,
+        "visible_before_first_raw": true,
+        "visible_before_first_stable": true,
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 8,
+          "normalized_reference_words": 9
+        },
+        "prefix_vs_final": {
+          "is_final_word_prefix": true,
+          "draft_words": 1,
+          "common_prefix_words": 1,
+          "wrong_or_extra_words": 0,
+          "word_edits_to_final": 10
+        }
+      },
+      "first_visible_ms": 393.41,
+      "combined_visible_churn": {
+        "snapshot_count": 12,
+        "changed_transitions": 10,
+        "character_edits": 53,
+        "retracted_characters": 0
+      },
+      "backlog": {
+        "max_queued_chunks": 4,
+        "max_queued_audio_ms": 80.0,
+        "max_consume_lag_ms": 54.253,
+        "mean_consume_lag_ms": 9.785
+      },
+      "utterance": {
+        "id": "cli-terms",
+        "category": "code_terms",
+        "reference": "Run pytest with the verbose flag, then inspect stderr.",
+        "say_text": "Run pie test with the verbose flag, then inspect standard error.",
+        "voice": "Moira",
+        "rate": 155
+      },
+      "audio_seconds": 4.52725,
+      "order_in_utterance": 4
+    },
+    {
+      "candidate": {
+        "name": "speculative-serialized-320",
+        "preset": "speculative",
+        "schedule": "serialized",
+        "draft_ms": 320.0
+      },
+      "authoritative": {
+        "first_raw_ms": 709.1,
+        "first_stable_ms": 863.94,
+        "release_to_final_ms": 281.77,
+        "wall_to_final_ms": 4809.91,
+        "final_text": "Run Pi test with the Vedbose flag, then inspect standard error.",
+        "raw_churn": {
+          "snapshot_count": 27,
+          "changed_transitions": 19,
+          "character_edits": 59,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 11,
+          "changed_transitions": 10,
+          "character_edits": 53,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 28,
+          "decoded_input_seconds": 78.1273,
+          "source_seconds_including_tail": 4.8472,
+          "audio_compute_amplification": 16.11785
+        },
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 5,
+          "normalized_reference_words": 9
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": true,
+        "stateless_invocations": 1,
+        "launch_ms": 321.11,
+        "visible_ms": 392.62,
+        "compute_wall_ms": 71.51,
+        "input_seconds": 0.32,
+        "text": "Run",
+        "nonempty": true,
+        "visible_before_first_raw": true,
+        "visible_before_first_stable": true,
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 8,
+          "normalized_reference_words": 9
+        },
+        "prefix_vs_final": {
+          "is_final_word_prefix": true,
+          "draft_words": 1,
+          "common_prefix_words": 1,
+          "wrong_or_extra_words": 0,
+          "word_edits_to_final": 10
+        }
+      },
+      "first_visible_ms": 392.62,
+      "combined_visible_churn": {
+        "snapshot_count": 12,
+        "changed_transitions": 10,
+        "character_edits": 53,
+        "retracted_characters": 0
+      },
+      "backlog": {
+        "max_queued_chunks": 4,
+        "max_queued_audio_ms": 80.0,
+        "max_consume_lag_ms": 72.659,
+        "mean_consume_lag_ms": 11.33
+      },
+      "utterance": {
+        "id": "cli-terms",
+        "category": "code_terms",
+        "reference": "Run pytest with the verbose flag, then inspect stderr.",
+        "say_text": "Run pie test with the verbose flag, then inspect standard error.",
+        "voice": "Moira",
+        "rate": 155
+      },
+      "audio_seconds": 4.52725,
+      "order_in_utterance": 5
+    },
+    {
+      "candidate": {
+        "name": "speculative-serialized-480",
+        "preset": "speculative",
+        "schedule": "serialized",
+        "draft_ms": 480.0
+      },
+      "authoritative": {
+        "first_raw_ms": 721.83,
+        "first_stable_ms": 1187.24,
+        "release_to_final_ms": 542.79,
+        "wall_to_final_ms": 6369.29,
+        "final_text": "Rename server underscore test.go to server underscore integration underscore test.go.",
+        "raw_churn": {
+          "snapshot_count": 35,
+          "changed_transitions": 23,
+          "character_edits": 85,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 15,
+          "changed_transitions": 14,
+          "character_edits": 80,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 36,
+          "decoded_input_seconds": 116.5461,
+          "source_seconds_including_tail": 6.1461,
+          "audio_compute_amplification": 18.962537
+        },
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 3,
+          "normalized_reference_words": 9
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": true,
+        "stateless_invocations": 1,
+        "launch_ms": 481.14,
+        "visible_ms": 559.45,
+        "compute_wall_ms": 78.31,
+        "input_seconds": 0.48,
+        "text": "Renames",
+        "nonempty": true,
+        "visible_before_first_raw": true,
+        "visible_before_first_stable": true,
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 9,
+          "normalized_reference_words": 9
+        },
+        "prefix_vs_final": {
+          "is_final_word_prefix": false,
+          "draft_words": 1,
+          "common_prefix_words": 0,
+          "wrong_or_extra_words": 1,
+          "word_edits_to_final": 12
+        }
+      },
+      "first_visible_ms": 559.45,
+      "combined_visible_churn": {
+        "snapshot_count": 16,
+        "changed_transitions": 15,
+        "character_edits": 81,
+        "retracted_characters": 1
+      },
+      "backlog": {
+        "max_queued_chunks": 6,
+        "max_queued_audio_ms": 120.0,
+        "max_consume_lag_ms": 103.387,
+        "mean_consume_lag_ms": 13.216
+      },
+      "utterance": {
+        "id": "mixed-file",
+        "category": "filenames",
+        "reference": "Rename server_test.go to server_integration_test.go.",
+        "say_text": "Rename server underscore test dot go to server underscore integration underscore test dot go.",
+        "voice": "Tessa",
+        "rate": 180
+      },
+      "audio_seconds": 5.826125,
+      "order_in_utterance": 1
+    },
+    {
+      "candidate": {
+        "name": "balanced",
+        "preset": "balanced",
+        "schedule": "none",
+        "draft_ms": null
+      },
+      "authoritative": {
+        "first_raw_ms": 708.59,
+        "first_stable_ms": 1182.49,
+        "release_to_final_ms": 310.14,
+        "wall_to_final_ms": 6136.92,
+        "final_text": "Rename server underscore test.go to server underscore integration underscore test.go.",
+        "raw_churn": {
+          "snapshot_count": 35,
+          "changed_transitions": 23,
+          "character_edits": 85,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 15,
+          "changed_transitions": 14,
+          "character_edits": 80,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 36,
+          "decoded_input_seconds": 116.5461,
+          "source_seconds_including_tail": 6.1461,
+          "audio_compute_amplification": 18.962537
+        },
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 3,
+          "normalized_reference_words": 9
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": false,
+        "stateless_invocations": 0,
+        "launch_ms": null,
+        "visible_ms": null,
+        "compute_wall_ms": null,
+        "input_seconds": 0.0,
+        "text": "",
+        "nonempty": false,
+        "visible_before_first_raw": false,
+        "visible_before_first_stable": false,
+        "errors_vs_reference": null,
+        "prefix_vs_final": null
+      },
+      "first_visible_ms": 1182.49,
+      "combined_visible_churn": {
+        "snapshot_count": 15,
+        "changed_transitions": 14,
+        "character_edits": 80,
+        "retracted_characters": 0
+      },
+      "backlog": {
+        "max_queued_chunks": 5,
+        "max_queued_audio_ms": 100.0,
+        "max_consume_lag_ms": 57.996,
+        "mean_consume_lag_ms": 10.76
+      },
+      "utterance": {
+        "id": "mixed-file",
+        "category": "filenames",
+        "reference": "Rename server_test.go to server_integration_test.go.",
+        "say_text": "Rename server underscore test dot go to server underscore integration underscore test dot go.",
+        "voice": "Tessa",
+        "rate": 180
+      },
+      "audio_seconds": 5.826125,
+      "order_in_utterance": 2
+    },
+    {
+      "candidate": {
+        "name": "speculative-parallel-320",
+        "preset": "speculative",
+        "schedule": "parallel",
+        "draft_ms": 320.0
+      },
+      "authoritative": {
+        "first_raw_ms": 707.59,
+        "first_stable_ms": 1181.66,
+        "release_to_final_ms": 328.08,
+        "wall_to_final_ms": 6154.91,
+        "final_text": "Rename server underscore test.go to server underscore integration underscore test.go.",
+        "raw_churn": {
+          "snapshot_count": 35,
+          "changed_transitions": 23,
+          "character_edits": 85,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 15,
+          "changed_transitions": 14,
+          "character_edits": 80,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 36,
+          "decoded_input_seconds": 116.5461,
+          "source_seconds_including_tail": 6.1461,
+          "audio_compute_amplification": 18.962537
+        },
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 3,
+          "normalized_reference_words": 9
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": true,
+        "stateless_invocations": 1,
+        "launch_ms": 321.19,
+        "visible_ms": 396.58,
+        "compute_wall_ms": 75.4,
+        "input_seconds": 0.32,
+        "text": "Renewame",
+        "nonempty": true,
+        "visible_before_first_raw": true,
+        "visible_before_first_stable": true,
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 9,
+          "normalized_reference_words": 9
+        },
+        "prefix_vs_final": {
+          "is_final_word_prefix": false,
+          "draft_words": 1,
+          "common_prefix_words": 0,
+          "wrong_or_extra_words": 1,
+          "word_edits_to_final": 12
+        }
+      },
+      "first_visible_ms": 396.58,
+      "combined_visible_churn": {
+        "snapshot_count": 16,
+        "changed_transitions": 15,
+        "character_edits": 82,
+        "retracted_characters": 5
+      },
+      "backlog": {
+        "max_queued_chunks": 5,
+        "max_queued_audio_ms": 100.0,
+        "max_consume_lag_ms": 54.153,
+        "mean_consume_lag_ms": 10.414
+      },
+      "utterance": {
+        "id": "mixed-file",
+        "category": "filenames",
+        "reference": "Rename server_test.go to server_integration_test.go.",
+        "say_text": "Rename server underscore test dot go to server underscore integration underscore test dot go.",
+        "voice": "Tessa",
+        "rate": 180
+      },
+      "audio_seconds": 5.826125,
+      "order_in_utterance": 3
+    },
+    {
+      "candidate": {
+        "name": "speculative-serialized-320",
+        "preset": "speculative",
+        "schedule": "serialized",
+        "draft_ms": 320.0
+      },
+      "authoritative": {
+        "first_raw_ms": 713.41,
+        "first_stable_ms": 1188.59,
+        "release_to_final_ms": 319.6,
+        "wall_to_final_ms": 6146.42,
+        "final_text": "Rename server underscore test.go to server underscore integration underscore test.go.",
+        "raw_churn": {
+          "snapshot_count": 35,
+          "changed_transitions": 23,
+          "character_edits": 85,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 15,
+          "changed_transitions": 14,
+          "character_edits": 80,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 36,
+          "decoded_input_seconds": 116.5461,
+          "source_seconds_including_tail": 6.1461,
+          "audio_compute_amplification": 18.962537
+        },
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 3,
+          "normalized_reference_words": 9
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": true,
+        "stateless_invocations": 1,
+        "launch_ms": 321.11,
+        "visible_ms": 393.33,
+        "compute_wall_ms": 72.22,
+        "input_seconds": 0.32,
+        "text": "Renewame",
+        "nonempty": true,
+        "visible_before_first_raw": true,
+        "visible_before_first_stable": true,
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 9,
+          "normalized_reference_words": 9
+        },
+        "prefix_vs_final": {
+          "is_final_word_prefix": false,
+          "draft_words": 1,
+          "common_prefix_words": 0,
+          "wrong_or_extra_words": 1,
+          "word_edits_to_final": 12
+        }
+      },
+      "first_visible_ms": 393.33,
+      "combined_visible_churn": {
+        "snapshot_count": 16,
+        "changed_transitions": 15,
+        "character_edits": 82,
+        "retracted_characters": 5
+      },
+      "backlog": {
+        "max_queued_chunks": 5,
+        "max_queued_audio_ms": 100.0,
+        "max_consume_lag_ms": 73.379,
+        "mean_consume_lag_ms": 11.566
+      },
+      "utterance": {
+        "id": "mixed-file",
+        "category": "filenames",
+        "reference": "Rename server_test.go to server_integration_test.go.",
+        "say_text": "Rename server underscore test dot go to server underscore integration underscore test dot go.",
+        "voice": "Tessa",
+        "rate": 180
+      },
+      "audio_seconds": 5.826125,
+      "order_in_utterance": 4
+    },
+    {
+      "candidate": {
+        "name": "speculative-parallel-480",
+        "preset": "speculative",
+        "schedule": "parallel",
+        "draft_ms": 480.0
+      },
+      "authoritative": {
+        "first_raw_ms": 703.16,
+        "first_stable_ms": 1191.36,
+        "release_to_final_ms": 331.38,
+        "wall_to_final_ms": 6158.19,
+        "final_text": "Rename server underscore test.go to server underscore integration underscore test.go.",
+        "raw_churn": {
+          "snapshot_count": 35,
+          "changed_transitions": 23,
+          "character_edits": 85,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 15,
+          "changed_transitions": 14,
+          "character_edits": 80,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 36,
+          "decoded_input_seconds": 116.5461,
+          "source_seconds_including_tail": 6.1461,
+          "audio_compute_amplification": 18.962537
+        },
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 3,
+          "normalized_reference_words": 9
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": true,
+        "stateless_invocations": 1,
+        "launch_ms": 481.22,
+        "visible_ms": 553.52,
+        "compute_wall_ms": 72.3,
+        "input_seconds": 0.48,
+        "text": "Renames",
+        "nonempty": true,
+        "visible_before_first_raw": true,
+        "visible_before_first_stable": true,
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 9,
+          "normalized_reference_words": 9
+        },
+        "prefix_vs_final": {
+          "is_final_word_prefix": false,
+          "draft_words": 1,
+          "common_prefix_words": 0,
+          "wrong_or_extra_words": 1,
+          "word_edits_to_final": 12
+        }
+      },
+      "first_visible_ms": 553.52,
+      "combined_visible_churn": {
+        "snapshot_count": 16,
+        "changed_transitions": 15,
+        "character_edits": 81,
+        "retracted_characters": 1
+      },
+      "backlog": {
+        "max_queued_chunks": 5,
+        "max_queued_audio_ms": 100.0,
+        "max_consume_lag_ms": 97.16,
+        "mean_consume_lag_ms": 13.798
+      },
+      "utterance": {
+        "id": "mixed-file",
+        "category": "filenames",
+        "reference": "Rename server_test.go to server_integration_test.go.",
+        "say_text": "Rename server underscore test dot go to server underscore integration underscore test dot go.",
+        "voice": "Tessa",
+        "rate": 180
+      },
+      "audio_seconds": 5.826125,
+      "order_in_utterance": 5
+    },
+    {
+      "candidate": {
+        "name": "balanced",
+        "preset": "balanced",
+        "schedule": "none",
+        "draft_ms": null
+      },
+      "authoritative": {
+        "first_raw_ms": 711.4,
+        "first_stable_ms": 866.27,
+        "release_to_final_ms": 587.88,
+        "wall_to_final_ms": 3649.4,
+        "final_text": "Build the release binary. Then wait for the checksum.",
+        "raw_churn": {
+          "snapshot_count": 18,
+          "changed_transitions": 13,
+          "character_edits": 44,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 7,
+          "changed_transitions": 6,
+          "character_edits": 35,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 19,
+          "decoded_input_seconds": 39.3814,
+          "source_seconds_including_tail": 3.3814,
+          "audio_compute_amplification": 11.64636
+        },
+        "errors_vs_reference": {
+          "normalized_match": true,
+          "normalized_word_edits": 0,
+          "normalized_reference_words": 9
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": false,
+        "stateless_invocations": 0,
+        "launch_ms": null,
+        "visible_ms": null,
+        "compute_wall_ms": null,
+        "input_seconds": 0.0,
+        "text": "",
+        "nonempty": false,
+        "visible_before_first_raw": false,
+        "visible_before_first_stable": false,
+        "errors_vs_reference": null,
+        "prefix_vs_final": null
+      },
+      "first_visible_ms": 866.27,
+      "combined_visible_churn": {
+        "snapshot_count": 7,
+        "changed_transitions": 6,
+        "character_edits": 35,
+        "retracted_characters": 0
+      },
+      "backlog": {
+        "max_queued_chunks": 4,
+        "max_queued_audio_ms": 80.0,
+        "max_consume_lag_ms": 73.32,
+        "mean_consume_lag_ms": 11.552
+      },
+      "utterance": {
+        "id": "paused-command",
+        "category": "pause",
+        "reference": "Build the release binary, then wait for the checksum.",
+        "say_text": "Build the release binary, [[slnc 700]] then wait for the checksum.",
+        "voice": "Samantha",
+        "rate": 185
+      },
+      "audio_seconds": 3.061437,
+      "order_in_utterance": 1
+    },
+    {
+      "candidate": {
+        "name": "speculative-parallel-320",
+        "preset": "speculative",
+        "schedule": "parallel",
+        "draft_ms": 320.0
+      },
+      "authoritative": {
+        "first_raw_ms": 705.92,
+        "first_stable_ms": 862.95,
+        "release_to_final_ms": 277.44,
+        "wall_to_final_ms": 3338.96,
+        "final_text": "Build the release binary. Then wait for the checksum.",
+        "raw_churn": {
+          "snapshot_count": 18,
+          "changed_transitions": 13,
+          "character_edits": 44,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 7,
+          "changed_transitions": 6,
+          "character_edits": 35,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 19,
+          "decoded_input_seconds": 39.3814,
+          "source_seconds_including_tail": 3.3814,
+          "audio_compute_amplification": 11.64636
+        },
+        "errors_vs_reference": {
+          "normalized_match": true,
+          "normalized_word_edits": 0,
+          "normalized_reference_words": 9
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": true,
+        "stateless_invocations": 1,
+        "launch_ms": 321.19,
+        "visible_ms": 397.15,
+        "compute_wall_ms": 75.96,
+        "input_seconds": 0.32,
+        "text": "Builder",
+        "nonempty": true,
+        "visible_before_first_raw": true,
+        "visible_before_first_stable": true,
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 9,
+          "normalized_reference_words": 9
+        },
+        "prefix_vs_final": {
+          "is_final_word_prefix": false,
+          "draft_words": 1,
+          "common_prefix_words": 0,
+          "wrong_or_extra_words": 1,
+          "word_edits_to_final": 9
+        }
+      },
+      "first_visible_ms": 397.15,
+      "combined_visible_churn": {
+        "snapshot_count": 8,
+        "changed_transitions": 7,
+        "character_edits": 37,
+        "retracted_characters": 2
+      },
+      "backlog": {
+        "max_queued_chunks": 3,
+        "max_queued_audio_ms": 60.0,
+        "max_consume_lag_ms": 52.634,
+        "mean_consume_lag_ms": 9.494
+      },
+      "utterance": {
+        "id": "paused-command",
+        "category": "pause",
+        "reference": "Build the release binary, then wait for the checksum.",
+        "say_text": "Build the release binary, [[slnc 700]] then wait for the checksum.",
+        "voice": "Samantha",
+        "rate": 185
+      },
+      "audio_seconds": 3.061437,
+      "order_in_utterance": 2
+    },
+    {
+      "candidate": {
+        "name": "speculative-serialized-320",
+        "preset": "speculative",
+        "schedule": "serialized",
+        "draft_ms": 320.0
+      },
+      "authoritative": {
+        "first_raw_ms": 716.06,
+        "first_stable_ms": 870.25,
+        "release_to_final_ms": 276.0,
+        "wall_to_final_ms": 3337.52,
+        "final_text": "Build the release binary. Then wait for the checksum.",
+        "raw_churn": {
+          "snapshot_count": 18,
+          "changed_transitions": 13,
+          "character_edits": 44,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 7,
+          "changed_transitions": 6,
+          "character_edits": 35,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 19,
+          "decoded_input_seconds": 39.3814,
+          "source_seconds_including_tail": 3.3814,
+          "audio_compute_amplification": 11.64636
+        },
+        "errors_vs_reference": {
+          "normalized_match": true,
+          "normalized_word_edits": 0,
+          "normalized_reference_words": 9
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": true,
+        "stateless_invocations": 1,
+        "launch_ms": 321.13,
+        "visible_ms": 392.79,
+        "compute_wall_ms": 71.66,
+        "input_seconds": 0.32,
+        "text": "Builder",
+        "nonempty": true,
+        "visible_before_first_raw": true,
+        "visible_before_first_stable": true,
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 9,
+          "normalized_reference_words": 9
+        },
+        "prefix_vs_final": {
+          "is_final_word_prefix": false,
+          "draft_words": 1,
+          "common_prefix_words": 0,
+          "wrong_or_extra_words": 1,
+          "word_edits_to_final": 9
+        }
+      },
+      "first_visible_ms": 392.79,
+      "combined_visible_churn": {
+        "snapshot_count": 8,
+        "changed_transitions": 7,
+        "character_edits": 37,
+        "retracted_characters": 2
+      },
+      "backlog": {
+        "max_queued_chunks": 3,
+        "max_queued_audio_ms": 60.0,
+        "max_consume_lag_ms": 72.829,
+        "mean_consume_lag_ms": 11.456
+      },
+      "utterance": {
+        "id": "paused-command",
+        "category": "pause",
+        "reference": "Build the release binary, then wait for the checksum.",
+        "say_text": "Build the release binary, [[slnc 700]] then wait for the checksum.",
+        "voice": "Samantha",
+        "rate": 185
+      },
+      "audio_seconds": 3.061437,
+      "order_in_utterance": 3
+    },
+    {
+      "candidate": {
+        "name": "speculative-parallel-480",
+        "preset": "speculative",
+        "schedule": "parallel",
+        "draft_ms": 480.0
+      },
+      "authoritative": {
+        "first_raw_ms": 707.85,
+        "first_stable_ms": 866.46,
+        "release_to_final_ms": 278.57,
+        "wall_to_final_ms": 3340.09,
+        "final_text": "Build the release binary. Then wait for the checksum.",
+        "raw_churn": {
+          "snapshot_count": 18,
+          "changed_transitions": 13,
+          "character_edits": 44,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 7,
+          "changed_transitions": 6,
+          "character_edits": 35,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 19,
+          "decoded_input_seconds": 39.3814,
+          "source_seconds_including_tail": 3.3814,
+          "audio_compute_amplification": 11.64636
+        },
+        "errors_vs_reference": {
+          "normalized_match": true,
+          "normalized_word_edits": 0,
+          "normalized_reference_words": 9
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": true,
+        "stateless_invocations": 1,
+        "launch_ms": 481.14,
+        "visible_ms": 555.23,
+        "compute_wall_ms": 74.1,
+        "input_seconds": 0.48,
+        "text": "Build a relay.",
+        "nonempty": true,
+        "visible_before_first_raw": true,
+        "visible_before_first_stable": true,
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 8,
+          "normalized_reference_words": 9
+        },
+        "prefix_vs_final": {
+          "is_final_word_prefix": false,
+          "draft_words": 3,
+          "common_prefix_words": 1,
+          "wrong_or_extra_words": 2,
+          "word_edits_to_final": 8
+        }
+      },
+      "first_visible_ms": 555.23,
+      "combined_visible_churn": {
+        "snapshot_count": 8,
+        "changed_transitions": 7,
+        "character_edits": 44,
+        "retracted_characters": 9
+      },
+      "backlog": {
+        "max_queued_chunks": 3,
+        "max_queued_audio_ms": 60.0,
+        "max_consume_lag_ms": 54.409,
+        "mean_consume_lag_ms": 9.879
+      },
+      "utterance": {
+        "id": "paused-command",
+        "category": "pause",
+        "reference": "Build the release binary, then wait for the checksum.",
+        "say_text": "Build the release binary, [[slnc 700]] then wait for the checksum.",
+        "voice": "Samantha",
+        "rate": 185
+      },
+      "audio_seconds": 3.061437,
+      "order_in_utterance": 4
+    },
+    {
+      "candidate": {
+        "name": "speculative-serialized-480",
+        "preset": "speculative",
+        "schedule": "serialized",
+        "draft_ms": 480.0
+      },
+      "authoritative": {
+        "first_raw_ms": 710.45,
+        "first_stable_ms": 861.26,
+        "release_to_final_ms": 278.19,
+        "wall_to_final_ms": 3339.84,
+        "final_text": "Build the release binary. Then wait for the checksum.",
+        "raw_churn": {
+          "snapshot_count": 18,
+          "changed_transitions": 13,
+          "character_edits": 44,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 7,
+          "changed_transitions": 6,
+          "character_edits": 35,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 19,
+          "decoded_input_seconds": 39.3814,
+          "source_seconds_including_tail": 3.3814,
+          "audio_compute_amplification": 11.64636
+        },
+        "errors_vs_reference": {
+          "normalized_match": true,
+          "normalized_word_edits": 0,
+          "normalized_reference_words": 9
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": true,
+        "stateless_invocations": 1,
+        "launch_ms": 481.11,
+        "visible_ms": 555.74,
+        "compute_wall_ms": 74.63,
+        "input_seconds": 0.48,
+        "text": "Build a relay.",
+        "nonempty": true,
+        "visible_before_first_raw": true,
+        "visible_before_first_stable": true,
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 8,
+          "normalized_reference_words": 9
+        },
+        "prefix_vs_final": {
+          "is_final_word_prefix": false,
+          "draft_words": 3,
+          "common_prefix_words": 1,
+          "wrong_or_extra_words": 2,
+          "word_edits_to_final": 8
+        }
+      },
+      "first_visible_ms": 555.74,
+      "combined_visible_churn": {
+        "snapshot_count": 8,
+        "changed_transitions": 7,
+        "character_edits": 44,
+        "retracted_characters": 9
+      },
+      "backlog": {
+        "max_queued_chunks": 3,
+        "max_queued_audio_ms": 60.0,
+        "max_consume_lag_ms": 75.805,
+        "mean_consume_lag_ms": 10.998
+      },
+      "utterance": {
+        "id": "paused-command",
+        "category": "pause",
+        "reference": "Build the release binary, then wait for the checksum.",
+        "say_text": "Build the release binary, [[slnc 700]] then wait for the checksum.",
+        "voice": "Samantha",
+        "rate": 185
+      },
+      "audio_seconds": 3.061437,
+      "order_in_utterance": 5
+    },
+    {
+      "candidate": {
+        "name": "speculative-parallel-320",
+        "preset": "speculative",
+        "schedule": "parallel",
+        "draft_ms": 320.0
+      },
+      "authoritative": {
+        "first_raw_ms": 711.91,
+        "first_stable_ms": 864.24,
+        "release_to_final_ms": 544.87,
+        "wall_to_final_ms": 6446.04,
+        "final_text": "Back up the database before applying Migration 42, and do not restart the primary server.",
+        "raw_churn": {
+          "snapshot_count": 35,
+          "changed_transitions": 23,
+          "character_edits": 82,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 15,
+          "changed_transitions": 14,
+          "character_edits": 78,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 36,
+          "decoded_input_seconds": 116.6202,
+          "source_seconds_including_tail": 6.2203,
+          "audio_compute_amplification": 18.748483
+        },
+        "errors_vs_reference": {
+          "normalized_match": true,
+          "normalized_word_edits": 0,
+          "normalized_reference_words": 15
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": true,
+        "stateless_invocations": 1,
+        "launch_ms": 321.13,
+        "visible_ms": 393.73,
+        "compute_wall_ms": 72.6,
+        "input_seconds": 0.32,
+        "text": "Back",
+        "nonempty": true,
+        "visible_before_first_raw": true,
+        "visible_before_first_stable": true,
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 14,
+          "normalized_reference_words": 15
+        },
+        "prefix_vs_final": {
+          "is_final_word_prefix": true,
+          "draft_words": 1,
+          "common_prefix_words": 1,
+          "wrong_or_extra_words": 0,
+          "word_edits_to_final": 14
+        }
+      },
+      "first_visible_ms": 393.73,
+      "combined_visible_churn": {
+        "snapshot_count": 16,
+        "changed_transitions": 14,
+        "character_edits": 78,
+        "retracted_characters": 0
+      },
+      "backlog": {
+        "max_queued_chunks": 3,
+        "max_queued_audio_ms": 60.0,
+        "max_consume_lag_ms": 56.786,
+        "mean_consume_lag_ms": 10.218
+      },
+      "utterance": {
+        "id": "database-command",
+        "category": "long_command",
+        "reference": "Back up the database before applying migration 42, and do not restart the primary server.",
+        "say_text": "Back up the database before applying migration forty two, and do not restart the primary server.",
+        "voice": "Daniel",
+        "rate": 175
+      },
+      "audio_seconds": 5.90025,
+      "order_in_utterance": 1
+    },
+    {
+      "candidate": {
+        "name": "speculative-serialized-320",
+        "preset": "speculative",
+        "schedule": "serialized",
+        "draft_ms": 320.0
+      },
+      "authoritative": {
+        "first_raw_ms": 709.09,
+        "first_stable_ms": 862.0,
+        "release_to_final_ms": 344.55,
+        "wall_to_final_ms": 6245.69,
+        "final_text": "Back up the database before applying Migration 42, and do not restart the primary server.",
+        "raw_churn": {
+          "snapshot_count": 35,
+          "changed_transitions": 23,
+          "character_edits": 82,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 15,
+          "changed_transitions": 14,
+          "character_edits": 78,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 36,
+          "decoded_input_seconds": 116.6202,
+          "source_seconds_including_tail": 6.2203,
+          "audio_compute_amplification": 18.748483
+        },
+        "errors_vs_reference": {
+          "normalized_match": true,
+          "normalized_word_edits": 0,
+          "normalized_reference_words": 15
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": true,
+        "stateless_invocations": 1,
+        "launch_ms": 321.11,
+        "visible_ms": 392.58,
+        "compute_wall_ms": 71.47,
+        "input_seconds": 0.32,
+        "text": "Back",
+        "nonempty": true,
+        "visible_before_first_raw": true,
+        "visible_before_first_stable": true,
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 14,
+          "normalized_reference_words": 15
+        },
+        "prefix_vs_final": {
+          "is_final_word_prefix": true,
+          "draft_words": 1,
+          "common_prefix_words": 1,
+          "wrong_or_extra_words": 0,
+          "word_edits_to_final": 14
+        }
+      },
+      "first_visible_ms": 392.58,
+      "combined_visible_churn": {
+        "snapshot_count": 16,
+        "changed_transitions": 14,
+        "character_edits": 78,
+        "retracted_characters": 0
+      },
+      "backlog": {
+        "max_queued_chunks": 5,
+        "max_queued_audio_ms": 100.0,
+        "max_consume_lag_ms": 91.756,
+        "mean_consume_lag_ms": 13.752
+      },
+      "utterance": {
+        "id": "database-command",
+        "category": "long_command",
+        "reference": "Back up the database before applying migration 42, and do not restart the primary server.",
+        "say_text": "Back up the database before applying migration forty two, and do not restart the primary server.",
+        "voice": "Daniel",
+        "rate": 175
+      },
+      "audio_seconds": 5.90025,
+      "order_in_utterance": 2
+    },
+    {
+      "candidate": {
+        "name": "speculative-parallel-480",
+        "preset": "speculative",
+        "schedule": "parallel",
+        "draft_ms": 480.0
+      },
+      "authoritative": {
+        "first_raw_ms": 708.88,
+        "first_stable_ms": 868.13,
+        "release_to_final_ms": 316.56,
+        "wall_to_final_ms": 6217.73,
+        "final_text": "Back up the database before applying Migration 42, and do not restart the primary server.",
+        "raw_churn": {
+          "snapshot_count": 35,
+          "changed_transitions": 23,
+          "character_edits": 82,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 15,
+          "changed_transitions": 14,
+          "character_edits": 78,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 36,
+          "decoded_input_seconds": 116.6202,
+          "source_seconds_including_tail": 6.2203,
+          "audio_compute_amplification": 18.748483
+        },
+        "errors_vs_reference": {
+          "normalized_match": true,
+          "normalized_word_edits": 0,
+          "normalized_reference_words": 15
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": true,
+        "stateless_invocations": 1,
+        "launch_ms": 481.19,
+        "visible_ms": 563.59,
+        "compute_wall_ms": 82.39,
+        "input_seconds": 0.48,
+        "text": "Backup",
+        "nonempty": true,
+        "visible_before_first_raw": true,
+        "visible_before_first_stable": true,
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 15,
+          "normalized_reference_words": 15
+        },
+        "prefix_vs_final": {
+          "is_final_word_prefix": false,
+          "draft_words": 1,
+          "common_prefix_words": 0,
+          "wrong_or_extra_words": 1,
+          "word_edits_to_final": 15
+        }
+      },
+      "first_visible_ms": 563.59,
+      "combined_visible_churn": {
+        "snapshot_count": 16,
+        "changed_transitions": 15,
+        "character_edits": 80,
+        "retracted_characters": 2
+      },
+      "backlog": {
+        "max_queued_chunks": 4,
+        "max_queued_audio_ms": 80.0,
+        "max_consume_lag_ms": 64.171,
+        "mean_consume_lag_ms": 11.368
+      },
+      "utterance": {
+        "id": "database-command",
+        "category": "long_command",
+        "reference": "Back up the database before applying migration 42, and do not restart the primary server.",
+        "say_text": "Back up the database before applying migration forty two, and do not restart the primary server.",
+        "voice": "Daniel",
+        "rate": 175
+      },
+      "audio_seconds": 5.90025,
+      "order_in_utterance": 3
+    },
+    {
+      "candidate": {
+        "name": "speculative-serialized-480",
+        "preset": "speculative",
+        "schedule": "serialized",
+        "draft_ms": 480.0
+      },
+      "authoritative": {
+        "first_raw_ms": 746.02,
+        "first_stable_ms": 880.84,
+        "release_to_final_ms": 322.31,
+        "wall_to_final_ms": 6223.44,
+        "final_text": "Back up the database before applying Migration 42, and do not restart the primary server.",
+        "raw_churn": {
+          "snapshot_count": 35,
+          "changed_transitions": 23,
+          "character_edits": 82,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 15,
+          "changed_transitions": 14,
+          "character_edits": 78,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 36,
+          "decoded_input_seconds": 116.6202,
+          "source_seconds_including_tail": 6.2203,
+          "audio_compute_amplification": 18.748483
+        },
+        "errors_vs_reference": {
+          "normalized_match": true,
+          "normalized_word_edits": 0,
+          "normalized_reference_words": 15
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": true,
+        "stateless_invocations": 1,
+        "launch_ms": 481.18,
+        "visible_ms": 572.61,
+        "compute_wall_ms": 91.43,
+        "input_seconds": 0.48,
+        "text": "Backup",
+        "nonempty": true,
+        "visible_before_first_raw": true,
+        "visible_before_first_stable": true,
+        "errors_vs_reference": {
+          "normalized_match": false,
+          "normalized_word_edits": 15,
+          "normalized_reference_words": 15
+        },
+        "prefix_vs_final": {
+          "is_final_word_prefix": false,
+          "draft_words": 1,
+          "common_prefix_words": 0,
+          "wrong_or_extra_words": 1,
+          "word_edits_to_final": 15
+        }
+      },
+      "first_visible_ms": 572.61,
+      "combined_visible_churn": {
+        "snapshot_count": 16,
+        "changed_transitions": 15,
+        "character_edits": 80,
+        "retracted_characters": 2
+      },
+      "backlog": {
+        "max_queued_chunks": 5,
+        "max_queued_audio_ms": 100.0,
+        "max_consume_lag_ms": 95.789,
+        "mean_consume_lag_ms": 14.905
+      },
+      "utterance": {
+        "id": "database-command",
+        "category": "long_command",
+        "reference": "Back up the database before applying migration 42, and do not restart the primary server.",
+        "say_text": "Back up the database before applying migration forty two, and do not restart the primary server.",
+        "voice": "Daniel",
+        "rate": 175
+      },
+      "audio_seconds": 5.90025,
+      "order_in_utterance": 4
+    },
+    {
+      "candidate": {
+        "name": "balanced",
+        "preset": "balanced",
+        "schedule": "none",
+        "draft_ms": null
+      },
+      "authoritative": {
+        "first_raw_ms": 723.75,
+        "first_stable_ms": 875.52,
+        "release_to_final_ms": 307.23,
+        "wall_to_final_ms": 6207.86,
+        "final_text": "Back up the database before applying Migration 42, and do not restart the primary server.",
+        "raw_churn": {
+          "snapshot_count": 35,
+          "changed_transitions": 23,
+          "character_edits": 82,
+          "retracted_characters": 0
+        },
+        "stable_churn": {
+          "snapshot_count": 15,
+          "changed_transitions": 14,
+          "character_edits": 78,
+          "retracted_characters": 0
+        },
+        "compute": {
+          "model_invocations": 36,
+          "decoded_input_seconds": 116.6202,
+          "source_seconds_including_tail": 6.2203,
+          "audio_compute_amplification": 18.748483
+        },
+        "errors_vs_reference": {
+          "normalized_match": true,
+          "normalized_word_edits": 0,
+          "normalized_reference_words": 15
+        },
+        "exact_final_equals_balanced": true,
+        "normalized_final_equals_balanced": true
+      },
+      "preview": {
+        "launched": false,
+        "stateless_invocations": 0,
+        "launch_ms": null,
+        "visible_ms": null,
+        "compute_wall_ms": null,
+        "input_seconds": 0.0,
+        "text": "",
+        "nonempty": false,
+        "visible_before_first_raw": false,
+        "visible_before_first_stable": false,
+        "errors_vs_reference": null,
+        "prefix_vs_final": null
+      },
+      "first_visible_ms": 875.52,
+      "combined_visible_churn": {
+        "snapshot_count": 15,
+        "changed_transitions": 14,
+        "character_edits": 78,
+        "retracted_characters": 0
+      },
+      "backlog": {
+        "max_queued_chunks": 4,
+        "max_queued_audio_ms": 80.0,
+        "max_consume_lag_ms": 63.424,
+        "mean_consume_lag_ms": 11.545
+      },
+      "utterance": {
+        "id": "database-command",
+        "category": "long_command",
+        "reference": "Back up the database before applying migration 42, and do not restart the primary server.",
+        "say_text": "Back up the database before applying migration forty two, and do not restart the primary server.",
+        "voice": "Daniel",
+        "rate": 175
+      },
+      "audio_seconds": 5.90025,
+      "order_in_utterance": 5
+    }
+  ],
+  "aggregates": {
+    "balanced": {
+      "utterances": 12,
+      "authoritative_first_raw_ms": {
+        "available": 12,
+        "median": 708.605,
+        "p95": 723.75,
+        "mean": 706.585
+      },
+      "authoritative_first_stable_ms": {
+        "available": 12,
+        "median": 1023.27,
+        "p95": 1219.39,
+        "mean": 977.413
+      },
+      "authoritative_release_to_final_ms": {
+        "available": 12,
+        "median": 296.21,
+        "p95": 587.88,
+        "mean": 324.142
+      },
+      "authoritative_wall_to_final_ms": {
+        "available": 12,
+        "median": 3656.66,
+        "p95": 8159.18,
+        "mean": 4195.241
+      },
+      "first_visible_ms": {
+        "available": 12,
+        "median": 1023.27,
+        "p95": 1219.39,
+        "mean": 977.413
+      },
+      "backlog_max_queued_audio_ms": {
+        "available": 12,
+        "median": 70.0,
+        "p95": 100.0,
+        "mean": 71.667
+      },
+      "backlog_max_consume_lag_ms": {
+        "available": 12,
+        "median": 54.563,
+        "p95": 98.391,
+        "mean": 55.605
+      },
+      "preview": {
+        "launched": 0,
+        "nonempty": 0,
+        "nonempty_coverage": null,
+        "visible_ms": {
+          "available": 0,
+          "median": null,
+          "p95": null,
+          "mean": null
+        },
+        "compute_wall_ms": {
+          "available": 0,
+          "median": null,
+          "p95": null,
+          "mean": null
+        },
+        "input_seconds_total": 0,
+        "visible_before_first_raw": 0,
+        "visible_before_first_stable": 0,
+        "normalized_wer_vs_reference": null,
+        "final_word_prefix": 0,
+        "prefix_common_words": 0,
+        "prefix_draft_words": 0
+      },
+      "combined_visible_churn": {
+        "snapshot_count": 110,
+        "changed_transitions": 98,
+        "character_edits": 527,
+        "retracted_characters": 0
+      },
+      "authoritative_compute": {
+        "model_invocations": 285,
+        "decoded_input_seconds": 769.8046
+      },
+      "total_logical_compute": {
+        "stateless_invocations": 0,
+        "decoded_input_seconds": 769.8046
+      },
+      "final_parity_with_balanced": {
+        "exact": 12,
+        "normalized": 12,
+        "utterances": 12
+      }
+    },
+    "speculative-parallel-320": {
+      "utterances": 12,
+      "authoritative_first_raw_ms": {
+        "available": 12,
+        "median": 708.43,
+        "p95": 711.91,
+        "mean": 704.838
+      },
+      "authoritative_first_stable_ms": {
+        "available": 12,
+        "median": 1023.19,
+        "p95": 1186.92,
+        "mean": 972.882
+      },
+      "authoritative_release_to_final_ms": {
+        "available": 12,
+        "median": 295.33,
+        "p95": 691.23,
+        "mean": 335.967
+      },
+      "authoritative_wall_to_final_ms": {
+        "available": 12,
+        "median": 3647.83,
+        "p95": 8517.92,
+        "mean": 4207.132
+      },
+      "first_visible_ms": {
+        "available": 12,
+        "median": 394.75,
+        "p95": 1023.5,
+        "mean": 489.917
+      },
+      "backlog_max_queued_audio_ms": {
+        "available": 12,
+        "median": 60.0,
+        "p95": 620.0,
+        "mean": 115.0
+      },
+      "backlog_max_consume_lag_ms": {
+        "available": 12,
+        "median": 55.038,
+        "p95": 605.612,
+        "mean": 99.26
+      },
+      "preview": {
+        "launched": 12,
+        "nonempty": 10,
+        "nonempty_coverage": 0.833333,
+        "visible_ms": {
+          "available": 10,
+          "median": 393.645,
+          "p95": 444.13,
+          "mean": 399.133
+        },
+        "compute_wall_ms": {
+          "available": 12,
+          "median": 72.45,
+          "p95": 123.01,
+          "mean": 76.413
+        },
+        "input_seconds_total": 3.84,
+        "visible_before_first_raw": 10,
+        "visible_before_first_stable": 10,
+        "normalized_wer_vs_reference": 0.95,
+        "final_word_prefix": 4,
+        "prefix_common_words": 4,
+        "prefix_draft_words": 10
+      },
+      "combined_visible_churn": {
+        "snapshot_count": 120,
+        "changed_transitions": 105,
+        "character_edits": 545,
+        "retracted_characters": 25
+      },
+      "authoritative_compute": {
+        "model_invocations": 285,
+        "decoded_input_seconds": 769.8046
+      },
+      "total_logical_compute": {
+        "stateless_invocations": 12,
+        "decoded_input_seconds": 773.6446
+      },
+      "final_parity_with_balanced": {
+        "exact": 12,
+        "normalized": 12,
+        "utterances": 12
+      },
+      "impact_vs_balanced": {
+        "authoritative_first_raw_ms": {
+          "p95_delta_ms": -11.84,
+          "material_threshold_ms": 100.0,
+          "material_regression": false
+        },
+        "authoritative_first_stable_ms": {
+          "p95_delta_ms": -32.47,
+          "material_threshold_ms": 121.939,
+          "material_regression": false
+        },
+        "authoritative_release_to_final_ms": {
+          "p95_delta_ms": 103.35,
+          "material_threshold_ms": 100.0,
+          "material_regression": true
+        },
+        "backlog_max_consume_lag_ms": {
+          "p95_delta_ms": 507.221,
+          "material_threshold_ms": 100.0,
+          "material_regression": true
+        }
+      },
+      "added_logical_compute_vs_balanced_seconds": 3.84,
+      "reject_for_authoritative_p95": true
+    },
+    "speculative-serialized-320": {
+      "utterances": 12,
+      "authoritative_first_raw_ms": {
+        "available": 12,
+        "median": 709.325,
+        "p95": 721.73,
+        "mean": 706.74
+      },
+      "authoritative_first_stable_ms": {
+        "available": 12,
+        "median": 1022.0,
+        "p95": 1188.59,
+        "mean": 972.482
+      },
+      "authoritative_release_to_final_ms": {
+        "available": 12,
+        "median": 300.9,
+        "p95": 539.97,
+        "mean": 316.24
+      },
+      "authoritative_wall_to_final_ms": {
+        "available": 12,
+        "median": 3698.735,
+        "p95": 8147.09,
+        "mean": 4187.457
+      },
+      "first_visible_ms": {
+        "available": 12,
+        "median": 393.1,
+        "p95": 1024.72,
+        "mean": 485.067
+      },
+      "backlog_max_queued_audio_ms": {
+        "available": 12,
+        "median": 60.0,
+        "p95": 100.0,
+        "mean": 71.667
+      },
+      "backlog_max_consume_lag_ms": {
+        "available": 12,
+        "median": 73.149,
+        "p95": 91.756,
+        "mean": 74.969
+      },
+      "preview": {
+        "launched": 12,
+        "nonempty": 10,
+        "nonempty_coverage": 0.833333,
+        "visible_ms": {
+          "available": 10,
+          "median": 392.83,
+          "p95": 397.49,
+          "mean": 393.452
+        },
+        "compute_wall_ms": {
+          "available": 12,
+          "median": 71.785,
+          "p95": 77.01,
+          "mean": 72.263
+        },
+        "input_seconds_total": 3.84,
+        "visible_before_first_raw": 10,
+        "visible_before_first_stable": 10,
+        "normalized_wer_vs_reference": 0.95,
+        "final_word_prefix": 4,
+        "prefix_common_words": 4,
+        "prefix_draft_words": 10
+      },
+      "combined_visible_churn": {
+        "snapshot_count": 120,
+        "changed_transitions": 105,
+        "character_edits": 545,
+        "retracted_characters": 25
+      },
+      "authoritative_compute": {
+        "model_invocations": 285,
+        "decoded_input_seconds": 769.8046
+      },
+      "total_logical_compute": {
+        "stateless_invocations": 12,
+        "decoded_input_seconds": 773.6446
+      },
+      "final_parity_with_balanced": {
+        "exact": 12,
+        "normalized": 12,
+        "utterances": 12
+      },
+      "impact_vs_balanced": {
+        "authoritative_first_raw_ms": {
+          "p95_delta_ms": -2.02,
+          "material_threshold_ms": 100.0,
+          "material_regression": false
+        },
+        "authoritative_first_stable_ms": {
+          "p95_delta_ms": -30.8,
+          "material_threshold_ms": 121.939,
+          "material_regression": false
+        },
+        "authoritative_release_to_final_ms": {
+          "p95_delta_ms": -47.91,
+          "material_threshold_ms": 100.0,
+          "material_regression": false
+        },
+        "backlog_max_consume_lag_ms": {
+          "p95_delta_ms": -6.635,
+          "material_threshold_ms": 100.0,
+          "material_regression": false
+        }
+      },
+      "added_logical_compute_vs_balanced_seconds": 3.84,
+      "reject_for_authoritative_p95": false
+    },
+    "speculative-parallel-480": {
+      "utterances": 12,
+      "authoritative_first_raw_ms": {
+        "available": 12,
+        "median": 703.995,
+        "p95": 708.88,
+        "mean": 700.773
+      },
+      "authoritative_first_stable_ms": {
+        "available": 12,
+        "median": 1023.815,
+        "p95": 1191.44,
+        "mean": 974.823
+      },
+      "authoritative_release_to_final_ms": {
+        "available": 12,
+        "median": 293.73,
+        "p95": 795.02,
+        "mean": 334.912
+      },
+      "authoritative_wall_to_final_ms": {
+        "available": 12,
+        "median": 3587.53,
+        "p95": 8145.97,
+        "mean": 4206.114
+      },
+      "first_visible_ms": {
+        "available": 12,
+        "median": 558.37,
+        "p95": 1029.31,
+        "mean": 638.769
+      },
+      "backlog_max_queued_audio_ms": {
+        "available": 12,
+        "median": 60.0,
+        "p95": 100.0,
+        "mean": 68.333
+      },
+      "backlog_max_consume_lag_ms": {
+        "available": 12,
+        "median": 54.175,
+        "p95": 97.16,
+        "mean": 54.648
+      },
+      "preview": {
+        "launched": 12,
+        "nonempty": 10,
+        "nonempty_coverage": 0.833333,
+        "visible_ms": {
+          "available": 10,
+          "median": 557.33,
+          "p95": 596.02,
+          "mean": 560.917
+        },
+        "compute_wall_ms": {
+          "available": 12,
+          "median": 75.465,
+          "p95": 114.86,
+          "mean": 78.573
+        },
+        "input_seconds_total": 5.76,
+        "visible_before_first_raw": 10,
+        "visible_before_first_stable": 10,
+        "normalized_wer_vs_reference": 0.905882,
+        "final_word_prefix": 4,
+        "prefix_common_words": 8,
+        "prefix_draft_words": 15
+      },
+      "combined_visible_churn": {
+        "snapshot_count": 120,
+        "changed_transitions": 105,
+        "character_edits": 557,
+        "retracted_characters": 34
+      },
+      "authoritative_compute": {
+        "model_invocations": 285,
+        "decoded_input_seconds": 769.8046
+      },
+      "total_logical_compute": {
+        "stateless_invocations": 12,
+        "decoded_input_seconds": 775.5646
+      },
+      "final_parity_with_balanced": {
+        "exact": 12,
+        "normalized": 12,
+        "utterances": 12
+      },
+      "impact_vs_balanced": {
+        "authoritative_first_raw_ms": {
+          "p95_delta_ms": -14.87,
+          "material_threshold_ms": 100.0,
+          "material_regression": false
+        },
+        "authoritative_first_stable_ms": {
+          "p95_delta_ms": -27.95,
+          "material_threshold_ms": 121.939,
+          "material_regression": false
+        },
+        "authoritative_release_to_final_ms": {
+          "p95_delta_ms": 207.14,
+          "material_threshold_ms": 100.0,
+          "material_regression": true
+        },
+        "backlog_max_consume_lag_ms": {
+          "p95_delta_ms": -1.231,
+          "material_threshold_ms": 100.0,
+          "material_regression": false
+        }
+      },
+      "added_logical_compute_vs_balanced_seconds": 5.76,
+      "reject_for_authoritative_p95": true
+    },
+    "speculative-serialized-480": {
+      "utterances": 12,
+      "authoritative_first_raw_ms": {
+        "available": 12,
+        "median": 706.995,
+        "p95": 746.02,
+        "mean": 706.779
+      },
+      "authoritative_first_stable_ms": {
+        "available": 12,
+        "median": 1022.58,
+        "p95": 1189.64,
+        "mean": 973.704
+      },
+      "authoritative_release_to_final_ms": {
+        "available": 12,
+        "median": 287.43,
+        "p95": 542.79,
+        "mean": 311.402
+      },
+      "authoritative_wall_to_final_ms": {
+        "available": 12,
+        "median": 3584.54,
+        "p95": 8151.32,
+        "mean": 4182.582
+      },
+      "first_visible_ms": {
+        "available": 12,
+        "median": 555.985,
+        "p95": 1024.66,
+        "mean": 634.274
+      },
+      "backlog_max_queued_audio_ms": {
+        "available": 12,
+        "median": 60.0,
+        "p95": 120.0,
+        "mean": 73.333
+      },
+      "backlog_max_consume_lag_ms": {
+        "available": 12,
+        "median": 74.812,
+        "p95": 103.387,
+        "mean": 78.129
+      },
+      "preview": {
+        "launched": 12,
+        "nonempty": 10,
+        "nonempty_coverage": 0.833333,
+        "visible_ms": {
+          "available": 10,
+          "median": 555.39,
+          "p95": 572.61,
+          "mean": 556.613
+        },
+        "compute_wall_ms": {
+          "available": 12,
+          "median": 73.51,
+          "p95": 91.43,
+          "mean": 74.737
+        },
+        "input_seconds_total": 5.76,
+        "visible_before_first_raw": 10,
+        "visible_before_first_stable": 10,
+        "normalized_wer_vs_reference": 0.905882,
+        "final_word_prefix": 4,
+        "prefix_common_words": 8,
+        "prefix_draft_words": 15
+      },
+      "combined_visible_churn": {
+        "snapshot_count": 120,
+        "changed_transitions": 105,
+        "character_edits": 557,
+        "retracted_characters": 34
+      },
+      "authoritative_compute": {
+        "model_invocations": 285,
+        "decoded_input_seconds": 769.8046
+      },
+      "total_logical_compute": {
+        "stateless_invocations": 12,
+        "decoded_input_seconds": 775.5646
+      },
+      "final_parity_with_balanced": {
+        "exact": 12,
+        "normalized": 12,
+        "utterances": 12
+      },
+      "impact_vs_balanced": {
+        "authoritative_first_raw_ms": {
+          "p95_delta_ms": 22.27,
+          "material_threshold_ms": 100.0,
+          "material_regression": false
+        },
+        "authoritative_first_stable_ms": {
+          "p95_delta_ms": -29.75,
+          "material_threshold_ms": 121.939,
+          "material_regression": false
+        },
+        "authoritative_release_to_final_ms": {
+          "p95_delta_ms": -45.09,
+          "material_threshold_ms": 100.0,
+          "material_regression": false
+        },
+        "backlog_max_consume_lag_ms": {
+          "p95_delta_ms": 4.996,
+          "material_threshold_ms": 100.0,
+          "material_regression": false
+        }
+      },
+      "added_logical_compute_vs_balanced_seconds": 5.76,
+      "reject_for_authoritative_p95": false
+    }
+  },
+  "rejection_rule": "Reject a speculative variant when any authoritative p95 latency or backlog lag rises by more than max(100 ms, 10%) versus balanced.",
+  "metric_notes": [
+    "Each speculative run launches exactly one stateless timestamps-none call after 320 ms or 480 ms of audio has been captured.",
+    "Parallel launches the stateless call from the capture producer and permits overlap with live inference. Serialized pauses before yielding the cutoff-crossing live chunk, runs the stateless call while capture continues, and resumes live inference without model-call overlap.",
+    "The 20 ms producer schedules each frame at the end of its capture interval. Queue depth and consume lag measure live-stream backlog.",
+    "Draft visible time is stateless-call completion from capture start and only counts non-empty text.",
+    "Prefix correctness compares normalized whole words with that run's authoritative final. WER uses the fixed corpus reference.",
+    "Combined churn orders the draft completion and authoritative stable events by actual wall time.",
+    "Added draft input compute is 0.32 or 0.48 decoded audio seconds per launch; compute_wall_ms measures its occupied wall interval.",
+    "Final parity is exact and normalized against the matched balanced run for the same utterance."
+  ]
+}
